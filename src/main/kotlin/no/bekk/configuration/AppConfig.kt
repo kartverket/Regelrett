@@ -6,6 +6,7 @@ data class Config(
     val homePath: String,
     val mode: String,
     val paths: PathsConfig,
+    val authConfig: AuthConfig,
     val microsoftGraph: MicrosoftGraphConfig,
     val oAuth: OAuthConfig,
     val server: ServerConfig,
@@ -43,6 +44,10 @@ data class YAMLInstanceConfig(
 
 data class PathsConfig(
     val provisioning: String,
+)
+
+class AuthConfig(
+    val authType: String,
 )
 
 data class FrontendDevServerConfig(

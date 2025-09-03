@@ -2,10 +2,7 @@ package no.bekk.configuration
 
 import net.mamoe.yamlkt.YamlMap
 import net.mamoe.yamlkt.toYamlElement
-import no.bekk.configuration.decodeYamlFromFile
 import org.slf4j.LoggerFactory
-import java.nio.file.Path
-import kotlin.collections.emptyList
 import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
@@ -23,6 +20,7 @@ class ConfigBuilder {
     private val appliedEnvOverrides = mutableListOf<String>()
 
     private lateinit var pathsConfig: PathsConfig
+    private lateinit var authConfig: AuthConfig
     private lateinit var microsoftGraphConfig: MicrosoftGraphConfig
     private lateinit var oAuthConfig: OAuthConfig
     private lateinit var serverConfig: ServerConfig
@@ -193,6 +191,10 @@ class ConfigBuilder {
         logger.info("App mode ${configYaml.getStringOrNull("base", "mode")}")
     }
 
+    fun buildAuthConfig(yaml: YamlConfig) = AuthConfig(
+        authType = yaml.getStringOrNull("auth", "auth_type") ?: "microsoft",
+    )
+
     fun buildMicrosoftGraphConfig(yaml: YamlConfig) = MicrosoftGraphConfig(
         baseUrl = yaml.getStringOrNull("microsoft_graph", "base_url") ?: "https://graph.microsoft.com",
         memberOfPath = yaml.getStringOrNull("microsoft_graph", "member_of_path") ?: "/v1.0/me/memberOf/microsoft.graph.group",
@@ -266,6 +268,7 @@ class ConfigBuilder {
     }
 
     fun build(): Config {
+        authConfig = buildAuthConfig(configYaml)
         microsoftGraphConfig = buildMicrosoftGraphConfig(configYaml)
         oAuthConfig = buildOAuthConfig(configYaml)
         pathsConfig = buildPathsConfig(configYaml)
@@ -278,6 +281,7 @@ class ConfigBuilder {
             homePath = homePath,
             mode = configYaml.getStringOrNull("base", "mode") ?: "production",
             paths = pathsConfig,
+            authConfig = authConfig,
             microsoftGraph = microsoftGraphConfig,
             oAuth = oAuthConfig,
             server = serverConfig,

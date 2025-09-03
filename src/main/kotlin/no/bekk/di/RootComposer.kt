@@ -4,6 +4,7 @@ import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.serialization.kotlinx.json.*
 import no.bekk.authentication.AuthServiceImpl
+import no.bekk.authentication.NoAuthServiceImpl
 import no.bekk.configuration.Config
 import no.bekk.configuration.JDBCDatabase
 import no.bekk.database.AnswerRepositoryImpl
@@ -26,7 +27,11 @@ fun rootComposer(config: Config): Dependencies {
             json()
         }
     }
-    val authService = AuthServiceImpl(MicrosoftServiceImpl(config, httpClient), contextRepository, config.oAuth)
+    val authService = when (config.authConfig.authType) {
+        "none" -> NoAuthServiceImpl()
+        "microsoft" -> AuthServiceImpl(MicrosoftServiceImpl(config), contextRepository, config.oAuth)
+        else -> throw IllegalArgumentException("Unknown auth type: ${config.authConfig.authType}")
+    }
 
     return Dependencies(
         formService = formService,

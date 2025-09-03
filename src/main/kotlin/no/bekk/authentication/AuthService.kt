@@ -1,11 +1,8 @@
 package no.bekk.authentication
 
-import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.auth.jwt.JWTPrincipal
-import io.ktor.server.auth.principal
-import io.ktor.server.response.*
-import io.ktor.server.sessions.*
+import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
 import no.bekk.configuration.OAuthConfig
 import no.bekk.database.ContextRepository
 import no.bekk.domain.MicrosoftGraphGroup
@@ -116,4 +113,35 @@ class AuthServiceImpl(
 
         return microsoftGroups.find { it.displayName == teamName }?.id
     }
+}
+
+class NoAuthServiceImpl() : AuthService {
+    override suspend fun getGroupsOrEmptyList(call: ApplicationCall): List<MicrosoftGraphGroup> = emptyList()
+
+    override suspend fun getCurrentUser(call: ApplicationCall): MicrosoftGraphUser =
+        MicrosoftGraphUser(id = "no-auth-user", displayName = "NoAuth User", mail = "no-auth@example.com")
+
+    override suspend fun getUserByUserId(
+        call: ApplicationCall,
+        userId: String
+    ): MicrosoftGraphUser {
+        throw UnsupportedOperationException("User information not available when authType is 'none'")
+    }
+
+    override suspend fun hasTeamAccess(
+        call: ApplicationCall,
+        teamId: String?
+    ): Boolean = true
+
+    override suspend fun hasContextAccess(
+        call: ApplicationCall,
+        contextId: String
+    ): Boolean = true
+
+    override suspend fun hasSuperUserAccess(call: ApplicationCall): Boolean = true
+
+    override suspend fun getTeamIdFromName(
+        call: ApplicationCall,
+        teamName: String
+    ): String? = null
 }

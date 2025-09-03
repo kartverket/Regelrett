@@ -44,6 +44,10 @@ server:
 
 #################################### Auth ##############################
 
+#oauth | none
+auth:
+  auth_type: microsoft
+
 microsoft_graph:
   base_url: "https://graph.microsoft.com"
   member_of_path: "/v1.0/me/memberof/microsoft.graph.group"
