@@ -28,7 +28,6 @@ export default function MultiCheckboxAnswer({
 
   const submitIfModified = useCallback(
     (newAnswer: string) => {
-      console.log("submitting", newAnswer);
       if (newAnswer != savedAnswer) {
         submitAnswer(newAnswer);
         setUpdatedAt(new Date());
@@ -39,7 +38,6 @@ export default function MultiCheckboxAnswer({
   );
 
   useEffect(() => {
-    console.log("effect", selected);
     const handler = setTimeout(
       () => submitIfModified(selected.join(";")),
       1500,

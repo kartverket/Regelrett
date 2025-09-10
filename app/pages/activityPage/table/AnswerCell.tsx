@@ -95,7 +95,7 @@ export function AnswerCell({
           choices={choices}
           value={answerInput}
           submitAnswer={submitAnswer}
-          disabled={false}
+          disabled={isDisabled}
           updated={updated}
           answerExpiry={answerExpiry}
         />

@@ -30,7 +30,7 @@ export default function MultiDropdownMenuAnswer({
   const [open, setOpen] = useState(false);
   const [savedAnswer, setSavedAnswer] = useState(value);
   const [closeMenuTimeout, setCloseMenuTimeout] = useState<number>();
-  const [debounceTimeout, setDebonceTimeout] = useState<number>();
+  const [debounceTimeout, setDebounceTimeout] = useState<number>();
   const [updatedAt, setUpdatedAt] = useState(updated);
   const [selected, setSelected] = useState<string[]>(
     value?.split(";").map((val) => val.trim()) ?? [],
@@ -50,7 +50,7 @@ export default function MultiDropdownMenuAnswer({
       (() => submitIfModified(newAnswer)) as TimerHandler,
       1500,
     );
-    setDebonceTimeout(to);
+    setDebounceTimeout(to);
   }
 
   return (
@@ -85,7 +85,7 @@ export default function MultiDropdownMenuAnswer({
                 key={choice}
               >
                 {choice.slice(0, 20)}
-                {choice.length > 50 ? "..." : null}
+                {choice.length > 20 ? "..." : null}
                 <X className="group-hover:scale-140 group-hover:text-destructive h-auto w-auto" />
               </Badge>
             ))}
