@@ -25,6 +25,8 @@ import { cn } from "@/lib/utils";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
 import { TableStatistics } from "../TableStatistics";
 import { useLocalstorageState } from "@/hooks/useStorageState";
+import { useFilterState } from "@/hooks/useFilterState";
+import { useMemo } from "react";
 
 type Props = {
   columnMetadata: Column[];
@@ -54,7 +56,6 @@ export function TableComponent({
   ] = useColumnVisibility();
 
   const [search] = useSearchParams();
-  const filterSearchParams = search.getAll("filter");
   const pageParam = search.get("page");
   const pageIndex = pageParam ? parseInt(pageParam) - 1 : 0;
 
@@ -71,6 +72,7 @@ export function TableComponent({
 
     return Object.entries(grouped).map(([id, value]) => ({ id, value }));
   }
+  const [filters] = useFilterState(tableData.id);
 
   const [sorting, setSorting] = useLocalstorageState<SortingState>(
     `sortingState_${tableData.id}`,
@@ -220,6 +222,7 @@ export function TableComponent({
         pageIndex: pageIndex,
         pageSize: 10,
       },
+      columnFilters: filters,
     },
     onSortingChange: setSorting,
     autoResetAll: false,
@@ -270,7 +273,7 @@ export function TableComponent({
         />
       </div>
       <TableActions
-        tableMetadata={columnMetadata}
+        columnMetadata={columnMetadata}
         filterByAnswer={filterByAnswer}
         table={table}
         formId={tableData.id}

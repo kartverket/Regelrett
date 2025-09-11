@@ -1,4 +1,3 @@
-import { useSearchParams } from "react-router";
 import type { Column } from "@tanstack/react-table";
 import {
   DropdownMenu,
@@ -9,6 +8,8 @@ import {
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Table as TanstackTable } from "@tanstack/react-table";
+import { useFilterState } from "@/hooks/useFilterState";
+import { useEffect } from "react";
 
 type TableFilters<TData> = {
   filterName: string;
@@ -23,67 +24,37 @@ export const TableFilter = <TData,>({
   filterOptions,
   column,
   formId,
-  table,
 }: TableFilters<TData>) => {
   const placeholder = "Alle";
-  const [_, setSearchParams] = useSearchParams();
 
   const selectedValues = (column.getFilterValue() ?? []) as string[];
+  const [filters, setFilters] = useFilterState(formId);
+  const columnFilters = filters.find((f) => f.id == column.id);
 
-  const handleFilterChange = (toggledValue: string): void => {
-    const isSelected = selectedValues.includes(toggledValue);
-    const updatedSelection = isSelected
-      ? selectedValues.filter((val) => val !== toggledValue)
-      : [...selectedValues, toggledValue];
-
-    column.setFilterValue(
-      updatedSelection.length ? updatedSelection : undefined,
-    );
-
-    const updatedLocalStorageFilters = JSON.parse(
-      localStorage.getItem(`filters_${formId}`) || "[]",
-    ).filter(
-      (filter: { id: string; value: string }) => filter.id !== column.id,
-    );
-
-    setSearchParams(
-      (current) => {
-        current.delete("page");
-        current.getAll("filter").forEach((value) => {
-          if (value.startsWith(column.id)) {
-            current.delete("filter", value);
-          }
-        });
-        updatedSelection.forEach((val) => {
-          current.append("filter", `${column.id}_${val}`);
-        });
-        return current;
-      },
-      { replace: true },
-    );
-
-    localStorage.setItem(
-      `filters_${formId}`,
-      JSON.stringify(
-        !updatedSelection.length
-          ? updatedLocalStorageFilters
-          : [
-              ...updatedLocalStorageFilters,
-              ...updatedSelection.map((val) => ({
-                id: column.id,
-                value: val,
-              })),
-            ],
-      ),
-    );
-
-    table.setPageIndex(0);
-  };
-
-  const selectedNames = filterOptions
-    .filter((opt) => selectedValues.includes(opt.value))
-    .map((opt) => opt.name)
+  const selectedNames = columnFilters?.value
+    .map((f) => filterOptions.find((opt) => opt.value == f)?.name)
+    .filter((f) => f != undefined)
     .join(", ");
+
+  useEffect(() => {
+    console.log("NAME:", filterName);
+    console.log("\tselected", selectedNames);
+    console.log(
+      "\tfilters",
+      filters.filter((f) => f.id == column.id),
+    );
+    console.log("\toptions", filterOptions);
+  }, [column.id, filterName, filterOptions, filters, selectedNames]);
+
+  useEffect(() => {
+    console.log("NAME:", filterName);
+    console.log("\tselected", selectedNames);
+    console.log(
+      "\tfilters",
+      filters.filter((f) => f.id == column.id),
+    );
+    console.log("\toptions", filterOptions);
+  }, [column.id, filterName, filterOptions, filters, selectedNames]);
 
   return (
     <div className="flex flex-col gap-1 uppercase text-xs">
@@ -113,7 +84,34 @@ export const TableFilter = <TData,>({
               <DropdownMenuCheckboxItem
                 key={option.value}
                 checked={checked}
-                onCheckedChange={() => handleFilterChange(option.value)}
+                onCheckedChange={(checked) =>
+                  setFilters((current) => {
+                    console.log("setting", current, option.value);
+                    if (checked) {
+                      return [
+                        ...current.filter((f) => f.id != column.id),
+                        {
+                          id: column.id,
+                          value: [
+                            ...(columnFilters?.value || []),
+                            option.value,
+                          ],
+                        },
+                      ];
+                    } else {
+                      return current.map((it) => {
+                        if (it.id == column.id) {
+                          return {
+                            id: it.id,
+                            value: (it.value as string[]).filter(
+                              (v) => v != option.value,
+                            ),
+                          };
+                        } else return it;
+                      });
+                    }
+                  })
+                }
                 className="cursor-pointer"
               >
                 {option.name}

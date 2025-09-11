@@ -4,43 +4,26 @@ import { useStoredRedirect } from "../../../hooks/useStoredRedirect";
 import type { Table as TanstackTable } from "@tanstack/react-table";
 import { FunnelX, ListFilter } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useSearchParams } from "react-router";
+import { useFilterState } from "@/hooks/useFilterState";
 
 interface Props<TData> {
-  tableMetadata: Column[];
+  columnMetadata: Column[];
   filterByAnswer: boolean;
   table: TanstackTable<TData>;
   formId: string;
 }
 
 export const TableActions = <TData,>({
-  tableMetadata,
+  columnMetadata,
   filterByAnswer,
   table,
   formId,
 }: Props<TData>) => {
   const storedRedirect = useStoredRedirect();
-  const [_, setSearchParams] = useSearchParams();
+  const [filters, setFilters] = useFilterState(formId);
 
   const statusFilterKolonne = table.getColumn("Status");
-  const anyFiltersActive = table
-    .getAllColumns()
-    .some((col) => col.getFilterValue() != null);
-
-  const resetAllFilters = () => {
-    table.setColumnFilters([]);
-    localStorage.removeItem(`filters_${formId}`);
-    table.setPageIndex(0);
-    setSearchParams(
-      (current) => {
-        const newParams = new URLSearchParams(current);
-        newParams.delete("filter");
-        newParams.delete("page");
-        return newParams;
-      },
-      { replace: true },
-    );
-  };
+  const anyFiltersActive = filters.length > 0;
 
   return (
     <div
@@ -65,7 +48,7 @@ export const TableActions = <TData,>({
           />
         )}
 
-        {tableMetadata
+        {columnMetadata
           .filter(({ name }) => filterByAnswer || name !== "Svar")
           .map((metaColumn) => {
             const column = table.getColumn(metaColumn.name);
@@ -88,7 +71,7 @@ export const TableActions = <TData,>({
         <Button
           variant="link"
           className="flex flex-row w-fit has-[>svg]:px-0"
-          onClick={() => resetAllFilters()}
+          onClick={() => setFilters([])}
         >
           <FunnelX className="size-5  self-center" />
           Fjern alle filtre
