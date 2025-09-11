@@ -89,7 +89,7 @@ export function TableComponent({
         return (
           row.metadata.optionalFields?.find(
             (col) => col.key === metaColumn.name,
-          )?.value?.[0] || ""
+          )?.value || []
         );
       },
       {
@@ -127,9 +127,11 @@ export function TableComponent({
           if (columnId === "Svar") {
             return getLastUpdatedTime(a) - getLastUpdatedTime(b);
           }
-
           const sortFunc = getSortFuncForColumn(columnId);
-          return sortFunc(a.getValue(columnId), b.getValue(columnId));
+          return sortFunc(
+            (a.getValue(columnId) as string[])[0] || "",
+            (b.getValue(columnId) as string[])[0] || "",
+          );
         },
         filterFn: (
           row: Row<Question>,
@@ -142,9 +144,7 @@ export function TableComponent({
             );
           }
 
-          const values = row.original.metadata.optionalFields?.find(
-            (of) => of.key === columnId,
-          )?.value;
+          const values = row.getValue(columnId) as string[];
 
           if (!filterValue) return true; // Hvis ingen filterverdi → vis alt
           if (!values) return false; // Hvis ingen verdi i raden → ikke vis den
