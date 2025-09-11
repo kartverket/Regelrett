@@ -19,4 +19,3 @@ class YamlProviderTest {
         assertEquals(question.question, "Hvor lang er gjennomsnittlig responstid?")
     }
 }
-

@@ -10,9 +10,7 @@ import kotlinx.serialization.json.Json
 import no.bekk.authentication.AuthService
 import no.bekk.database.*
 import no.bekk.exception.ConflictException
-import no.bekk.exception.ValidationException
 import no.bekk.plugins.ErrorHandlers
-import no.bekk.util.RequestContext.getOrCreateCorrelationId
 import no.bekk.util.RequestContext.getRequestInfo
 import org.slf4j.LoggerFactory
 
@@ -20,7 +18,7 @@ fun Route.contextRouting(
     authService: AuthService,
     answerRepository: AnswerRepository,
     contextRepository: ContextRepository,
-    commentRepository: CommentRepository
+    commentRepository: CommentRepository,
 ) {
     val logger = LoggerFactory.getLogger("no.bekk.routes.ContextRouting")
     route("/contexts") {
@@ -31,15 +29,14 @@ fun Route.contextRouting(
                 lateinit var contextRequest: DatabaseContextRequest
                 try {
                     contextRequest = Json.decodeFromString<DatabaseContextRequest>(contextRequestJson)
-                }
-                catch (e: Exception) { // skal slettes når all bruk av endepunktet har gått over til å bruke formId
+                } catch (e: Exception) { // skal slettes når all bruk av endepunktet har gått over til å bruke formId
                     val contextRequestOLD = Json.decodeFromString<OldDatabaseContextRequest>(contextRequestJson)
                     contextRequest = DatabaseContextRequest(
                         teamId = contextRequestOLD.teamId,
                         formId = contextRequestOLD.tableId,
                         name = contextRequestOLD.name,
                         copyContext = contextRequestOLD.copyContext,
-                        copyComments = contextRequestOLD.copyComments
+                        copyComments = contextRequestOLD.copyComments,
                     )
                 }
                 if (!authService.hasTeamAccess(call, contextRequest.teamId)) {
@@ -55,10 +52,10 @@ fun Route.contextRouting(
                         call.respond(HttpStatusCode.Forbidden)
                         return@post
                     }
-                    answerRepository.copyAnswersFromOtherContext(insertedContext.id,copyContext)
+                    answerRepository.copyAnswersFromOtherContext(insertedContext.id, copyContext)
 
                     if (contextRequest.copyComments == "yes") {
-                        commentRepository.copyCommentsFromOtherContext(insertedContext.id,copyContext)
+                        commentRepository.copyCommentsFromOtherContext(insertedContext.id, copyContext)
                     }
                 }
                 call.respond(HttpStatusCode.Created, Json.encodeToString(insertedContext))
@@ -72,7 +69,6 @@ fun Route.contextRouting(
                 return@post
             }
         }
-
 
         get {
             val teamId = call.request.queryParameters["teamId"] ?: throw BadRequestException("Missing teamId parameter")
@@ -92,7 +88,6 @@ fun Route.contextRouting(
                 call.respond(HttpStatusCode.OK, Json.encodeToString(contexts))
                 return@get
             }
-
         }
 
         route("/{contextId}") {
@@ -120,7 +115,7 @@ fun Route.contextRouting(
                 call.respondText("Context and its answers and comments were successfully deleted.")
             }
 
-            patch("/team"){
+            patch("/team") {
                 try {
                     logger.info("Received PATCH /contexts with id: ${call.parameters["contextId"]}")
                     val contextId = call.parameters["contextId"] ?: throw BadRequestException("Missing contextId")
@@ -143,7 +138,6 @@ fun Route.contextRouting(
                         }
                     }
 
-
                     val success = contextRepository.changeTeam(contextId, newTeam)
                     if (success) {
                         call.respond(HttpStatusCode.OK)
@@ -159,7 +153,6 @@ fun Route.contextRouting(
                     logger.error("Unexpected error when processing PATCH /contexts", e)
                     call.respond(HttpStatusCode.InternalServerError, "An unexpected error occurred.")
                 }
-
             }
             patch("/answers") {
                 try {

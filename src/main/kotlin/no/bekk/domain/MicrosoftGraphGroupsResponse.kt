@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MicrosoftGraphGroupsResponse(
-    val value: List<MicrosoftGraphGroup>
+    val value: List<MicrosoftGraphGroup>,
 )
 
 @Serializable

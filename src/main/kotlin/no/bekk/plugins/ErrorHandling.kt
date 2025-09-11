@@ -17,7 +17,7 @@ data class ErrorResponse(
     val message: String,
     val correlationId: String? = null,
     val field: String? = null,
-    val details: Map<String, String>? = null
+    val details: Map<String, String>? = null,
 )
 
 /**
@@ -36,7 +36,7 @@ fun Application.configureErrorHandling() {
  */
 object ErrorHandlers {
     private val logger = LoggerFactory.getLogger("no.bekk.plugins.ErrorHandlers")
-    
+
     suspend fun handleAuthenticationException(call: ApplicationCall, cause: AuthenticationException) {
         logger.warn("${call.getRequestInfo()} Authentication failed: ${cause.message}", cause)
         call.respond(
@@ -44,8 +44,8 @@ object ErrorHandlers {
             ErrorResponse(
                 error = "authentication_failed",
                 message = cause.message ?: "Authentication failed",
-                correlationId = call.request.headers["X-Correlation-ID"]
-            )
+                correlationId = call.request.headers["X-Correlation-ID"],
+            ),
         )
     }
 
@@ -56,8 +56,8 @@ object ErrorHandlers {
             ErrorResponse(
                 error = "authorization_failed",
                 message = cause.message ?: "Access denied",
-                correlationId = call.request.headers["X-Correlation-ID"]
-            )
+                correlationId = call.request.headers["X-Correlation-ID"],
+            ),
         )
     }
 
@@ -68,8 +68,8 @@ object ErrorHandlers {
             ErrorResponse(
                 error = "resource_not_found",
                 message = cause.message ?: "Resource not found",
-                correlationId = call.request.headers["X-Correlation-ID"]
-            )
+                correlationId = call.request.headers["X-Correlation-ID"],
+            ),
         )
     }
 
@@ -81,8 +81,8 @@ object ErrorHandlers {
                 error = "validation_failed",
                 message = cause.message ?: "Invalid input",
                 field = cause.field,
-                correlationId = call.request.headers["X-Correlation-ID"]
-            )
+                correlationId = call.request.headers["X-Correlation-ID"],
+            ),
         )
     }
 
@@ -93,8 +93,8 @@ object ErrorHandlers {
             ErrorResponse(
                 error = "conflict",
                 message = cause.message ?: "Resource conflict",
-                correlationId = call.request.headers["X-Correlation-ID"]
-            )
+                correlationId = call.request.headers["X-Correlation-ID"],
+            ),
         )
     }
 
@@ -105,8 +105,8 @@ object ErrorHandlers {
             ErrorResponse(
                 error = "database_error",
                 message = "Internal server error",
-                correlationId = call.request.headers["X-Correlation-ID"]
-            )
+                correlationId = call.request.headers["X-Correlation-ID"],
+            ),
         )
     }
 
@@ -117,8 +117,8 @@ object ErrorHandlers {
             ErrorResponse(
                 error = "internal_error",
                 message = "An unexpected error occurred",
-                correlationId = call.request.headers["X-Correlation-ID"]
-            )
+                correlationId = call.request.headers["X-Correlation-ID"],
+            ),
         )
     }
 }

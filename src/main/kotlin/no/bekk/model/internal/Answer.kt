@@ -9,7 +9,7 @@ enum class AnswerType {
     TEXT_SINGLE_LINE,
     PERCENT,
     CHECKBOX,
-    TIME
+    TIME,
 }
 
 @Serializable

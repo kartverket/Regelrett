@@ -11,7 +11,7 @@ data class DatabaseAnswer(
     val updated: String,
     val answerType: String,
     val answerUnit: String? = null,
-    val contextId: String? = null
+    val contextId: String? = null,
 )
 
 @Serializable
@@ -22,5 +22,5 @@ data class DatabaseAnswerRequest(
     val answer: String? = null,
     val answerType: String,
     val answerUnit: String? = null,
-    val contextId: String? = null
+    val contextId: String? = null,
 )

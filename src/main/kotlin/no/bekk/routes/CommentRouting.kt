@@ -12,7 +12,6 @@ import no.bekk.database.DatabaseComment
 import no.bekk.database.DatabaseCommentRequest
 import no.bekk.exception.ValidationException
 import no.bekk.plugins.ErrorHandlers
-import no.bekk.util.RequestContext.getOrCreateCorrelationId
 import no.bekk.util.RequestContext.getRequestInfo
 import org.slf4j.LoggerFactory
 

@@ -12,7 +12,7 @@ data class Option(
 data class Column(
     val type: OptionalFieldType,
     val name: String,
-    val options: List<Option>? = null
+    val options: List<Option>? = null,
 )
 
 @Serializable
@@ -33,5 +33,5 @@ data class Form(
 @Serializable
 data class Schema(
     val id: String,
-    val name: String
+    val name: String,
 )

@@ -33,6 +33,9 @@ server:
   # Log web requests
   router_logging: false
 
+  # Enable timing and debug logging for external service calls (Airtable, Microsoft Graph)
+  external_service_timing: false
+
   # allowed_origins is a comma-separated list of origins that can establish connection with Regelrett Live.
   # If not set then origin will be matched over root_url. Supports wildcard symbol "*".
   allowed_origins: "localhost:5173,localhost:8080"

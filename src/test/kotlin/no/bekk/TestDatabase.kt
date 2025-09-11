@@ -18,4 +18,3 @@ class TestDatabase {
         postgresContainer.stop()
     }
 }
-

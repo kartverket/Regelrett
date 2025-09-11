@@ -25,7 +25,7 @@ class ProvisioningServiceImpl(
     private val provisionSchemaSourcesFunc: (String, FormService) -> Unit,
 ) : ProvisioningService {
     private val logger = LoggerFactory.getLogger(ProvisioningServiceImpl::class.java)
-    
+
     override fun runInitialProvisioners() {
         try {
             provisionSchemaSources()

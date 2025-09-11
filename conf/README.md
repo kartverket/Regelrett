@@ -144,6 +144,10 @@ The domain name used to access Regelrett from a browser. Important if you use Gi
 
 Set to `true` for Regelrett to log all HTTP requests (not just errors). These are logged as Info level events to the Regelrett log.
 
+#### `external_service_timing`
+
+Enable timing and debug logging for external service calls (Airtable, Microsoft Graph)
+
 #### `allowed_origins`
 
 The `allowed_origins` option is a comma-separated list of additional origins that is accepted by the Regelrett server.

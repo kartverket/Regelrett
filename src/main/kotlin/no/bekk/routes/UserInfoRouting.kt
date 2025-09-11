@@ -24,7 +24,7 @@ fun Route.userInfoRouting(authService: AuthService) {
                     val user = async { authService.getCurrentUser(call) }
                     val superuser = async { authService.hasSuperUserAccess(call) }
 
-                    call.respond(UserInfoResponse(groups.await(), user.await(), superuser.await()))
+                    call.respond(HttpStatusCode.OK, UserInfoResponse(groups.await(), user.await(), superuser.await()))
                 }
             } catch (e: Exception) {
                 logger.error("${call.getRequestInfo()} Error fetching user info", e)
@@ -36,12 +36,12 @@ fun Route.userInfoRouting(authService: AuthService) {
             try {
                 val userId = call.parameters["userId"]
                 logger.info("${call.getRequestInfo()} Received GET /userinfo/userId/username with id $userId")
-                
+
                 if (userId == null) {
                     logger.warn("${call.getRequestInfo()} Missing userId parameter")
                     throw ValidationException("userId parameter is required", field = "userId")
                 }
-                
+
                 val username = authService.getUserByUserId(call, userId).displayName
                 logger.info("${call.getRequestInfo()} Successfully retrieved username for userId: $userId")
                 call.respond(HttpStatusCode.OK, username)

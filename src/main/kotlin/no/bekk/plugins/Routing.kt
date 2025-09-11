@@ -27,7 +27,7 @@ fun Application.configureRouting(
         val schemas = dependencies.formService.getFormProviders().map {
             it.getSchema()
         }
-        call.respond(schemas)
+        call.respond(HttpStatusCode.OK, schemas)
     }
 
     authenticate("auth-oauth-azure") {

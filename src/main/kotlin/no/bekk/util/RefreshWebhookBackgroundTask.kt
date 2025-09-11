@@ -36,6 +36,4 @@ fun Application.configureBackgroundTasks(formService: FormService) {
     }
 }
 
-fun Application.launchBackgroundTask(block: suspend CoroutineScope.() -> Unit): Job {
-    return this.launch(block = block)
-}
+fun Application.launchBackgroundTask(block: suspend CoroutineScope.() -> Unit): Job = this.launch(block = block)

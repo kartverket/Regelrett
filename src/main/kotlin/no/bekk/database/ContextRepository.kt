@@ -6,8 +6,8 @@ import no.bekk.exception.ConflictException
 import no.bekk.exception.DatabaseException
 import no.bekk.exception.NotFoundException
 import org.slf4j.LoggerFactory
-import java.util.*
 import java.sql.SQLException
+import java.util.*
 
 interface ContextRepository {
     fun insertContext(context: DatabaseContextRequest): DatabaseContext
@@ -75,8 +75,8 @@ class ContextRepositoryImpl(private val database: Database) : ContextRepository 
                                     id = result.getString("id"),
                                     teamId = result.getString("team_id"),
                                     formId = result.getString("table_id"),
-                                    name = result.getString("name")
-                                )
+                                    name = result.getString("name"),
+                                ),
                             )
                         }
                     }.also {
@@ -110,7 +110,7 @@ class ContextRepositoryImpl(private val database: Database) : ContextRepository 
                                     teamId = result.getString("team_id"),
                                     formId = result.getString("table_id"),
                                     name = result.getString("name"),
-                                )
+                                ),
                             )
                         }
                     }
@@ -138,7 +138,7 @@ class ContextRepositoryImpl(private val database: Database) : ContextRepository 
                             id = result.getString("id"),
                             teamId = result.getString("team_id"),
                             formId = result.getString("table_id"),
-                            name = result.getString("name")
+                            name = result.getString("name"),
                         )
                     } else {
                         throw NotFoundException("Context with id $id not found")
@@ -184,5 +184,3 @@ class ContextRepositoryImpl(private val database: Database) : ContextRepository 
         }
     }
 }
-
-

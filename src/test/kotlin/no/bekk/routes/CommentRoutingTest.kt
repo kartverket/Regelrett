@@ -270,4 +270,3 @@ class CommentRoutingTest {
         assertEquals(HttpStatusCode.Forbidden, response.status)
     }
 }
-

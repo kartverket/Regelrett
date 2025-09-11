@@ -11,7 +11,6 @@ data class OldDatabaseContextRequest(
     val copyComments: String? = null,
 )
 
-
 @Serializable
 data class DatabaseContext(
     val id: String,

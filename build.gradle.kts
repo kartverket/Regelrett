@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.ktor)
     alias(libs.plugins.kotlin.plugin.serialization)
     alias(libs.plugins.flywaydb)
+    alias(libs.plugins.ktlint)
 }
 
 group = "no.bekk"

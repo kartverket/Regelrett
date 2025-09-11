@@ -1,9 +1,9 @@
 package no.bekk
 
 import io.ktor.server.application.*
+import no.bekk.authentication.AuthService
 import no.bekk.domain.MicrosoftGraphGroup
 import no.bekk.domain.MicrosoftGraphUser
-import no.bekk.authentication.AuthService
 
 interface MockAuthService : AuthService {
     override suspend fun getGroupsOrEmptyList(call: ApplicationCall): List<MicrosoftGraphGroup> = TODO("Not yet implemented")

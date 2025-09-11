@@ -23,7 +23,7 @@ class CommentRepositoryImpl(private val database: Database) : CommentRepository 
         return try {
             database.getConnection().use { conn ->
                 val statement = conn.prepareStatement(
-                    "SELECT id, actor, record_id, question_id, comment, updated FROM comments WHERE context_id = ? order by updated"
+                    "SELECT id, actor, record_id, question_id, comment, updated FROM comments WHERE context_id = ? order by updated",
                 )
                 statement.setObject(1, UUID.fromString(contextId))
                 val resultSet = statement.executeQuery()
@@ -38,7 +38,7 @@ class CommentRepositoryImpl(private val database: Database) : CommentRepository 
                                 updated = resultSet.getObject("updated", java.time.LocalDateTime::class.java)
                                     ?.toString() ?: "",
                                 contextId = contextId,
-                            )
+                            ),
                         )
                     }
                 }.also {
@@ -53,14 +53,14 @@ class CommentRepositoryImpl(private val database: Database) : CommentRepository 
 
     override fun getCommentsByContextAndRecordIdFromDatabase(
         contextId: String,
-        recordId: String
+        recordId: String,
     ): List<DatabaseComment> {
         logger.debug("Fetching comments for context: $contextId with recordId: $recordId")
 
         return try {
             database.getConnection().use { conn ->
                 val statement = conn.prepareStatement(
-                    "SELECT id, actor, record_id, question_id, comment, updated FROM comments WHERE context_id = ? AND record_id = ? order by updated"
+                    "SELECT id, actor, record_id, question_id, comment, updated FROM comments WHERE context_id = ? AND record_id = ? order by updated",
                 )
                 statement.setObject(1, UUID.fromString(contextId))
                 statement.setString(2, recordId)
@@ -76,7 +76,7 @@ class CommentRepositoryImpl(private val database: Database) : CommentRepository 
                                 updated = resultSet.getObject("updated", java.time.LocalDateTime::class.java)
                                     .toString(),
                                 contextId = contextId,
-                            )
+                            ),
                         )
                     }
                 }.also {
@@ -109,12 +109,12 @@ class CommentRepositoryImpl(private val database: Database) : CommentRepository 
         VALUES (?, ?, ?, ?, ?) 
         ON CONFLICT (context_id, record_id) 
         DO UPDATE SET updated = NOW(), comment = EXCLUDED.comment;
-    """.trimIndent()
+        """.trimIndent()
 
         val selectStatement = """
         SELECT * FROM comments
         WHERE record_id IN (${comments.joinToString(",") { "'${it.recordId}'" }});
-    """.trimIndent()
+        """.trimIndent()
 
         return try {
             database.getConnection().use { conn ->
@@ -146,16 +146,14 @@ class CommentRepositoryImpl(private val database: Database) : CommentRepository 
         }
     }
 
-    private fun mapResultSetToDatabaseComment(resultSet: ResultSet): DatabaseComment {
-        return DatabaseComment(
-            actor = resultSet.getString("actor"),
-            recordId = resultSet.getString("record_id"),
-            questionId = resultSet.getString("question_id"),
-            comment = resultSet.getString("comment"),
-            updated = resultSet.getObject("updated", java.time.LocalDateTime::class.java).toString(),
-            contextId = resultSet.getString("context_id")
-        )
-    }
+    private fun mapResultSetToDatabaseComment(resultSet: ResultSet): DatabaseComment = DatabaseComment(
+        actor = resultSet.getString("actor"),
+        recordId = resultSet.getString("record_id"),
+        questionId = resultSet.getString("question_id"),
+        comment = resultSet.getString("comment"),
+        updated = resultSet.getObject("updated", java.time.LocalDateTime::class.java).toString(),
+        contextId = resultSet.getString("context_id"),
+    )
 
     override fun deleteCommentFromDatabase(contextId: String, recordId: String): Boolean {
         logger.debug("Deleting comment from database with recordId: $recordId and contextId: $contextId")
@@ -179,20 +177,19 @@ class CommentRepositoryImpl(private val database: Database) : CommentRepository 
                 recordId = it.recordId,
                 questionId = it.questionId,
                 comment = it.comment,
-                contextId = newContextId
+                contextId = newContextId,
             )
         }
-        if (databaseCommentRequestList.isEmpty()) return;
+        if (databaseCommentRequestList.isEmpty()) return
         try {
             insertCommentsOnContextBatch(databaseCommentRequestList)
             logger.info("Comment copied to context $newContextId")
         } catch (e: SQLException) {
             logger.error(
                 "Error copying comment to context $newContextId: ${e.message}",
-                e
+                e,
             )
             throw RuntimeException("Error copying comments to new context", e)
         }
-
     }
 }

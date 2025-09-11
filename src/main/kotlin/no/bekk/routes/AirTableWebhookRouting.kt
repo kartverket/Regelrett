@@ -6,11 +6,11 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.Serializable
-import no.bekk.providers.AirTableProvider
-import no.bekk.services.FormService
 import no.bekk.exception.AuthorizationException
 import no.bekk.exception.ExternalServiceException
 import no.bekk.exception.NotFoundException
+import no.bekk.providers.AirTableProvider
+import no.bekk.services.FormService
 import no.bekk.util.RequestContext.getOrCreateCorrelationId
 import org.slf4j.LoggerFactory
 import java.util.Base64
@@ -41,7 +41,7 @@ fun Route.airTableWebhookRouting(formService: FormService) {
         try {
             val correlationId = call.getOrCreateCorrelationId()
             logger.info("[POST /webhook] [correlationId: $correlationId] Received webhook ping from AirTable")
-            
+
             val incomingSignature = call.request.headers["X-Airtable-Content-Mac"]?.removePrefix("hmac-sha256=") ?: run {
                 logger.warn("[POST /webhook] [correlationId: $correlationId] Missing X-Airtable-Content-Mac header")
                 call.respond(HttpStatusCode.Unauthorized, "Missing signature")
@@ -88,7 +88,7 @@ private fun getAirTableProviderByWebhookId(webhookId: String, formService: FormS
 
 private fun validateSignature(incomingSignature: String?, requestBody: String, formService: FormService) {
     val payload = kotlinx.serialization.json.Json.decodeFromString<AirtableWebhookPayload>(requestBody)
-    val provider = getAirTableProviderByWebhookId(payload.webhook.id, formService) 
+    val provider = getAirTableProviderByWebhookId(payload.webhook.id, formService)
         ?: throw NotFoundException("Provider not found for webhookId: ${payload.webhook.id}")
 
     if (provider.webhookSecret == null) {
@@ -102,7 +102,7 @@ private fun validateSignature(incomingSignature: String?, requestBody: String, f
         logger.error("Invalid webhook secret format for provider: ${provider.name}", e)
         throw AuthorizationException("Invalid webhook secret configuration")
     }
-    
+
     val hmacSha256 = Mac.getInstance("HmacSHA256").apply {
         init(SecretKeySpec(macSecret, "HmacSHA256"))
     }
@@ -115,14 +115,14 @@ private fun validateSignature(incomingSignature: String?, requestBody: String, f
         logger.warn("Signature validation failed for webhookId: ${payload.webhook.id}. Expected: $calculatedHmacHex, Received: $incomingSignature")
         throw AuthorizationException("Invalid signature")
     }
-    
+
     logger.debug("Signature validation successful for webhookId: ${payload.webhook.id}")
 }
 
 private suspend fun processWebhook(webhookId: String, formService: FormService) {
     logger.debug("Processing webhook for webhookId: $webhookId")
-    
-    val provider = getAirTableProviderByWebhookId(webhookId, formService) 
+
+    val provider = getAirTableProviderByWebhookId(webhookId, formService)
         ?: throw NotFoundException("Provider not found for webhookId: $webhookId")
 
     try {
@@ -134,5 +134,3 @@ private suspend fun processWebhook(webhookId: String, formService: FormService) 
         throw ExternalServiceException("AirTable", "Webhook processing failed: ${e.message}", cause = e)
     }
 }
-
-

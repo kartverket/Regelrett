@@ -31,7 +31,7 @@ class AirTableProvider(
     val webhookId: String? = null,
 ) : FormProvider {
     private val logger = LoggerFactory.getLogger(AirTableProvider::class.java)
-    
+
     private fun <K : Any, V> createCache(): Cache<K, V> {
         val expirationDuration = if (webhookId != null) (24L * 6) else 1L
         return Caffeine.newBuilder()

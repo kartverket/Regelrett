@@ -15,4 +15,5 @@
     <logger name="no.bekk.services" level="DEBUG"/>
     <logger name="no.bekk.routes" level="INFO"/>
     <logger name="no.bekk.exception" level="DEBUG"/>
+    <logger name="no.bekk.util.ExternalServiceTimer" level="DEBUG"/>
 </configuration>

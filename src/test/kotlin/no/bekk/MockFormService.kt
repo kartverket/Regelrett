@@ -12,4 +12,3 @@ interface MockFormService : FormService {
 
     override fun addFormProvider(command: UpsertDataFromConfig) = TODO("Not yet implemented")
 }
-

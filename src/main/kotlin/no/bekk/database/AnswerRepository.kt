@@ -26,7 +26,7 @@ class AnswerRepositoryImpl(private val database: Database) : AnswerRepository {
                 FROM answers
                 WHERE context_id = ?
                 ORDER BY question_id, updated DESC
-            """
+            """,
                 )
                 statement.setObject(1, UUID.fromString(contextId))
                 val resultSet = statement.executeQuery()
@@ -42,8 +42,8 @@ class AnswerRepositoryImpl(private val database: Database) : AnswerRepository {
                                     ?.toString() ?: "",
                                 answerType = resultSet.getString("answer_type"),
                                 answerUnit = resultSet.getString("answer_unit"),
-                                contextId = contextId
-                            )
+                                contextId = contextId,
+                            ),
                         )
                     }
                 }.also {
@@ -58,14 +58,14 @@ class AnswerRepositoryImpl(private val database: Database) : AnswerRepository {
 
     override fun getAnswersByContextAndRecordIdFromDatabase(
         contextId: String,
-        recordId: String
+        recordId: String,
     ): List<DatabaseAnswer> {
         logger.debug("Fetching answers from database for contextId: $contextId with recordId: $recordId")
 
         return try {
             database.getConnection().use { conn ->
                 val statement = conn.prepareStatement(
-                    "SELECT id, actor, question_id, answer, updated, answer_type, answer_unit FROM answers WHERE context_id = ? AND record_id = ? order by updated"
+                    "SELECT id, actor, question_id, answer, updated, answer_type, answer_unit FROM answers WHERE context_id = ? AND record_id = ? order by updated",
                 )
                 statement.setObject(1, UUID.fromString(contextId))
                 statement.setString(2, recordId)
@@ -82,8 +82,8 @@ class AnswerRepositoryImpl(private val database: Database) : AnswerRepository {
                                     .toString(),
                                 answerType = resultSet.getString("answer_type"),
                                 answerUnit = resultSet.getString("answer_unit"),
-                                contextId = contextId
-                            )
+                                contextId = contextId,
+                            ),
                         )
                     }
                 }.also {
@@ -93,7 +93,7 @@ class AnswerRepositoryImpl(private val database: Database) : AnswerRepository {
         } catch (e: SQLException) {
             logger.error(
                 "Error fetching answers from database for contextId: $contextId with recordId $recordId. ${e.message}",
-                e
+                e,
             )
             throw RuntimeException("Error fetching answers from database", e)
         }
@@ -111,7 +111,7 @@ class AnswerRepositoryImpl(private val database: Database) : AnswerRepository {
                 answer = answer.answer,
                 answerType = answer.answerType,
                 answerUnit = answer.answerUnit,
-                contextId = newContextId
+                contextId = newContextId,
             )
         }
         if (databaseAnswerRequestList.isEmpty()) return
@@ -120,11 +120,11 @@ class AnswerRepositoryImpl(private val database: Database) : AnswerRepository {
             insertAnswersOnContextBatch(databaseAnswerRequestList)
         } catch (e: SQLException) {
             logger.error(
-                "Error copying answers to context $newContextId: ${e.message}", e
+                "Error copying answers to context $newContextId: ${e.message}",
+                e,
             )
             throw RuntimeException("Error copying answers to new context", e)
         }
-
     }
 
     override fun insertAnswerOnContext(answer: DatabaseAnswerRequest): DatabaseAnswer {
@@ -145,12 +145,12 @@ class AnswerRepositoryImpl(private val database: Database) : AnswerRepository {
         val sqlInsertStatement = """
         INSERT INTO answers (actor, record_id, question_id, answer, answer_type, answer_unit, context_id) 
         VALUES (?, ?, ?, ?, ?, ?, ?);
-    """.trimIndent()
+        """.trimIndent()
 
         val selectStatement = """
         SELECT * FROM answers
         WHERE record_id IN (${answers.joinToString(",") { "'${it.recordId}'" }});
-    """.trimIndent()
+        """.trimIndent()
 
         return try {
             database.getConnection().use { conn ->
@@ -183,8 +183,8 @@ class AnswerRepositoryImpl(private val database: Database) : AnswerRepository {
                                     .toString(),
                                 answerType = resultSet.getString("answer_type"),
                                 answerUnit = resultSet.getString("answer_unit"),
-                                contextId = resultSet.getString("context_id")
-                            )
+                                contextId = resultSet.getString("context_id"),
+                            ),
                         )
                     }
                     insertedAnswers
@@ -195,5 +195,4 @@ class AnswerRepositoryImpl(private val database: Database) : AnswerRepository {
             throw RuntimeException("Error inserting answers into database", e)
         }
     }
-
 }

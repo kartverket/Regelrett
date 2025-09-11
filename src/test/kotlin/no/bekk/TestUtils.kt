@@ -38,7 +38,7 @@ object TestUtils {
             paths = PathsConfig(""),
             microsoftGraph = MicrosoftGraphConfig("", ""),
             oAuth = OAuthConfig("https://test.com", "test", "", "", "", "", "", "", ""),
-            server = ServerConfig("", "", "", 0, false, emptyList(), 4096, 8192, 8192),
+            server = ServerConfig("", "", "", 0, false, false, emptyList(), 4096, 8192, 8192),
             database = DatabaseConfig("", "", ""),
             answerHistoryCleanup = AnswerHistoryCleanupConfig(""),
             frontendDevServer = FrontendDevServerConfig("", 0, "", ""),

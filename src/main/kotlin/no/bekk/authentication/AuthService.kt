@@ -72,7 +72,7 @@ class AuthServiceImpl(
 
         val groupsClaim = call.principal<JWTPrincipal>()?.payload?.getClaim("groups")
         val groups = groupsClaim?.asArray(String::class.java)
-        
+
         if (groups == null || groups.isEmpty()) {
             logger.debug("Team access denied for teamId: $teamId - No groups found in JWT token")
             return false
@@ -84,27 +84,25 @@ class AuthServiceImpl(
         } else {
             logger.debug("Team access denied for teamId: $teamId - Team not in user's groups: ${groups.contentToString()}")
         }
-        
+
         return hasAccess
     }
 
     override suspend fun hasContextAccess(
         call: ApplicationCall,
         contextId: String,
-    ): Boolean {
-        return try {
-            val context = contextRepository.getContext(contextId)
-            val hasAccess = hasTeamAccess(call, context.teamId)
-            if (hasAccess) {
-                logger.debug("Context access granted for contextId: $contextId (teamId: ${context.teamId})")
-            } else {
-                logger.debug("Context access denied for contextId: $contextId (teamId: ${context.teamId})")
-            }
-            hasAccess
-        } catch (e: Exception) {
-            logger.warn("Context access check failed for contextId: $contextId - ${e.message}")
-            false
+    ): Boolean = try {
+        val context = contextRepository.getContext(contextId)
+        val hasAccess = hasTeamAccess(call, context.teamId)
+        if (hasAccess) {
+            logger.debug("Context access granted for contextId: $contextId (teamId: ${context.teamId})")
+        } else {
+            logger.debug("Context access denied for contextId: $contextId (teamId: ${context.teamId})")
         }
+        hasAccess
+    } catch (e: Exception) {
+        logger.warn("Context access check failed for contextId: $contextId - ${e.message}")
+        false
     }
 
     override suspend fun hasSuperUserAccess(

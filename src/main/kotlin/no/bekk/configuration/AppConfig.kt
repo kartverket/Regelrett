@@ -79,6 +79,7 @@ data class ServerConfig(
     val httpAddr: String,
     val httpPort: Int,
     val routerLogging: Boolean,
+    val externalServiceTiming: Boolean,
     val allowedOrigins: List<String>,
     val maxInitialLineLength: Int,
     val maxHeaderSize: Int,

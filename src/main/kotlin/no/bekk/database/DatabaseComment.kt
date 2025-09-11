@@ -9,7 +9,7 @@ data class DatabaseComment(
     val questionId: String,
     val comment: String,
     val updated: String,
-    val contextId: String? = null
+    val contextId: String? = null,
 )
 
 @Serializable
@@ -18,5 +18,5 @@ data class DatabaseCommentRequest(
     val recordId: String,
     val questionId: String,
     val comment: String,
-    val contextId: String? = null
+    val contextId: String? = null,
 )

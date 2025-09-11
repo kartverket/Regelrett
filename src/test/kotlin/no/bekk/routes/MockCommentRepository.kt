@@ -19,7 +19,7 @@ interface MockCommentRepository : CommentRepository {
 
     override fun getCommentsByContextAndRecordIdFromDatabase(
         contextId: String,
-        recordId: String
+        recordId: String,
     ): List<DatabaseComment> {
         TODO("Not yet implemented")
     }

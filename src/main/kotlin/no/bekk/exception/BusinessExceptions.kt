@@ -5,7 +5,7 @@ package no.bekk.exception
  */
 sealed class BusinessException(
     message: String,
-    cause: Throwable? = null
+    cause: Throwable? = null,
 ) : Exception(message, cause)
 
 /**
@@ -13,12 +13,12 @@ sealed class BusinessException(
  */
 class AuthenticationException(
     message: String,
-    cause: Throwable? = null
+    cause: Throwable? = null,
 ) : BusinessException(message, cause)
 
 class AuthorizationException(
     message: String,
-    cause: Throwable? = null
+    cause: Throwable? = null,
 ) : BusinessException(message, cause)
 
 /**
@@ -26,7 +26,7 @@ class AuthorizationException(
  */
 class NotFoundException(
     message: String,
-    cause: Throwable? = null
+    cause: Throwable? = null,
 ) : BusinessException(message, cause)
 
 /**
@@ -36,7 +36,7 @@ class ValidationException(
     message: String,
     val field: String? = null,
     val value: String? = null,
-    cause: Throwable? = null
+    cause: Throwable? = null,
 ) : BusinessException(message, cause)
 
 /**
@@ -44,7 +44,7 @@ class ValidationException(
  */
 class ConflictException(
     message: String,
-    cause: Throwable? = null
+    cause: Throwable? = null,
 ) : BusinessException(message, cause)
 
 /**
@@ -54,7 +54,7 @@ class ExternalServiceException(
     val service: String,
     message: String,
     val statusCode: Int? = null,
-    cause: Throwable? = null
+    cause: Throwable? = null,
 ) : BusinessException("$service: $message", cause)
 
 /**
@@ -63,5 +63,5 @@ class ExternalServiceException(
 class DatabaseException(
     message: String,
     val operation: String? = null,
-    cause: Throwable? = null
+    cause: Throwable? = null,
 ) : BusinessException(message, cause)

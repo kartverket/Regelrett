@@ -20,25 +20,25 @@ fun Route.formRouting(formService: FormService) {
                 val forms = formService.getFormProviders().map {
                     it.getForm().let { FormsMetadataDto(it.id, it.name) }
                 }
-                call.respond(forms)
+                call.respond(HttpStatusCode.OK, forms)
             } catch (e: Exception) {
                 logger.error("${call.getRequestInfo()} Error retrieving forms", e)
                 ErrorHandlers.handleGenericException(call, e)
             }
         }
-        
+
         get("/{formId}") {
             try {
                 val formId = call.parameters["formId"]
                 logger.info("${call.getRequestInfo()} Received GET /forms with id $formId")
-                
+
                 if (formId == null) {
                     logger.warn("${call.getRequestInfo()} Missing formId parameter")
                     throw ValidationException("formId parameter is required", field = "formId")
                 }
 
                 val table = formService.getFormProvider(formId).getForm()
-                call.respond(table)
+                call.respond(HttpStatusCode.OK, table)
             } catch (e: ValidationException) {
                 ErrorHandlers.handleValidationException(call, e)
             } catch (e: IllegalArgumentException) {
@@ -54,20 +54,20 @@ fun Route.formRouting(formService: FormService) {
                 val formId = call.parameters["formId"]
                 val recordId = call.parameters["recordId"]
                 logger.info("${call.getRequestInfo()} Received GET /forms with id $formId and recordId $recordId")
-                
+
                 if (formId == null) {
                     logger.warn("${call.getRequestInfo()} Missing formId parameter")
                     throw ValidationException("formId parameter is required", field = "formId")
                 }
-                
+
                 if (recordId == null) {
                     logger.warn("${call.getRequestInfo()} Missing recordId parameter")
                     throw ValidationException("recordId parameter is required", field = "recordId")
                 }
-                
+
                 val question = formService.getFormProvider(formId).getQuestion(recordId)
                 logger.info("${call.getRequestInfo()} Successfully retrieved question: $question")
-                call.respond(question)
+                call.respond(HttpStatusCode.OK, question)
             } catch (e: ValidationException) {
                 ErrorHandlers.handleValidationException(call, e)
             } catch (e: NotFoundException) {
@@ -82,15 +82,15 @@ fun Route.formRouting(formService: FormService) {
             try {
                 val formId = call.parameters["formId"]
                 logger.info("${call.getRequestInfo()} Received GET /forms/formId/columns with id $formId")
-                
+
                 if (formId == null) {
                     logger.warn("${call.getRequestInfo()} Missing formId parameter")
                     throw ValidationException("formId parameter is required", field = "formId")
                 }
-                
+
                 val columns = formService.getFormProvider(formId).getColumns()
                 logger.info("${call.getRequestInfo()} Successfully retrieved columns: $columns")
-                call.respond(columns)
+                call.respond(HttpStatusCode.OK, columns)
             } catch (e: ValidationException) {
                 ErrorHandlers.handleValidationException(call, e)
             } catch (e: Exception) {

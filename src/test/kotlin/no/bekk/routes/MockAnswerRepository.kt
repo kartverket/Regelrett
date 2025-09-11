@@ -22,5 +22,4 @@ interface MockAnswerRepository : AnswerRepository {
     override fun insertAnswersOnContextBatch(answers: List<DatabaseAnswerRequest>): List<DatabaseAnswer> {
         TODO("Not yet implemented")
     }
-
 }

@@ -22,25 +22,25 @@ fun Route.uploadCSVRouting(authService: AuthService, database: Database) {
         get {
             try {
                 logger.info("${call.getRequestInfo()} Received GET /dump-csv")
-                
+
                 if (!authService.hasSuperUserAccess(call)) {
                     logger.warn("${call.getRequestInfo()} Unauthorized access attempt to CSV dump")
                     throw AuthorizationException("Superuser access required for CSV dump")
                 }
-                
+
                 val csvData = getLatestAnswersAndComments(database)
                 val csv = csvData.toCsv()
 
                 val fileName = "data.csv"
                 call.response.header(
                     HttpHeaders.ContentDisposition,
-                    ContentDisposition.Attachment.withParameter(ContentDisposition.Parameters.FileName, fileName).toString()
+                    ContentDisposition.Attachment.withParameter(ContentDisposition.Parameters.FileName, fileName).toString(),
                 )
 
                 logger.info("${call.getRequestInfo()} Successfully generated CSV dump with ${csvData.size} records")
                 call.respondBytes(
                     bytes = csv.toByteArray(Charsets.UTF_8),
-                    contentType = ContentType.Text.CSV.withCharset(Charsets.UTF_8)
+                    contentType = ContentType.Text.CSV.withCharset(Charsets.UTF_8),
                 )
             } catch (e: AuthorizationException) {
                 ErrorHandlers.handleAuthorizationException(call, e)
@@ -108,20 +108,18 @@ fun List<AnswersCSVDump>.toCsv(): String {
     return stringWriter.toString()
 }
 
-fun mapRowToAnswersCSVDump(rs: ResultSet): AnswersCSVDump {
-    return AnswersCSVDump(
-        questionId = rs.getString("question_id"),
-        answer = rs.getString("answer"),
-        answerType = rs.getString("answer_type"),
-        answerUnit = rs.getString("answer_unit"),
-        answerUpdated = rs.getDate("answer_updated"),
-        answerActor = rs.getString("answer_actor"),
-        contextId = rs.getString("context_id"),
-        tableName = rs.getString("table_id"),
-        teamId = rs.getString("team_id"),
-        contextName = rs.getString("context_name")
-    )
-}
+fun mapRowToAnswersCSVDump(rs: ResultSet): AnswersCSVDump = AnswersCSVDump(
+    questionId = rs.getString("question_id"),
+    answer = rs.getString("answer"),
+    answerType = rs.getString("answer_type"),
+    answerUnit = rs.getString("answer_unit"),
+    answerUpdated = rs.getDate("answer_updated"),
+    answerActor = rs.getString("answer_actor"),
+    contextId = rs.getString("context_id"),
+    tableName = rs.getString("table_id"),
+    teamId = rs.getString("team_id"),
+    contextName = rs.getString("context_name"),
+)
 
 data class AnswersCSVDump(
     val questionId: String,

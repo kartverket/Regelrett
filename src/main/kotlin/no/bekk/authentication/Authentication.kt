@@ -87,13 +87,13 @@ fun Application.initializeAuthentication(config: Config, httpClient: HttpClient,
                     parameters.append("redirectUrl", call.request.uri)
                     build()
                 }
-                
+
                 val sessionCookie = call.request.cookies["user_session"]
                 val challengeReason = when {
                     sessionCookie == null -> "No session cookie found"
                     else -> "Invalid or expired session"
                 }
-                
+
                 logger.info("${call.getRequestInfo()} Session authentication challenge triggered - $challengeReason, redirecting to: $redirectUrl")
                 call.respondRedirect(redirectUrl)
             }
@@ -108,11 +108,11 @@ fun Application.initializeAuthentication(config: Config, httpClient: HttpClient,
 
             validate { jwtCredential ->
                 logger.debug("JWT validation started - Issuer: ${jwtCredential.payload.issuer}, Subject: ${jwtCredential.payload.subject}, Audience: ${jwtCredential.audience}")
-                
+
                 val expectedAudience = clientId
                 val actualAudiences = jwtCredential.audience
                 val hasValidAudience = actualAudiences.contains(expectedAudience)
-                
+
                 if (hasValidAudience) {
                     logger.debug("JWT validation successful - Token accepted for clientId: $expectedAudience")
                     JWTPrincipal(jwtCredential.payload)
@@ -128,7 +128,7 @@ fun Application.initializeAuthentication(config: Config, httpClient: HttpClient,
                     call.request.headers["Authorization"]?.startsWith("Bearer ") != true -> "Invalid Authorization header format (must start with 'Bearer ')"
                     else -> "Invalid or expired JWT token"
                 }
-                
+
                 logger.info("${call.getRequestInfo()} JWT authentication challenge triggered - $failureReason")
                 call.respond(HttpStatusCode.Unauthorized, "Token is not valid or has expired")
             }

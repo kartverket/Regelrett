@@ -222,6 +222,7 @@ class ConfigBuilder {
             httpPort = httpPort,
             httpAddr = yaml.getStringOrNull("server", "http_addr") ?: "0.0.0.0",
             routerLogging = yaml.getBoolOrNull("server", "router_logging") ?: false,
+            externalServiceTiming = yaml.getBoolOrNull("server", "external_service_timing") ?: false,
             allowedOrigins = yaml.getStringOrNull("server", "allowed_origins")?.split(",") ?: emptyList(),
             maxInitialLineLength = yaml.getIntOrNull("server", "max_initial_line_length") ?: 4096,
             maxHeaderSize = yaml.getIntOrNull("server", "max_header_size") ?: 8192,

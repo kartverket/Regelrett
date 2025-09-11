@@ -24,10 +24,12 @@ import no.bekk.configuration.JDBCDatabase
 import no.bekk.configuration.newConfigFromArgs
 import no.bekk.di.Dependencies
 import no.bekk.di.rootComposer
+import no.bekk.plugins.RequestContextPlugin
 import no.bekk.plugins.RequestLoggingPlugin
 import no.bekk.plugins.configureCors
 import no.bekk.plugins.configureErrorHandling
 import no.bekk.plugins.configureRouting
+import no.bekk.util.ExternalServiceTimingConfig
 import no.bekk.util.configureBackgroundTasks
 import org.slf4j.LoggerFactory
 import kotlin.io.path.pathString
@@ -110,6 +112,9 @@ fun cleanupAnswersHistory(database: Database) {
 fun Application.main(config: Config) {
     val dependencies = rootComposer(config)
 
+    // Initialize external service timing configuration
+    ExternalServiceTimingConfig.setEnabled(config.server.externalServiceTiming)
+
     dependencies.provisioningService.runInitialProvisioners()
     configureAPILayer(config, dependencies)
     configureBackgroundTasks(dependencies.formService)
@@ -142,10 +147,13 @@ fun Application.configureAPILayer(
     }
 
     install(XForwardedHeaders)
-    
+
+    // Always install request context for correlation tracking and timing
+    install(RequestContextPlugin)
+
     // Configure global error handling
     configureErrorHandling()
-    
+
     if (config.server.routerLogging) {
         install(RequestLoggingPlugin)
     }

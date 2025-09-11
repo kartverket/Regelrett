@@ -11,7 +11,6 @@ import no.bekk.database.DatabaseAnswer
 import no.bekk.database.DatabaseAnswerRequest
 import no.bekk.exception.ValidationException
 import no.bekk.plugins.ErrorHandlers
-import no.bekk.util.RequestContext.getOrCreateCorrelationId
 import no.bekk.util.RequestContext.getRequestInfo
 import org.slf4j.LoggerFactory
 
@@ -22,7 +21,7 @@ fun Route.answerRouting(authService: AuthService, answerRepository: AnswerReposi
         try {
             val answerRequestJson = call.receiveText()
             logger.info("${call.getRequestInfo()} Received POST /answer request")
-            
+
             val answerRequest = try {
                 Json.decodeFromString<DatabaseAnswerRequest>(answerRequestJson)
             } catch (e: Exception) {
@@ -87,5 +86,4 @@ fun Route.answerRouting(authService: AuthService, answerRepository: AnswerReposi
             ErrorHandlers.handleGenericException(call, e)
         }
     }
-
 }
