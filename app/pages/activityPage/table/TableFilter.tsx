@@ -1,6 +1,5 @@
 import { useSearchParams } from "react-router";
 import type { Column } from "@tanstack/react-table";
-import type { ActiveFilter } from "../../../types/tableTypes";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -13,7 +12,7 @@ import type { Table as TanstackTable } from "@tanstack/react-table";
 
 type TableFilters<TData> = {
   filterName: string;
-  filterOptions: { name: string; value: any }[];
+  filterOptions: { name: string; value: string }[];
   column: Column<TData, unknown>;
   formId: string;
   table: TanstackTable<TData>;
@@ -43,7 +42,9 @@ export const TableFilter = <TData,>({
 
     const updatedLocalStorageFilters = JSON.parse(
       localStorage.getItem(`filters_${formId}`) || "[]",
-    ).filter((filter: ActiveFilter) => filter.id !== column.id);
+    ).filter(
+      (filter: { id: string; value: string }) => filter.id !== column.id,
+    );
 
     setSearchParams(
       (current) => {

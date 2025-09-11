@@ -1,6 +1,6 @@
 import { useSearchParams } from "react-router";
 import { useFetchAllContexts } from "../../hooks/useContext";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import {
   Select,
   SelectTrigger,
@@ -24,8 +24,7 @@ export function CopyContextDropdown({
   const formId = searchParams.get("formId");
   const copyContext = searchParams.get("copyContext");
 
-  const { data: contexts, isPending: contextsIsLoading } =
-    useFetchAllContexts();
+  const { data: contexts } = useFetchAllContexts();
 
   const contextsCollection = useMemo(() => {
     return contexts?.filter((context) => context.formId == formId) ?? [];

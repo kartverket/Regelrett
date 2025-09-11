@@ -11,6 +11,7 @@
             "ES2024"
         ],
         "types": [
+            "module",
             "node",
             "vite/client"
         ],

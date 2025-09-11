@@ -1,5 +1,4 @@
-/* eslint-disable react-refresh/only-export-components */
-import type { PropsWithChildren} from "react";
+import type { PropsWithChildren } from "react";
 import { createContext, useContext, useState } from "react";
 
 export type CommentState = {
