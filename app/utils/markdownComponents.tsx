@@ -10,4 +10,5 @@ export const markdownComponents: Components = {
       {children}
     </a>
   ),
+  ul: ({ ...props }) => <ul className="list-disc list-inside" {...props} />,
 };
