@@ -1,15 +1,16 @@
 import { useState } from "react";
-import type { Answer, Question, User } from "../../api/types";
-import { AnswerType } from "../../api/types";
-import { PercentAnswer } from "../../components/answers/PercentAnswer";
+import type { Answer, Question, User } from "@/api/types";
+import { AnswerType } from "@/api/types";
+import { PercentAnswer } from "@/components/answers/PercentAnswer";
 import { RadioAnswer } from "./RadioAnswer";
 import { TextAreaAnswer } from "./TextAreaAnswer";
 import { Button } from "@/components/ui/button";
-import { TimeAnswer } from "../../components/answers/TimeAnswer";
-import { CheckboxAnswer } from "../../components/answers/CheckboxAnswer";
-import { useSubmitAnswer } from "../../hooks/useAnswers";
+import { TimeAnswer } from "@/components/answers/TimeAnswer";
+import { CheckboxAnswer } from "@/components/answers/CheckboxAnswer";
+import { useSubmitAnswer } from "@/hooks/useAnswers";
 import { RefreshCw } from "lucide-react";
 import { useIsMutating } from "@tanstack/react-query";
+import MultiCheckboxAnswer from "@/components/answers/MultiCheckboxAnswer";
 
 type Props = {
   question: Question;
@@ -70,6 +71,17 @@ export function QuestionAnswer({
                 disabled={isDisabled}
               />
             );
+          case AnswerType.SELECT_MULTIPLE:
+            return (
+              <MultiCheckboxAnswer
+                value={answerInput}
+                choices={question.metadata.answerMetadata.options}
+                submitAnswer={submitAnswer}
+                disabled={isDisabled}
+                answerExpiry={answerExpiry}
+              />
+            );
+
           case AnswerType.TEXT_MULTI_LINE:
             return (
               <TextAreaAnswer

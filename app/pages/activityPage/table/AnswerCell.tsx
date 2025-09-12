@@ -1,18 +1,18 @@
 import { useState } from "react";
-import type { User } from "../../../api/types";
-import { AnswerType } from "../../../api/types";
-import type { Option } from "../../../api/types";
-import { PercentAnswer } from "../../../components/answers/PercentAnswer";
-import { TimeAnswer } from "../../../components/answers/TimeAnswer";
-import { TextAnswer } from "../../../components/answers/TextAnswer";
-import { SingleSelectAnswer } from "../../../components/answers/SingleSelectAnswer";
-import { CheckboxAnswer } from "../../../components/answers/CheckboxAnswer";
-import { useSubmitAnswer } from "../../../hooks/useAnswers";
+import type { User } from "@/api/types";
+import { AnswerType } from "@/api/types";
+import type { Option } from "@/api/types";
+import { PercentAnswer } from "@/components/answers/PercentAnswer";
+import { TimeAnswer } from "@/components/answers/TimeAnswer";
+import { TextAnswer } from "@/components/answers/TextAnswer";
+import { SingleSelectAnswer } from "@/components/answers/SingleSelectAnswer";
+import { CheckboxAnswer } from "@/components/answers/CheckboxAnswer";
+import { useSubmitAnswer } from "@/hooks/useAnswers";
 import { useIsMutating } from "@tanstack/react-query";
+import MultiSelectAnswer from "@/components/answers/MultiSelectAnswer";
 
 type Props = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  value: any;
+  value: string | undefined;
   answerType: AnswerType;
   unit?: string;
   units?: string[] | null;
@@ -44,11 +44,7 @@ export function AnswerCell({
   const [answerInput, setAnswerInput] = useState<string | undefined>(value);
   const [answerUnit, setAnswerUnit] = useState<string | undefined>(unit);
 
-  const { mutate: submitAnswerHook } = useSubmitAnswer(
-    contextId,
-    recordId,
-    true,
-  );
+  const { mutate: submitAnswerHook } = useSubmitAnswer(contextId, recordId);
   const isMutating = useIsMutating({
     mutationKey: ["answers", contextId, recordId],
   });
@@ -91,6 +87,17 @@ export function AnswerCell({
           submitAnswer={submitAnswer}
           answerExpiry={answerExpiry}
           disabled={isDisabled}
+        />
+      );
+    case AnswerType.SELECT_MULTIPLE:
+      return (
+        <MultiSelectAnswer
+          choices={choices}
+          value={answerInput}
+          submitAnswer={submitAnswer}
+          disabled={isDisabled}
+          updated={updated}
+          answerExpiry={answerExpiry}
         />
       );
     case AnswerType.PERCENT:

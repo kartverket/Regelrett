@@ -1,4 +1,4 @@
-import type { Answer } from "../../api/types";
+import { AnswerType, type Answer } from "../../api/types";
 import { formatDateTime } from "../../utils/formatTime";
 import { useFetchUsername } from "../../hooks/useUser";
 import { Circle, Clock, User } from "lucide-react";
@@ -65,6 +65,22 @@ function QuestionHistoryStep({
   } = useFetchUsername(answer.actor);
   const isCurrent = index === 0;
 
+  function answerString(answer: Answer) {
+    let suffix = "";
+    if (answer.answerUnit != undefined) {
+      suffix = answer.answerUnit;
+    } else if (answer.answerType === AnswerType.PERCENT) {
+      suffix = "%";
+    }
+
+    const answerContent =
+      answer.answerType === AnswerType.SELECT_MULTIPLE
+        ? answer.answer.split(";").join(",\n")
+        : answer.answer;
+
+    return `${answerContent} ${suffix}`;
+  }
+
   return (
     <div className="relative flex w-full mb-20">
       <div className="w-12 flex justify-center items-center relative">
@@ -87,11 +103,7 @@ function QuestionHistoryStep({
         </div>
 
         <div className={cn(opacity < 1 && "opacity-60", "text-sm")}>
-          <p>
-            {answer.answer ? answer.answer : "-"}{" "}
-            {answer.answer &&
-              (answer.answerType === "PERCENT" ? "%" : answer.answerUnit || "")}
-          </p>
+          <p className="wrap-anywhere">{answerString(answer)}</p>
         </div>
 
         <div
