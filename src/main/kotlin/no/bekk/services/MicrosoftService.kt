@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory
 interface MicrosoftService {
     suspend fun requestTokenOnBehalfOf(jwtToken: String?): String
     suspend fun fetchGroups(bearerToken: String): List<MicrosoftGraphGroup>
+    suspend fun fetchGroupName(bearerToken: String, groupId: String): MicrosoftGraphGroup
     suspend fun fetchCurrentUser(bearerToken: String): MicrosoftGraphUser
     suspend fun fetchUserByUserId(bearerToken: String, userId: String): MicrosoftGraphUser
 }
@@ -105,6 +106,43 @@ class MicrosoftServiceImpl(private val config: Config, private val client: HttpC
                         displayName = it.displayName,
                     )
                 }
+            }
+        } catch (e: ExternalServiceException) {
+            throw e
+        } catch (e: Exception) {
+            logger.error("Unexpected error fetching groups from Microsoft Graph", e)
+            throw ExternalServiceException("Microsoft Graph", "Failed to fetch groups: ${e.message}", cause = e)
+        }
+    }
+
+
+    override suspend fun fetchGroupName(bearerToken: String, groupId: String): MicrosoftGraphGroup {
+        val url = "${config.microsoftGraph.baseUrl}/v1.0/groups/${groupId}?\$select=id,displayName"
+
+        return try {
+            ExternalServiceTimer.time("Microsoft", "fetchGroupName") {
+                val response: HttpResponse = client.get(url) {
+                    bearerAuth(bearerToken)
+                    header("ConsistencyLevel", "eventual")
+                }
+
+                if (response.status != HttpStatusCode.OK) {
+                    val responseBody = response.body<String>()
+                    logger.warn("Failed to fetch group name from Microsoft Graph - Status: ${response.status}, Body: $responseBody")
+                    throw ExternalServiceException("Microsoft Graph", "Failed to fetch group name", response.status.value)
+                }
+
+                val responseBody = response.body<String>()
+                logger.debug("Successfully fetched groups from Microsoft Graph")
+
+                try {
+                    json.decodeFromString<MicrosoftGraphGroup>(responseBody)
+                } catch (e: Exception) {
+                    logger.error("Failed to parse Microsoft Graph groups response", e)
+                    throw ExternalServiceException("Microsoft Graph", "Invalid response format", cause = e)
+                }
+
+
             }
         } catch (e: ExternalServiceException) {
             throw e

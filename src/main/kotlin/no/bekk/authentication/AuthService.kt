@@ -36,12 +36,20 @@ class AuthServiceImpl(
 ) : AuthService {
     private val logger = LoggerFactory.getLogger(AuthServiceImpl::class.java)
     override suspend fun getGroupsOrEmptyList(call: ApplicationCall): List<MicrosoftGraphGroup> {
+        val groupsClaim = call.principal<JWTPrincipal>()?.payload?.getClaim("groups")
+        val groups = groupsClaim?.asArray(String::class.java)
+
         val jwtToken =
             call.request.headers["Authorization"]?.removePrefix("Bearer ")
                 ?: throw IllegalStateException("Authorization header missing")
         val oboToken = microsoftService.requestTokenOnBehalfOf(jwtToken)
 
-        return microsoftService.fetchGroups(oboToken)
+
+        val groupNames = groups?.map { group ->
+            microsoftService.fetchGroupName(oboToken, group)
+        }
+
+        return groupNames ?: emptyList()
     }
 
     override suspend fun getCurrentUser(call: ApplicationCall): MicrosoftGraphUser {
