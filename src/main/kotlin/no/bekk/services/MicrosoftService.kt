@@ -114,7 +114,6 @@ class MicrosoftServiceImpl(private val config: Config, private val client: HttpC
         }
     }
 
-
     override suspend fun fetchCurrentUser(bearerToken: String): MicrosoftGraphUser {
         val url = "${config.microsoftGraph.baseUrl}/v1.0/me?\$select=id,displayName,mail"
 
