@@ -149,10 +149,8 @@ configurations`.
 
 ### Steg 2: Frontend dev server
 
-- Naviger til frontendmappa med `cd app`
-- Installer avhengigheter med `npm i`
-- Forbered husky (hvis aktuelt) med `npm run prepare`
-- Start utviklingsserveren ved å kjøre: `npm run dev`
+- Installer avhengigheter med `pnpm i`
+- Start utviklingsserveren ved å kjøre: `pnpm run dev`
 
 ### Steg 3: Web server
 
