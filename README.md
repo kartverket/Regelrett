@@ -77,6 +77,9 @@ Nå skal databasen være oppe og kjøre!
 
 ## Konfigurasjon
 
+Regelrett kan konfigurerers opp til å kunne tilpasse seg ulike behov. Med det følger en drøss av verdier; de som MÅ bli satt for at regelrett skal fungere er nevnt under i [Steg 1](#steg-1-konfigurasjon), andre er nevnt i [Konfigurasjons docen](conf/README.md)
+
+Les mer:
 [Konfigurasjon](conf/README.md)
 
 ## Kjøre regelrett lokalt
@@ -96,25 +99,44 @@ Du må konfigurere applikasjonen slik det beskrives i
 [`conf/README.md`](conf/readme.md). Du kan enten opprette en `conf/custom.yaml`
 fil, eller bruke miljøvariabler der du kjører backenden.
 
-Verdiene som _må_ overskrives er
+Verdiene som _må_ overskrives, enten i fil:
 
-````oauth: tenant_id: <tenant_id> client_id: <client_id> client_secret:
-<client_secret> ```
+```yaml
+oauth:
+  tenant_id: <tenant_id>
+  client_id: <client_id>
+  client_secret: <client_secret>
+```
 
-Om du setter base.mode til development skal KTOR appen kunne reloades
-automatisk.
+Eller som miljøvariabler:
 
-``` base: mode: development ```
+```env
+RR_OAUTH_TENANT_ID=<TENANT_ID>
+RR_OAUTH_CLIENT_ID=<CLIENT_ID>
+RR_OAUTH_CLIENT_SECRET=<CLIENT_SECRET>
+RR_BASE_MODE=development
+```
 
-Som miljøvariabler
-
-``` RR_OAUTH_TENANT_ID=<TENANT_ID> RR_OAUTH_CLIENT_ID=<CLIENT_ID>
-RR_OAUTH_CLIENT_SECRET=<CLIENT_SECRET> RR_BASE_MODE=development ```
 
 I tillegg må du sette miljøvariabelen. Denne brukes i
 conf/provisioning/defaults.yaml og kan derfor ikke settes i conf/custom.yaml
 
-``` RR_AIRTABLE_ACCESS_TOKEN=<PAT> ```
+```env 
+RR_AIRTABLE_ACCESS_TOKEN=<PAT>
+```
+
+Om du setter base.mode til development skal KTOR appen kunne reloades
+automatisk.
+Fil:
+```yaml 
+base:
+  mode: development
+```
+Miljøvariabel:
+```env 
+RR_BASE_MODE=development
+```
+
 
 For å få tilgang til hemmelighetene, spør noen på teamet om å gi deg tilgang
 til 1Password vaulten.
@@ -127,10 +149,8 @@ configurations`.
 
 ### Steg 2: Frontend dev server
 
-- Naviger til frontendmappa med `cd frontend/beCompliant`
-- Installer avhengigheter med `npm i`
-- Forbered husky (hvis aktuelt) med `npm run prepare`
-- Start utviklingsserveren ved å kjøre: `npm run dev`
+- Installer avhengigheter med `pnpm i`
+- Start utviklingsserveren ved å kjøre: `pnpm run dev`
 
 ### Steg 3: Web server
 
@@ -162,9 +182,11 @@ dockerinstallasjon. I tillegg, avhengig av oppsettet ditt, så er det noen
 spesifikke miljøvariabler som må settes. Hvis du bruker colima, sett følgende i
 .bashrc/.zshrc eller andre tilsvarende konfigurasjonsfiler for ditt shell;
 
-```shell export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock
+```shell
+export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock
 export TESTCONTAINERS_HOST_OVERRIDE=$(colima ls -j | jq -r '.address') export
-DOCKER_HOST="unix://${HOME}/.colima/default/docker.sock" ```
+DOCKER_HOST="unix://${HOME}/.colima/default/docker.sock"
+```
 
 Merk at det er viktig at colima startes med `--network-address` flagget, da det
 er trengs for å hente ut adressen til `TESTCONTAINERS_HOST_OVERRIDE`.
