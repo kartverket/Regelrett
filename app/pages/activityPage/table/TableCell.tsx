@@ -10,8 +10,7 @@ import { Link } from "react-router";
 
 type Props = {
   contextId: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  value: any;
+  value: Array<string>;
   column: Column;
   row: Row<Question>;
   answerable?: boolean;
@@ -50,12 +49,11 @@ export const TableCell = ({
     return <></>;
   }
 
-  switch (value.type) {
+  switch (column.type) {
     case OptionalFieldType.OPTION_MULTIPLE: {
-      const valueArray = value.value;
       return (
         <div className="flex flex-wrap gap-1">
-          {valueArray
+          {value
             .sort((a: string, b: string) => a.length - b.length)
             .map((text: string, index: number) => {
               return <Badge key={index}>{text}</Badge>;
@@ -65,7 +63,7 @@ export const TableCell = ({
     }
     case OptionalFieldType.OPTION_SINGLE: {
       const backgroundColor = column.options?.find(
-        (option) => option.name === value.value[0],
+        (option) => option.name === value[0],
       )?.color;
 
       const backgroundColorHex = colorUtils.getHexForColor(
@@ -82,7 +80,7 @@ export const TableCell = ({
           }}
           className={`text-${useWhiteTextColor ? "white" : "black"}`}
         >
-          {value.value}
+          {value[0]}
         </Badge>
       );
     }
@@ -96,7 +94,7 @@ export const TableCell = ({
           aria-label="Se detaljer"
           className="p-0 text-sm h-0 whitespace-normal text-left text-primary hover:underline"
         >
-          {value.value[0]}
+          {value[0]}
         </Link>
       </div>
     );
@@ -105,7 +103,7 @@ export const TableCell = ({
   return (
     <div className="max-w-[650px] whitespace-normal text-sm">
       <Markdown components={markdownComponents}>
-        {value.value[0].split("\n\n")[0]}
+        {value[0].split("\n\n")[0]}
       </Markdown>
     </div>
   );

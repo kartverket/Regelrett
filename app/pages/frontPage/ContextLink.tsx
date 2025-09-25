@@ -1,6 +1,5 @@
 import { useContext } from "@/hooks/useContext";
 import { Link as ReactRouterLink } from "react-router";
-import type { ActiveFilter } from "@/types/tableTypes";
 import { DeleteContextModal } from "@/pages/frontPage/DeleteContextModal";
 import { ProgressCircle } from "@/pages/frontPage/ProgressCircle";
 import {
@@ -68,7 +67,8 @@ export function ContextLink({
             localStorage.getItem(`filters_${context.formId}`) || `[]`,
           )
             .map(
-              (filter: ActiveFilter) => `filter=${filter.id}_${filter.value}`,
+              (filter: { id: string; value: string }) =>
+                `filter=${filter.id}_${filter.value}`,
             )
             .join("&")}`}
         >

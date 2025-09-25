@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Subset copy from https://github.com/Airtable/blocks/blob/master/packages/sdk/src/private_utils.ts
 export type ObjectValues<T extends object> = T[keyof T];
 

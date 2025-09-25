@@ -6,7 +6,7 @@ import { useState } from "react";
 
 interface Props {
   filteredData: Question[];
-  table: Table<any>;
+  table: Table<Question>;
 }
 
 export const TableStatistics = ({ filteredData, table }: Props) => {
