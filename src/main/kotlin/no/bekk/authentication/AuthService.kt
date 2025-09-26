@@ -41,7 +41,10 @@ class AuthServiceImpl(
                 ?: throw IllegalStateException("Authorization header missing")
         val oboToken = microsoftService.requestTokenOnBehalfOf(jwtToken)
 
-        return microsoftService.fetchGroups(oboToken)
+        val groupsClaim = call.principal<JWTPrincipal>()?.payload?.getClaim("groups")
+        val groupsClaimList = groupsClaim?.asArray(String::class.java) ?: emptyArray()
+
+        return microsoftService.fetchGroups(oboToken).filter { it.id in groupsClaimList}
     }
 
     override suspend fun getCurrentUser(call: ApplicationCall): MicrosoftGraphUser {
