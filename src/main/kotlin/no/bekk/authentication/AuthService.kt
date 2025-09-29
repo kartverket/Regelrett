@@ -1,11 +1,5 @@
 package no.bekk.authentication
-
-import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.auth.jwt.JWTPrincipal
-import io.ktor.server.auth.principal
-import io.ktor.server.response.*
-import io.ktor.server.sessions.*
 import no.bekk.configuration.OAuthConfig
 import no.bekk.database.ContextRepository
 import no.bekk.domain.MicrosoftGraphGroup
@@ -41,10 +35,7 @@ class AuthServiceImpl(
                 ?: throw IllegalStateException("Authorization header missing")
         val oboToken = microsoftService.requestTokenOnBehalfOf(jwtToken)
 
-        val groupsClaim = call.principal<JWTPrincipal>()?.payload?.getClaim("groups")
-        val groupsClaimList = groupsClaim?.asArray(String::class.java) ?: emptyArray()
-
-        return microsoftService.fetchGroups(oboToken).filter { it.id in groupsClaimList}
+        return microsoftService.fetchGroups(oboToken)
     }
 
     override suspend fun getCurrentUser(call: ApplicationCall): MicrosoftGraphUser {
@@ -73,19 +64,19 @@ class AuthServiceImpl(
             return false
         }
 
-        val groupsClaim = call.principal<JWTPrincipal>()?.payload?.getClaim("groups")
-        val groups = groupsClaim?.asArray(String::class.java)
+        val groups = getGroupsOrEmptyList(call)
 
-        if (groups == null || groups.isEmpty()) {
+        if (groups.isEmpty()) {
             logger.debug("Team access denied for teamId: $teamId - No groups found in JWT token")
             return false
         }
 
-        val hasAccess = teamId in groups
+        val hasAccess = teamId in groups.map { it.id }
+
         if (hasAccess) {
             logger.debug("Team access granted for teamId: $teamId")
         } else {
-            logger.debug("Team access denied for teamId: $teamId - Team not in user's groups: ${groups.contentToString()}")
+            logger.debug("Team access denied for teamId: $teamId - Team not in user's groups: $groups")
         }
 
         return hasAccess
