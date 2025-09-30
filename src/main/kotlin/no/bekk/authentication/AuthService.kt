@@ -67,7 +67,7 @@ class AuthServiceImpl(
         val groups = getGroupsOrEmptyList(call)
 
         if (groups.isEmpty()) {
-            logger.debug("Team access denied for teamId: $teamId - No groups found in JWT token")
+            logger.debug("Team access denied for teamId: $teamId - No groups found in Entra ID")
             return false
         }
 
