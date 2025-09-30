@@ -20,7 +20,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
       - name: Setup gradle
-        uses: gradle/actions/setup-gradle@v4.4.3
+        uses: gradle/actions/setup-gradle@v4.4.4
       - name: Setup postgres
         run: docker pull postgres:15.4-alpine
       - name: Restore Gradle Cache
