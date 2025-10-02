@@ -15,7 +15,6 @@ import RedirectBackButton from "../../components/buttons/RedirectBackButton";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
 import { Button } from "@/components/ui/button";
 import { Settings } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 
 export default function ActivityPage() {
   const params = useParams();
@@ -137,7 +136,7 @@ export default function ActivityPage() {
               !!comments &&
               !!answers && (
                 <TableComponent
-                  tableMetadata={tableData?.columns ?? []}
+                  columnMetadata={tableData?.columns ?? []}
                   filterByAnswer={allSingleSelect ?? false}
                   contextId={context?.id}
                   data={tableData?.records ?? []}

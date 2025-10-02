@@ -1,9 +1,13 @@
 import type { Table, Updater } from "@tanstack/react-table";
 import { PaginationActionButton } from "./PaginationActionButton";
 import { PaginationRelativeButtons } from "./PaginationRelativeButtons";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useSearchParams } from "react-router";
+import {
+  NavigationType,
+  useNavigationType,
+  useSearchParams,
+} from "react-router";
 
 interface Props<TData> {
   table: Table<TData>;
@@ -17,7 +21,7 @@ export function PaginationButtonContainer<TData>({ table }: Props<TData>) {
   const numberOfRows = table.getRowCount();
   const numberOfPages = Math.ceil(numberOfRows / pageSize);
   const ref = useRef<HTMLDivElement>(null);
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const navigation = useNavigationType();
 
   const setPageRequestParam = (page: number) => {
     setSearchParams((current) => {
@@ -32,16 +36,14 @@ export function PaginationButtonContainer<TData>({ table }: Props<TData>) {
 
   useEffect(() => {
     if (ref.current) {
-      if (!isInitialLoad) {
+      if (navigation === NavigationType.Push) {
         window.scrollTo({
           top: document.documentElement.scrollHeight,
           behavior: "auto",
         });
-      } else {
-        setIsInitialLoad(false);
       }
     }
-  }, [index]);
+  }, [index, navigation]);
 
   return (
     <div
