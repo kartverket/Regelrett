@@ -196,6 +196,7 @@ class ConfigBuilder {
     fun buildMicrosoftGraphConfig(yaml: YamlConfig) = MicrosoftGraphConfig(
         baseUrl = yaml.getStringOrNull("microsoft_graph", "base_url") ?: "https://graph.microsoft.com",
         memberOfPath = yaml.getStringOrNull("microsoft_graph", "member_of_path") ?: "/v1.0/me/memberOf/microsoft.graph.group",
+        groupnameFilter = yaml.getStringOrNull("microsoft_graph", "groupfilter") ?: "",
     )
 
     fun buildOAuthConfig(yaml: YamlConfig): OAuthConfig = OAuthConfig(

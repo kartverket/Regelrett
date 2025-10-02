@@ -18,6 +18,7 @@ import no.bekk.exception.AuthenticationException
 import no.bekk.exception.ExternalServiceException
 import no.bekk.util.ExternalServiceTimer
 import org.slf4j.LoggerFactory
+import kotlin.math.log
 
 interface MicrosoftService {
     suspend fun requestTokenOnBehalfOf(jwtToken: String?): String
@@ -76,11 +77,15 @@ class MicrosoftServiceImpl(private val config: Config, private val client: HttpC
     override suspend fun fetchGroups(bearerToken: String): List<MicrosoftGraphGroup> {
         val url = "${config.microsoftGraph.baseUrl + config.microsoftGraph.memberOfPath}?\$count=true&\$select=id,displayName"
 
+
         return try {
             ExternalServiceTimer.time("Microsoft", "fetchGroups") {
                 val response: HttpResponse = client.get(url) {
                     bearerAuth(bearerToken)
                     header("ConsistencyLevel", "eventual")
+                    if (!config.microsoftGraph.groupnameFilter.isBlank()) {
+                        parameter("\$filter",config.microsoftGraph.groupnameFilter)
+                    }
                 }
 
                 if (response.status != HttpStatusCode.OK) {

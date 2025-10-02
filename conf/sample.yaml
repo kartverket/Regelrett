@@ -47,6 +47,8 @@
 # microsoft_graph:
 #   base_url: "https://graph.microsoft.com"
 #   member_of_path: "/v1.0/me/memberof/microsoft.graph.group"
+#   groupfilter: null
+
 #
 # oauth:
 #   base_url: "https://login.microsoftonline.com"
