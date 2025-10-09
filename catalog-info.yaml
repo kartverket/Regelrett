@@ -22,7 +22,7 @@ metadata:
     title: "regelrett på GitHub"
 spec:
   type: "repo"
-  owner: "security_champion_regelrett"
+  owner: "skvis"
   dependencyOf:
   - "component:regelrett"
 ---
