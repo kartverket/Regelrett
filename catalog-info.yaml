@@ -1,0 +1,43 @@
+# nonk8s
+apiVersion: "backstage.io/v1alpha1"
+kind: "Component"
+metadata:
+  name: "regelrett"
+  tags:
+  - "public"
+spec:
+  type: "service"
+  lifecycle: "production"
+  owner: "skvis"
+  system: "funksjon-skjema-register"
+  providesApis:
+  - "regelrett-api"
+---
+apiVersion: "backstage.io/v1alpha1"
+kind: "Resource"
+metadata:
+  name: "regelrett"
+  links:
+  - url: "https://github.com/kartverket/regelrett"
+    title: "regelrett på GitHub"
+spec:
+  type: "repo"
+  owner: "skvis"
+  dependencyOf:
+  - "component:regelrett"
+---
+apiVersion: "backstage.io/v1alpha1"
+kind: "API"
+metadata:
+  name: "regelrett-api"
+  tags:
+  - "internal"
+spec:
+  type: "openapi"
+  lifecycle: "production"
+  owner: "skvis"
+  definition: |
+    openapi: "3.0.0"
+    info:
+        title: regelrett API
+    paths:
