@@ -21,14 +21,18 @@ for å administrere prosjektet effektivt.
 
 Start med å klone repoet fra GitHub:
 
-`git clone <repository-url>`
+```
+git clone <repository-url>
+```
 
 ### Steg 2
 
 For å sette opp databasen må man ha installert Docker. Dette kan du gjøre ved å
 kjøre denne kommandoen:
 
-`brew cask install docker`
+```
+brew cask install docker
+```
 
 Alternativt kan du bruke Postgres desktop til å kjøre en database lokalt. Hvis
 du har gjort dette kan du hoppe til Steg 6. Som standard antar Regelrett at du
@@ -42,21 +46,26 @@ container-runtime miljø som lar deg kjøre containere på din lokale maskin. Du
 kan bruker docker desktop dersom du har det. Hvis ikke kan du bruke Colima.
 Last ned Colima ved å kjøre denne kommandoen:
 
-`brew install colima`.
+```
+brew install colima
+```
 
 ### Steg 4
 
 Etter å ha installert Colima, kan du starte det opp ved å kjøre denne
 kommandoen:
 
-`colima start --network-address`
+```
+colima start --network-address
+```
 
 ### Steg 5
 
 Når du har Colima eller Docker Desktop kjørende, kjør denne kommandoen:
 
-`docker run --name regelrett-db -it -e POSTGRES_HOST_AUTH_METHOD=trust -e
-POSTGRES_USER=postgres -e POSTGRES_DB=regelrett -p 5432:5432 -d postgres:15.4`
+```
+docker run --name regelrett-db -it -e POSTGRES_HOST_AUTH_METHOD=trust -e POSTGRES_USER=postgres -e POSTGRES_DB=regelrett -p 5432:5432 -d postgres:15.4
+```
 
 Nå skal databasen være oppe og kjøre!
 
@@ -96,7 +105,7 @@ Før du begynner, sørg for at du har følgende installert:
 ### Steg 1: Konfigurasjon
 
 Du må konfigurere applikasjonen slik det beskrives i
-[`conf/README.md`](conf/readme.md). Du kan enten opprette en `conf/custom.yaml`
+[`conf/README.md`](conf/README.md). Du kan enten opprette en `conf/custom.yaml`
 fil, eller bruke miljøvariabler der du kjører backenden.
 
 Verdiene som _må_ overskrives, enten i fil:
@@ -114,29 +123,29 @@ Eller som miljøvariabler:
 RR_OAUTH_TENANT_ID=<TENANT_ID>
 RR_OAUTH_CLIENT_ID=<CLIENT_ID>
 RR_OAUTH_CLIENT_SECRET=<CLIENT_SECRET>
-RR_BASE_MODE=development
 ```
-
 
 I tillegg må du sette miljøvariabelen. Denne brukes i
 conf/provisioning/defaults.yaml og kan derfor ikke settes i conf/custom.yaml
 
-```env 
+```env
 RR_AIRTABLE_ACCESS_TOKEN=<PAT>
 ```
 
 Om du setter base.mode til development skal KTOR appen kunne reloades
 automatisk.
 Fil:
-```yaml 
+
+```yaml
 base:
   mode: development
 ```
+
 Miljøvariabel:
-```env 
+
+```env
 RR_BASE_MODE=development
 ```
-
 
 For å få tilgang til hemmelighetene, spør noen på teamet om å gi deg tilgang
 til 1Password vaulten.
@@ -205,12 +214,12 @@ https://java.testcontainers.org/supported_docker_environment/
   vil kompilere TypeScript-filene og pakke applikasjonen ved hjelp av Vite.
   Output vil bli plassert i dist-mappen, klar for utrulling.
 - Før du ruller ut, kan du forhåndsvise produksjonsbygget lokalt: `npm run
-  preview`. Denne kommandoen vil servere produksjonsbygget på en lokal server,
+preview`. Denne kommandoen vil servere produksjonsbygget på en lokal server,
   slik at du kan verifisere at alt fungerer som forventet.
 - Husky er konfigurert til å kjøre visse skript før commits blir fullført.
   Dette inkluderer linting og TypeScript-sjekker for å sikre kodekvalitet og
   konsistens. For å manuelt utløse disse sjekkene, kan du kjøre: `npm run
-  pre-commit`. Dette vil kjøre lint-staged for å sjekke de stage’ede filene og
+pre-commit`. Dette vil kjøre lint-staged for å sjekke de stage’ede filene og
   sikre at TypeScript-filene er feilfrie før de blir committet.
 - Dette prosjektet bruker TanStack Query (tidligere kjent som React Query) for
   å håndtere nettverksforespørsler og servertilstand. TanStack Query forenkler
@@ -222,4 +231,4 @@ https://java.testcontainers.org/supported_docker_environment/
   Query her https://tanstack.com/query/latest
 - For mer dokumentasjon om [Build and
   deployment](./docs/build-and-deployment.md)
-````
+  ´´´´
