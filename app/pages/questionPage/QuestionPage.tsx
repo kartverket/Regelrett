@@ -68,7 +68,7 @@ export default function QuestionPage() {
       <Button
         variant="link"
         onClick={handleBackButton}
-        className="flex justify-start ml-2 text-lg"
+        className="flex justify-start ml-2 text-lg w-max"
       >
         <ArrowLeft className="size-5" />
         Tilbake
