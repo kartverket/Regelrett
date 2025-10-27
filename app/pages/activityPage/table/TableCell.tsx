@@ -1,7 +1,7 @@
 import type { Row } from "@tanstack/react-table";
 import { AnswerCell } from "./AnswerCell";
 import type { Column, Question, User } from "@/api/types";
-import { AnswerType, OptionalFieldType } from "@/api/types";
+import { OptionalFieldType } from "@/api/types";
 import colorUtils from "@/utils/colorUtils";
 import Markdown from "react-markdown";
 import { markdownComponents } from "@/utils/markdownComponents";
