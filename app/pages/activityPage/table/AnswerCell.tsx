@@ -12,7 +12,7 @@ import { useIsMutating } from "@tanstack/react-query";
 import MultiSelectAnswer from "@/components/answers/MultiSelectAnswer";
 
 type Props = {
-  value: string | undefined;
+  value: string;
   answerType: AnswerType;
   unit?: string;
   units?: string[] | null;

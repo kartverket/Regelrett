@@ -28,7 +28,7 @@ export const TableCell = ({
   if (answerable) {
     return (
       <AnswerCell
-        value={row.original.answers.at(-1)?.answer}
+        value={row.original.answers.at(-1)?.answer ?? ""}
         answerType={row.original.metadata?.answerMetadata.type}
         unit={row.original.answers.at(-1)?.answerUnit}
         units={row.original.metadata?.answerMetadata.units}
