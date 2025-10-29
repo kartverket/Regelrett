@@ -83,8 +83,8 @@ class MicrosoftServiceImpl(private val config: Config, private val client: HttpC
                 val response: HttpResponse = client.get(url) {
                     bearerAuth(bearerToken)
                     header("ConsistencyLevel", "eventual")
-                    if (!config.microsoftGraph.groupnameFilter.isBlank()) {
-                        parameter("\$filter",config.microsoftGraph.groupnameFilter)
+                    if (!config.microsoftGraph.groupFilter.isBlank()) {
+                        parameter("\$filter",config.microsoftGraph.groupFilter)
                     }
                 }
 

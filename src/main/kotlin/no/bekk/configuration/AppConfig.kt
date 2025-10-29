@@ -55,7 +55,7 @@ data class FrontendDevServerConfig(
 class MicrosoftGraphConfig(
     val baseUrl: String,
     val memberOfPath: String,
-    val groupnameFilter: String,
+    val groupFilter: String,
 )
 
 data class OAuthConfig(
