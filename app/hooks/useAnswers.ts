@@ -59,17 +59,27 @@ export function useSubmitAnswer(
   recordId?: string,
   refetchAll: boolean = false,
 ) {
-  const url = `${API_URL_BASE}/answer`;
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationKey: ["answers", contextId, recordId],
     mutationFn: (body: SubmitAnswerRequest) => {
       return axiosFetch<SubmitAnswerRequest>({
-        url: url,
+        url: `${API_URL_BASE}/answer`,
         method: "POST",
         data: JSON.stringify(body),
       });
+    },
+    onMutate: async (newAnswer) => {
+      await queryClient.cancelQueries({ queryKey: ["answers", contextId] })
+
+      const previousAnswers = queryClient.getQueryData<Answer[]>(["answers", contextId])
+
+      queryClient.setQueryData<Answer[]>(["answers", contextId], (old = []) => {
+        return [...old, { ...newAnswer, updated: new Date(), optimistic: true }];
+      })
+
+      return { previousAnswers }
     },
     onSuccess: async () => {
       if (!refetchAll && recordId) {
