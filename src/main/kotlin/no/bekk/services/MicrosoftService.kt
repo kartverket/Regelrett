@@ -77,7 +77,6 @@ class MicrosoftServiceImpl(private val config: Config, private val client: HttpC
     override suspend fun fetchGroups(bearerToken: String): List<MicrosoftGraphGroup> {
         val url = "${config.microsoftGraph.baseUrl + config.microsoftGraph.memberOfPath}?\$count=true&\$select=id,displayName"
 
-
         return try {
             ExternalServiceTimer.time("Microsoft", "fetchGroups") {
                 val response: HttpResponse = client.get(url) {
