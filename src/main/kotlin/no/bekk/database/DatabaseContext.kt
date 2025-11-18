@@ -27,3 +27,13 @@ data class DatabaseContextRequest(
     val copyContext: String? = null,
     val copyComments: String? = null,
 )
+
+@Serializable
+data class DatabaseContextMetrics(
+    val id: String,
+    val teamId: String,
+    val formId: String,
+    val name: String,
+    val answerCount: Int,
+    val oldestUpdate: String
+)

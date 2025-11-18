@@ -203,6 +203,18 @@ fun Route.contextRouting(
             }
         }
     }
+    route("/contextMetrics") {
+        get {
+            logger.info("Received GET /contextMetrics with teamIds")
+
+                val contextMetrics = contextRepository.getContextMetrics()
+
+                call.respond(HttpStatusCode.OK, Json.encodeToString(contextMetrics))
+                return@get
+
+        }
+    }
+
 }
 
 @Serializable
