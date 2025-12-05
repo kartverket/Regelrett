@@ -195,9 +195,9 @@ class ContextRepositoryImpl(private val database: Database) : ContextRepository 
                c.table_id,
                c.name,
                COUNT(a.id) AS answer_count,
-               MIN(a.updated) AS oldest_updated
+               MIN(a.updated) AS oldest_update
         FROM contexts c
-        LEFT JOIN answers a ON a.contexts = c.id
+        LEFT JOIN answers a ON a.context_id = c.id
         GROUP BY c.id, c.team_id, c.table_id, c.name
     """
         return try {
