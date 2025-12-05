@@ -9,6 +9,7 @@ enum class AirTableFieldType(val fieldType: String) {
     SINGLE_SELECT("singleSelect"),
     MULTILINE_TEXT("multilineText"),
     SINGLE_LINE_TEXT("singleLineText"),
+    MULTIPLE_RECORD_LINKS("multipleRecordLinks"),
     PERCENT("percent"),
     TIME("time"),
     CHECKBOX("checkbox"),
@@ -37,5 +38,6 @@ fun mapAirTableFieldTypeToOptionalFieldType(airtableFieldType: AirTableFieldType
     AirTableFieldType.SINGLE_SELECT -> OptionalFieldType.OPTION_SINGLE
     AirTableFieldType.MULTILINE_TEXT -> OptionalFieldType.TEXT
     AirTableFieldType.SINGLE_LINE_TEXT -> OptionalFieldType.TEXT
+    AirTableFieldType.MULTIPLE_RECORD_LINKS -> OptionalFieldType.TEXT
     else -> throw IllegalArgumentException("Unknown field type: $airtableFieldType")
 }
