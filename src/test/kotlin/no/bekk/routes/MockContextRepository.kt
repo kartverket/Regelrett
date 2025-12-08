@@ -2,6 +2,7 @@ package no.bekk.routes
 
 import no.bekk.database.ContextRepository
 import no.bekk.database.DatabaseContext
+import no.bekk.database.DatabaseContextMetrics
 import no.bekk.database.DatabaseContextRequest
 
 interface MockContextRepository : ContextRepository {
@@ -26,6 +27,10 @@ interface MockContextRepository : ContextRepository {
     }
 
     override fun getContextByTeamIdAndFormId(teamId: String, formId: String): List<DatabaseContext> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getContextMetrics(): List<DatabaseContextMetrics> {
         TODO("Not yet implemented")
     }
 }
