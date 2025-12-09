@@ -16,6 +16,7 @@ interface ContextRepository {
     fun getContext(id: String): DatabaseContext
     fun deleteContext(id: String): Boolean
     fun changeTeam(contextId: String, newTeamId: String): Boolean
+    fun getContextMetrics(): List<DatabaseContextMetrics>
 }
 
 class ContextRepositoryImpl(private val database: Database) : ContextRepository {
@@ -182,5 +183,52 @@ class ContextRepositoryImpl(private val database: Database) : ContextRepository 
             logger.error("Database error updating team for context $contextId with teamId $newTeamId", e)
             throw DatabaseException("Failed to update team for context $contextId", "changeTeam", e)
         }
+    }
+
+   override fun getContextMetrics(): List<DatabaseContextMetrics>{
+        logger.debug("Fetching context-stats for team")
+
+
+        val sqlStatement = """
+        SELECT c.id,
+               c.team_id,
+               c.table_id,
+               c.name,
+               COUNT(a.id) AS answer_count,
+               MIN(a.updated) AS oldest_update
+        FROM contexts c
+        LEFT JOIN answers a ON a.context_id = c.id
+        GROUP BY c.id, c.team_id, c.table_id, c.name
+    """
+        return try {
+            database.getConnection().use { conn ->
+                conn.prepareStatement(sqlStatement).use { statement ->
+
+                    val result = statement.executeQuery()
+                    buildList {
+                        while (result.next()) {
+                            add(
+                                DatabaseContextMetrics(
+                                    id = result.getString("id"),
+                                    teamId = result.getString("team_id"),
+                                    formId = result.getString("table_id"),
+                                    name = result.getString("name"),
+                                    answerCount = result.getInt("answer_count"),
+                                    oldestUpdate = result.getString("oldest_update"),
+                                ),
+                            )
+                        }
+                    }
+                }.also {
+                    logger.debug("Successfully fetched context metrics")
+                }
+
+
+            }
+        } catch (e: SQLException) {
+            logger.error("Database error fetching context metrics", e)
+            throw DatabaseException("Failed to fetch context metrics", "getContextMetrics", e)
+        }
+
     }
 }

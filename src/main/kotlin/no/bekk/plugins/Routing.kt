@@ -5,13 +5,17 @@ import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.html.*
 import io.ktor.server.http.content.*
+import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.response.*
+import io.ktor.server.response.respond
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import kotlinx.html.*
+import kotlinx.serialization.json.Json
 import no.bekk.authentication.UserSession
 import no.bekk.configuration.Config
 import no.bekk.di.Dependencies
+import no.bekk.model.internal.ContextMetrics
 import no.bekk.routes.*
 import java.io.*
 
@@ -28,6 +32,26 @@ fun Application.configureRouting(
             it.getSchema()
         }
         call.respond(HttpStatusCode.OK, schemas)
+    }
+
+    get("/contextMetrics") {
+        val forms = dependencies.formService.getFormProviders()
+            .map { it.getForm() }
+            .associateBy { it.id }
+        val contextMetrics = dependencies.contextRepository.getContextMetrics().mapNotNull { ctx ->
+            val form = forms[ctx.formId] ?: return@mapNotNull null
+
+            ContextMetrics(
+                teamId = ctx.teamId,
+                formName = form.name,
+                contextName = ctx.name,
+                answerCount = ctx.answerCount,
+                questionCount = form.records.size,
+                oldestUpdate = ctx.oldestUpdate
+            )
+        }
+        call.respond(HttpStatusCode.OK, contextMetrics)
+
     }
 
     authenticate("auth-oauth-azure") {
