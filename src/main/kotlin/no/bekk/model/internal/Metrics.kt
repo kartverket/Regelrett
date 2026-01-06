@@ -9,5 +9,5 @@ data class ContextMetrics(
     val contextName: String,
     val answerCount: Int,
     val questionCount: Int,
-    val oldestUpdate: String?
+    val oldestUpdate: String?,
 )

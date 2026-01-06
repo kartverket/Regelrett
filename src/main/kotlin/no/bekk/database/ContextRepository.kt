@@ -185,9 +185,8 @@ class ContextRepositoryImpl(private val database: Database) : ContextRepository 
         }
     }
 
-   override fun getContextMetrics(): List<DatabaseContextMetrics>{
+    override fun getContextMetrics(): List<DatabaseContextMetrics> {
         logger.debug("Fetching context-stats for team")
-
 
         val sqlStatement = """
         SELECT c.id,
@@ -222,13 +221,10 @@ class ContextRepositoryImpl(private val database: Database) : ContextRepository 
                 }.also {
                     logger.debug("Successfully fetched context metrics")
                 }
-
-
             }
         } catch (e: SQLException) {
             logger.error("Database error fetching context metrics", e)
             throw DatabaseException("Failed to fetch context metrics", "getContextMetrics", e)
         }
-
     }
 }
