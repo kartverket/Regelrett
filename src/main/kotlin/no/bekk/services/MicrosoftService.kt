@@ -18,7 +18,6 @@ import no.bekk.exception.AuthenticationException
 import no.bekk.exception.ExternalServiceException
 import no.bekk.util.ExternalServiceTimer
 import org.slf4j.LoggerFactory
-import kotlin.math.log
 
 interface MicrosoftService {
     suspend fun requestTokenOnBehalfOf(jwtToken: String?): String
@@ -83,7 +82,7 @@ class MicrosoftServiceImpl(private val config: Config, private val client: HttpC
                     bearerAuth(bearerToken)
                     header("ConsistencyLevel", "eventual")
                     if (!config.microsoftGraph.groupFilter.isBlank()) {
-                        parameter("\$filter",config.microsoftGraph.groupFilter)
+                        parameter("\$filter", config.microsoftGraph.groupFilter)
                     }
                 }
 

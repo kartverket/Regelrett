@@ -35,5 +35,5 @@ data class DatabaseContextMetrics(
     val formId: String,
     val name: String,
     val answerCount: Int,
-    val oldestUpdate: String?
+    val oldestUpdate: String?,
 )

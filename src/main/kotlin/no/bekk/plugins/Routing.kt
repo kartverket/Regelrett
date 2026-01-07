@@ -5,13 +5,11 @@ import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.html.*
 import io.ktor.server.http.content.*
-import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.response.*
 import io.ktor.server.response.respond
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import kotlinx.html.*
-import kotlinx.serialization.json.Json
 import no.bekk.authentication.UserSession
 import no.bekk.configuration.Config
 import no.bekk.di.Dependencies
@@ -47,11 +45,10 @@ fun Application.configureRouting(
                 contextName = ctx.name,
                 answerCount = ctx.answerCount,
                 questionCount = form.records.size,
-                oldestUpdate = ctx.oldestUpdate
+                oldestUpdate = ctx.oldestUpdate,
             )
         }
         call.respond(HttpStatusCode.OK, contextMetrics)
-
     }
 
     authenticate("auth-oauth-azure") {
