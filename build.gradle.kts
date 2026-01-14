@@ -59,7 +59,10 @@ dependencies {
 tasks {
     withType<ShadowJar> {
         isZip64 = true
-        mergeServiceFiles()
+        mergeServiceFiles {
+            include("META-INF/services/**")
+            duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        }
     }
     withType<Test> {
         testLogging {
