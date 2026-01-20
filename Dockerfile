@@ -56,6 +56,8 @@ FROM ${JS_SRC} AS js-src
 
 FROM ${BASE_IMAGE}
 
+RUN apk update && apk add --no-cache --upgrade libpng
+
 LABEL maintainer="Bekk Consulting"
 LABEL org.opencontainers.image.source="https://github.com/bekk/regelrett"
 
