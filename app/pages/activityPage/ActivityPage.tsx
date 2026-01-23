@@ -7,7 +7,7 @@ import { useForm } from "../../hooks/useForm";
 import { mapTableDataRecords } from "../../utils/mapperUtil";
 import { AnswerType } from "../../api/types";
 import { ErrorState } from "../../components/ErrorState";
-import { useContext } from "../../hooks/useContext";
+import { useContext, useContextPermissions } from "../../hooks/useContext";
 import { useUser } from "../../hooks/useUser";
 import { useState } from "react";
 import { SettingsModal } from "./settingsModal/SettingsModal";
@@ -50,10 +50,16 @@ export default function ActivityPage() {
     isPending: answerIsPending,
   } = useAnswers(contextId);
 
+  const {
+    data: permissions,
+    error: permissionsError,
+    isPending: permissionsIsPending,
+  } = useContextPermissions(contextId);
+
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   const error =
-    tableError || commentError || answerError || contextError || userinfoError;
+    tableError || commentError || answerError || contextError || userinfoError || permissionsError;
 
   if (contextError) {
     const statusCode = contextError.response?.status;
@@ -90,7 +96,7 @@ export default function ActivityPage() {
         <div className="flex flex-col max-w-full self-center gap-2">
           <div className="flex flex-col gap-2 px-10">
             <SkeletonLoader
-              loading={contextIsPending || tableIsPending}
+              loading={contextIsPending || tableIsPending || permissionsIsPending}
               width="w-full"
               height="h-8"
             >
@@ -101,15 +107,17 @@ export default function ActivityPage() {
                   </p>
                   <div className="flex items-center">
                     <h3 className="text-2xl font-bold">{context?.name}</h3>
-                    <Button
-                      variant="ghost"
-                      size="lg"
-                      aria-label="Edit context"
-                      onClick={() => setSettingsOpen(true)}
-                      className="text-primary hover:text-primary"
-                    >
-                      <Settings className="size-5" />
-                    </Button>
+                    {permissions?.canWrite ?? (
+                      <Button
+                        variant="ghost"
+                        size="lg"
+                        aria-label="Edit context"
+                        onClick={() => setSettingsOpen(true)}
+                        className="text-primary hover:text-primary"
+                      >
+                        <Settings className="size-5" />
+                      </Button>)
+                    }
                   </div>
                 </div>
                 <div className="flex-col items-start bg-color-badge-grey text-secondary-foreground">
@@ -134,7 +142,8 @@ export default function ActivityPage() {
               !!context &&
               !!userinfo &&
               !!comments &&
-              !!answers && (
+              !!answers &&
+              !!permissions && (
                 <TableComponent
                   columnMetadata={tableData?.columns ?? []}
                   filterByAnswer={allSingleSelect ?? false}
@@ -145,6 +154,7 @@ export default function ActivityPage() {
                   isLoading={
                     tableIsPending || answerIsPending || commentIsPending
                   }
+                  hasWriteAccess={permissions.canWrite}
                 />
               )}
           </SkeletonLoader>
