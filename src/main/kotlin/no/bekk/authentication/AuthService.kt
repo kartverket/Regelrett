@@ -30,7 +30,7 @@ class AuthServiceImpl(
     private val microsoftService: MicrosoftService,
     private val contextRepository: ContextRepository,
     private val oAuthConfig: OAuthConfig,
-    private val formService: FormService
+    private val formService: FormService,
 ) : AuthService {
     private val logger = LoggerFactory.getLogger(AuthServiceImpl::class.java)
     override suspend fun getGroupsOrEmptyList(call: ApplicationCall): List<MicrosoftGraphGroup> {
