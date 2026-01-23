@@ -76,11 +76,13 @@ class FormServiceImpl : FormService {
                 viewId = cmd.view_id,
                 webhookId = cmd.webhook_id,
                 webhookSecret = cmd.webhook_secret,
+                readAccessGroupId = cmd.read_access_group_id,
             )
             "YAML" -> YamlProvider(
                 name = cmd.name,
                 id = uuid,
                 endpoint = cmd.url,
+                readAccessGroupId = cmd.read_access_group_id,
                 resourcePath = cmd.resource_path,
             )
             else -> throw IllegalStateException("Illegal type \"${cmd.type}\"")

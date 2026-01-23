@@ -13,6 +13,11 @@ export type Context = {
   teamId: string;
 };
 
+type Permissions = {
+  canRead: boolean;
+  canWrite: boolean;
+};
+
 export function useTeamContexts(teamId?: string) {
   return useQuery({
     queryKey: ["contexts", teamId],
@@ -111,6 +116,17 @@ export function useFetchAllContexts() {
       }, []);
     },
     enabled: !!teamIds.length,
+  });
+}
+
+export function useContextPermissions(contextId?: string) {
+  return useQuery<Permissions, AxiosError>({
+    queryKey: ["contextPermissions", contextId],
+    queryFn: () =>
+      axiosFetch<Permissions>({
+        url: `${API_URL_BASE}/contexts/${contextId}/permissions`,
+      }).then((response) => response.data),
+    enabled: !!contextId,
   });
 }
 

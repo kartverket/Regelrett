@@ -193,6 +193,7 @@ class CommentRoutingTest {
             testModule(
                 authService = object : MockAuthService {
                     override suspend fun hasContextAccess(call: ApplicationCall, contextId: String): Boolean = false
+                    override suspend fun hasReadContextAccess(call: ApplicationCall, contextId: String): Boolean = false
                 },
             )
         }

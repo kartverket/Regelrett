@@ -50,6 +50,7 @@ export function CheckboxAnswer({
           answerExpiry={answerExpiry}
           submitAnswer={submitAnswer}
           value={value}
+          disabled={disabled}
         />
       )}
     </div>

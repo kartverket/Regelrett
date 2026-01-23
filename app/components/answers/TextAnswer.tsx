@@ -59,6 +59,7 @@ export function TextAnswer({
         answerExpiry={answerExpiry}
         submitAnswer={submitAnswer}
         value={value}
+        disabled={disabled}
       />
     </div>
   );

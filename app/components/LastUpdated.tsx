@@ -14,6 +14,7 @@ type Props = {
   unitAnswer?: string;
   answerExpiry?: number | null;
   isComment?: boolean;
+  disabled?: boolean;
 };
 
 export function LastUpdated({
@@ -23,6 +24,7 @@ export function LastUpdated({
   unitAnswer,
   answerExpiry,
   isComment,
+  disabled
 }: Props) {
   if (!updated) return null;
 
@@ -54,6 +56,7 @@ export function LastUpdated({
             submitAnswer(value ?? "", unitAnswer);
           }}
           className="self-center has-[>svg]:px-0"
+          disabled={disabled}
         >
           <RotateCw />
           Forny svar

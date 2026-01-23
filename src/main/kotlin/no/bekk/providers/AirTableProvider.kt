@@ -23,6 +23,7 @@ private const val SVARVARIGHET = "Svarvarighet"
 class AirTableProvider(
     override val name: String,
     override val id: String,
+    override val readAccessGroupId: String? = null,
     private val airtableClient: AirTableClient,
     private val baseId: String,
     private val tableId: String,

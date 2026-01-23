@@ -63,7 +63,7 @@ fun Route.commentRouting(authService: AuthService, commentRepository: CommentRep
                 throw ValidationException("contextId parameter is required", field = "contextId")
             }
 
-            if (!authService.hasContextAccess(call, contextId)) {
+            if (!authService.hasContextAccess(call, contextId) && !authService.hasReadContextAccess(call, contextId)) {
                 logger.warn("${call.getRequestInfo()} Access denied to context: $contextId")
                 call.respond(HttpStatusCode.Forbidden)
                 return@get
