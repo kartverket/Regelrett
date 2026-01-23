@@ -46,7 +46,8 @@ class ConfigReader {
                     expandEnv(it.view_id),
                     expandEnv(it.webhook_id),
                     expandEnv(it.webhook_secret),
-                )
+                    expandEnv(it.read_access_group_id),
+                    )
             },
         )
     }

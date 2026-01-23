@@ -95,7 +95,7 @@ fun Route.contextRouting(
                 logger.info("Received GET /context with id: ${call.parameters["contextId"]}")
                 val contextId = call.parameters["contextId"] ?: throw BadRequestException("Missing contextId")
 
-                if (!authService.hasContextAccess(call, contextId)) {
+                if (!authService.hasContextAccess(call, contextId) && !authService.hasReadContextAccess(call, contextId)) {
                     call.respond(HttpStatusCode.Forbidden)
                     return@get
                 }
@@ -113,6 +113,17 @@ fun Route.contextRouting(
                 }
                 contextRepository.deleteContext(contextId)
                 call.respondText("Context and its answers and comments were successfully deleted.")
+            }
+
+            get("/permissions") {
+                logger.info("Received GET /context/permissions with context-id: ${call.parameters["contextId"]}")
+                val contextId = call.parameters["contextId"] ?: throw BadRequestException("Missing contextId")
+
+                val hasReadAccess = authService.hasReadContextAccess(call, contextId)
+                val hasWriteAccess = authService.hasContextAccess(call, contextId)
+
+                call.respond(HttpStatusCode.OK, Json.encodeToString(ContextPremissionResponse(hasReadAccess, hasWriteAccess)))
+                return@get
             }
 
             patch("/team") {
@@ -210,3 +221,9 @@ data class TeamUpdateRequest(val teamName: String? = null, val teamId: String? =
 
 @Serializable
 data class CopyContextRequest(val copyContextId: String?)
+
+@Serializable
+data class ContextPremissionResponse(
+    val canRead: Boolean,
+    val canWrite: Boolean,
+)

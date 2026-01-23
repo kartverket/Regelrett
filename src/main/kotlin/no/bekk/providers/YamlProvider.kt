@@ -11,6 +11,7 @@ import no.bekk.model.internal.*
 class YamlProvider(
     override val name: String,
     override val id: String,
+    override val readAccessGroupId: String? = null,
     private val httpClient: HttpClient? = null,
     private val endpoint: String? = null,
     private val resourcePath: String? = null,
