@@ -1,0 +1,189 @@
+name: Build and deploy
+on:
+  workflow_dispatch:
+    inputs:
+      commit_sha:
+        description: "Commit hash to deploy"
+        default: ""
+        type: string
+  pull_request:
+    branches:
+      - main
+  push:
+    paths-ignore:
+      - .sikkerhet**
+      - compose.yaml
+      - README**
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: write
+
+env:
+  REGION: europe-north1
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  ARGO_VERSION_FILE: image-url-regelrett
+
+jobs:
+  build:
+    name: Build and push docker image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    outputs:
+      image: ${{ steps.setOutput.outputs.image }}
+    steps:
+      - name: Checkout code
+        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.commit_sha == '') }}
+        uses: actions/checkout@v4
+
+      - name: Checkout code
+        if: ${{ (github.event_name == 'workflow_dispatch' && inputs.commit_sha == '') }}
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout specific commit
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.commit_sha != '' }}
+        run: git checkout ${{ github.event.inputs.commit_sha }}
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "21"
+          architecture: "x64"
+
+      - name: test pull image
+        run: docker pull postgres:15-alpine
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@8379f6a1328ee0e06e2bb424dadb7b159856a326 # v4.4.0
+
+      - name: Run Tests
+        working-directory: backend
+        run: gradle test -PintegrationTest
+
+      - name: Set tag
+        id: set-tag
+        env:
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          if [[ "$BRANCH" == "main" || "$BRANCH" == "master" ]]; then
+            echo "image_tag=latest" >> $GITHUB_OUTPUT
+          else
+            echo "image_tag=prebuild-temp" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Login to Github Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha,format=long
+            type=raw,value=${{ steps.set-tag.outputs.image_tag }}
+
+      - name: Build docker and push
+        id: build-docker
+        uses: docker/build-push-action@v6
+        with:
+          push: ${{ !github.event.pull_request.draft }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Set output with build values
+        id: setOutput
+        run: |
+          echo "image=${{ env.IMAGE_NAME }}@${{ steps.build-docker.outputs.digest }}" >> $GITHUB_OUTPUT
+
+  pharos:
+    name: Run Pharos
+    needs: build
+    permissions:
+      actions: read
+      packages: read
+      contents: read
+      security-events: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Run Pharos"
+        uses: kartverket/pharos@v0.2.5
+        with:
+          image_url: ${{ env.REGISTRY }}/${{ needs.build.outputs.image }}
+
+  deploy-dev:
+    name: Deploy to dev
+    if: github.ref == 'refs/heads/main'
+    needs: [build, pharos]
+    runs-on: ubuntu-latest
+    environment:
+      name: dev
+    permissions:
+      id-token: write
+    steps:
+      - name: Set Docker image URL
+        run: echo "IMAGE_URL=${{ env.REGISTRY }}/${{ needs.build.outputs.image }}" >> $GITHUB_ENV
+
+      - uses: octo-sts/action@6177b4481c00308b3839969c3eca88c96a91775f # v1.0.0
+        id: octo-sts
+        with:
+          scope: kartverket/skvis-apps
+          identity: regelrett
+      - name: Checkout skvis-apps
+        uses: actions/checkout@v4
+        with:
+          repository: kartverket/skvis-apps
+          ref: main
+          token: ${{ steps.octo-sts.outputs.token }}
+      - name: Update version
+        run: |
+          echo "\"${{ env.IMAGE_URL }}\"" > "env/atgcp1-dev/regelrett-main/${{ env.ARGO_VERSION_FILE }}"
+          git config --global user.email "noreply@kartverket.no"
+          git config --global user.name "Regelrett CI"
+          git pull
+          git commit -am "Update ${{ env.ARGO_VERSION_FILE }}"
+          git push
+
+  deploy-prod:
+    name: Deploy to prod
+    if: github.ref == 'refs/heads/main'
+    needs: [build, deploy-dev]
+    runs-on: ubuntu-latest
+    environment:
+      name: prod
+    permissions:
+      id-token: write
+    steps:
+      - name: Set Docker image URL
+        run: echo "IMAGE_URL=${{ env.REGISTRY }}/${{ needs.build.outputs.image }}" >> $GITHUB_ENV
+
+      - uses: octo-sts/action@6177b4481c00308b3839969c3eca88c96a91775f # v1.0.0
+        id: octo-sts
+        with:
+          scope: kartverket/skvis-apps
+          identity: regelrett
+      - name: Checkout skvis-apps
+        uses: actions/checkout@v4
+        with:
+          repository: kartverket/skvis-apps
+          ref: main
+          token: ${{ steps.octo-sts.outputs.token }}
+      - name: Update version
+        run: |
+          echo "\"${{ env.IMAGE_URL }}\"" > "env/atgcp1-prod/regelrett-main/${{ env.ARGO_VERSION_FILE }}"
+          git config --global user.email "noreply@kartverket.no"
+          git config --global user.name "Regelrett CI"
+          git pull
+          git commit -am "Update ${{ env.ARGO_VERSION_FILE }}"
+          git push
