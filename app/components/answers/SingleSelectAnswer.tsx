@@ -69,6 +69,7 @@ export function SingleSelectAnswer({
         submitAnswer={submitAnswer}
         value={value}
         answerExpiry={answerExpiry}
+        disabled={disabled}
       />
     </div>
   );

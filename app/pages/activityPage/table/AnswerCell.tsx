@@ -10,6 +10,8 @@ import { CheckboxAnswer } from "@/components/answers/CheckboxAnswer";
 import { useSubmitAnswer } from "@/hooks/useAnswers";
 import { useIsMutating } from "@tanstack/react-query";
 import MultiSelectAnswer from "@/components/answers/MultiSelectAnswer";
+import { useContextPermissions } from "@/hooks/useContext";
+import { Spinner } from "@/components/Spinner";
 
 type Props = {
   value: string;
@@ -44,11 +46,19 @@ export function AnswerCell({
   const [answerInput, setAnswerInput] = useState<string | undefined>(value);
   const [answerUnit, setAnswerUnit] = useState<string | undefined>(unit);
 
+  const {
+    data: permissions,
+      isPending: permissionsIsPending,
+  } = useContextPermissions(contextId)
   const { mutate: submitAnswerHook } = useSubmitAnswer(contextId, recordId);
   const isMutating = useIsMutating({
     mutationKey: ["answers", contextId, recordId],
   });
-  const isDisabled = isMutating !== 0;
+
+  if (permissionsIsPending) return <Spinner></Spinner>
+
+
+  const isDisabled = isMutating !== 0 || !permissions?.canWrite;
 
   const submitAnswer = (newAnswer: string, unitAnswer?: string) => {
     submitAnswerHook({

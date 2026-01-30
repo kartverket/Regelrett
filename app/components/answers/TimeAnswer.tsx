@@ -106,6 +106,7 @@ export function TimeAnswer({
           submitAnswer={submitAnswer}
           value={value}
           unitAnswer={unit}
+          disabled={disabled}
         />
       )}
     </div>

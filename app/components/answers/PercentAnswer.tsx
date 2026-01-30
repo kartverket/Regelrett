@@ -62,6 +62,7 @@ export function PercentAnswer({
           answerExpiry={answerExpiry}
           submitAnswer={submitAnswer}
           value={value}
+          disabled={disabled}
         />
       )}
     </div>

@@ -38,6 +38,8 @@ class ContextIntegrationTest {
 
             override suspend fun hasContextAccess(call: ApplicationCall, contextId: String): Boolean = true
 
+            override suspend fun hasReadContextAccess(call: ApplicationCall, contextId: String): Boolean = true
+
             override suspend fun getTeamIdFromName(call: ApplicationCall, teamName: String): String? = newTeamId
         }
         val contextRepository = ContextRepositoryImpl(database)

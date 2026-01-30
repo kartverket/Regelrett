@@ -136,6 +136,7 @@ export default function MultiDropdownMenuAnswer({
         }}
         value={selected.join(";")}
         answerExpiry={answerExpiry}
+        disabled={disabled}
       />
     </div>
   );
