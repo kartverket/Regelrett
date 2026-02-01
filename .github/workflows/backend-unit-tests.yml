@@ -28,7 +28,7 @@ jobs:
     continue-on-error: true
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     - name: Setup gradle
       uses: gradle/actions/setup-gradle@v4.4.3
     - name: Restore Gradle Cache
