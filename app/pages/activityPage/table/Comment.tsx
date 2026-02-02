@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Spinner } from "@/components/Spinner";
 import { Edit, Trash2, MessageSquarePlus, Check, X } from "lucide-react";
+import { useContextPermissions } from "@/hooks/useContext";
 
 // Replace with type from api when the internal data model is implemented
 type Props = {
@@ -37,6 +38,7 @@ export function Comment({
     setRowState,
   } = useCommentState(questionId);
   const [commentDeleted] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   const { mutate: submitComment, isPending: isLoading } = useSubmitComment(
     contextId,
@@ -44,7 +46,10 @@ export function Comment({
     setIsEditing,
   );
 
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const {
+    data: permissions,
+    isPending: permissionsIsPending,
+  } = useContextPermissions(contextId);
 
   const handleDiscardChanges = () => {
     setRowState(questionId, {
@@ -60,6 +65,13 @@ export function Comment({
       textArea.setSelectionRange(textArea.value.length, textArea.value.length);
     }
   }, [isEditMode]);
+
+  if (permissionsIsPending) {
+    return <Spinner></Spinner>;
+  }
+  if (!permissions) {
+    return;
+  }
 
   const handleKeyDown = (event: KeyboardEvent) => {
     if (textAreaRef.current !== document.activeElement) return;
@@ -80,6 +92,7 @@ export function Comment({
           onKeyDown={(ev) => {
             handleKeyDown(ev);
           }}
+          disabled={!permissions.canWrite}
         />
         <div className="flex gap-2">
           <Button
@@ -97,7 +110,7 @@ export function Comment({
                 });
               }
             }}
-            disabled={editedComment === comment || isLoading}
+            disabled={editedComment === comment || isLoading || !permissions.canWrite}
             className="bg-transparent has-[>svg]:px-2"
           >
             {isLoading ? <Spinner /> : <Check className="size-5" />}
@@ -109,7 +122,7 @@ export function Comment({
             onClick={() => {
               handleDiscardChanges();
             }}
-            disabled={isLoading}
+            disabled={isLoading || !permissions.canWrite}
             className="bg-transparent has-[>svg]:px-2"
           >
             <X className="size-5" />
@@ -132,6 +145,7 @@ export function Comment({
         }}
         className={`${updated ? "mb-0" : "mb-10"} bg-transparent has-[>svg]:px-2`}
         size="sm"
+        disabled={!permissions.canWrite}
       >
         <MessageSquarePlus className="size-5" />
       </Button>
@@ -156,6 +170,7 @@ export function Comment({
               });
             }}
             className="flex justify-start bg-transparent"
+            disabled={!permissions.canWrite}
           >
             <Edit className="size-5 " />
           </Button>
@@ -167,6 +182,7 @@ export function Comment({
               setIsDeleteOpen(true);
             }}
             className="flex justify-start bg-transparent"
+            disabled={!permissions.canWrite}
           >
             <Trash2 className="size-5" />
           </Button>

@@ -33,6 +33,7 @@ type Props = {
   user: User;
   contextId: string;
   isLoading: boolean;
+  hasWriteAccess: boolean;
 };
 
 export function TableComponent({
@@ -43,6 +44,7 @@ export function TableComponent({
   columnMetadata,
   filterByAnswer,
   isLoading,
+  hasWriteAccess,
 }: Props) {
   const [
     columnVisibility,
@@ -266,6 +268,7 @@ export function TableComponent({
             table={table}
           />
         </SkeletonLoader>
+        { hasWriteAccess &&
         <CSVDownload
           rows={
             table
@@ -274,6 +277,7 @@ export function TableComponent({
           }
           headerArray={headerNames}
         />
+        }
       </div>
       <TableActions
         tableMetadata={columnMetadata}

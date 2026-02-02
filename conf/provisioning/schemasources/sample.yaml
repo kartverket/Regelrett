@@ -33,6 +33,9 @@
 #     webhook_id: exampleid
 #     # <string, optional, for Airtable schema sources>
 #     webhook_secret: S3cr3t!
+#     # <string, optional, for Airtable and YAML scheams sources>
+#     # entra id group id which is given read access to specefied schema
+#     read_access_group_id:
 #     ##### Additional parameters for specifying Yaml schema     #####
 #     ##### sources.                                             #####
 #     # Either endpoint or resourcePath must be set

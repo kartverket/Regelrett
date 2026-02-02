@@ -26,7 +26,7 @@ fun rootComposer(config: Config): Dependencies {
             json()
         }
     }
-    val authService = AuthServiceImpl(MicrosoftServiceImpl(config, httpClient), contextRepository, config.oAuth)
+    val authService = AuthServiceImpl(MicrosoftServiceImpl(config, httpClient), contextRepository, config.oAuth, formService)
 
     return Dependencies(
         formService = formService,
