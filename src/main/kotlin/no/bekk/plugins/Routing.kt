@@ -87,7 +87,6 @@ fun Application.configureRouting(
             answerRouting(dependencies.authService, dependencies.answerRepository)
             commentRouting(dependencies.authService, dependencies.commentRepository)
             contextRouting(dependencies.authService, dependencies.answerRepository, dependencies.contextRepository, dependencies.commentRepository)
-            nameRouting(dependencies.authService, dependencies.contextRepository)
             formRouting(dependencies.formService)
             userInfoRouting(dependencies.authService)
             uploadCSVRouting(dependencies.authService, dependencies.database)
