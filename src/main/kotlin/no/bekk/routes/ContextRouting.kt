@@ -92,7 +92,7 @@ fun Route.contextRouting(
 
         get("/name") {
             val name = call.request.queryParameters["name"] ?: throw BadRequestException("Missing name")
-            logger.info("Received GET /name with function $name")
+            logger.info("Received GET /name with $name")
             val contexts = contextRepository.getContextsByName(name)
             for (context in contexts) {
                 if (!authService.hasContextAccess(call, context.id)) {

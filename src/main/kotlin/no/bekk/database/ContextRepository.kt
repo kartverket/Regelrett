@@ -93,7 +93,7 @@ class ContextRepositoryImpl(private val database: Database) : ContextRepository 
     }
 
     override fun getContextsByName(name: String): List<DatabaseContext> {
-        logger.debug("Fetching contexts for function: $name")
+        logger.debug("Fetching contexts for: $name")
         val sqlStatement = "SELECT * FROM contexts WHERE name = ?"
 
         return try {
@@ -115,13 +115,13 @@ class ContextRepositoryImpl(private val database: Database) : ContextRepository 
                             )
                         }
                     }.also {
-                        logger.debug("Successfully fetched contexts for function: $name")
+                        logger.debug("Successfully fetched contexts for: $name")
                     }
                 }
             }
         } catch (e: SQLException) {
-            logger.error("Error fetching contexts for function: $name", e)
-            throw RuntimeException("Error fetching contexts for function: $name from database", e)
+            logger.error("Error fetching contexts for: $name", e)
+            throw RuntimeException("Error fetching contexts for: $name from database", e)
         }
     }
 
