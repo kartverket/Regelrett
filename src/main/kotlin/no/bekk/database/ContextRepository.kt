@@ -17,6 +17,7 @@ interface ContextRepository {
     fun deleteContext(id: String): Boolean
     fun changeTeam(contextId: String, newTeamId: String): Boolean
     fun getContextMetrics(): List<DatabaseContextMetrics>
+    fun getContextsByName(name: String): List<DatabaseContext>
 }
 
 class ContextRepositoryImpl(private val database: Database) : ContextRepository {
@@ -88,6 +89,39 @@ class ContextRepositoryImpl(private val database: Database) : ContextRepository 
         } catch (e: SQLException) {
             logger.error("Error fetching contexts for team: $teamId", e)
             throw RuntimeException("Error fetching contexts for team: $teamId from database", e)
+        }
+    }
+
+    override fun getContextsByName(name: String): List<DatabaseContext> {
+        logger.debug("Fetching contexts for: $name")
+        val sqlStatement = "SELECT * FROM contexts WHERE name = ?"
+
+        return try {
+            database.getConnection().use { conn ->
+                conn.prepareStatement(sqlStatement).use { statement ->
+                    statement.setString(1, name)
+
+                    val result = statement.executeQuery()
+
+                    buildList {
+                        while (result.next()) {
+                            add(
+                                DatabaseContext(
+                                    id = result.getString("id"),
+                                    teamId = result.getString("team_id"),
+                                    formId = result.getString("table_id"),
+                                    name = result.getString("name"),
+                                ),
+                            )
+                        }
+                    }.also {
+                        logger.debug("Successfully fetched contexts for: $name")
+                    }
+                }
+            }
+        } catch (e: SQLException) {
+            logger.error("Error fetching contexts for: $name", e)
+            throw RuntimeException("Error fetching contexts for: $name from database", e)
         }
     }
 
