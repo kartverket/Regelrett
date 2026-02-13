@@ -33,13 +33,9 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-      - name: Debug Docker
+      - name: Ensure Docker is running
         run: |
-          whoami
-          docker version || echo "Docker not found"
-          ls -la /var/run/docker.sock || echo "No Docker socket"
+          sudo systemctl start docker
+          docker info
       - name: Run Integration tests
         run: ./gradlew test -PintegrationTest --no-daemon
-
-
-
