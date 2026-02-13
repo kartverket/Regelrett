@@ -64,7 +64,8 @@ jobs:
         uses: gradle/actions/setup-gradle@8379f6a1328ee0e06e2bb424dadb7b159856a326 # v4.4.0
 
       - name: Run Tests
-        run: ./gradlew test -PintegrationTest --no-daemon
+        working-directory: backend
+        run: gradle test -PintegrationTest
 
       - name: Set tag
         id: set-tag
