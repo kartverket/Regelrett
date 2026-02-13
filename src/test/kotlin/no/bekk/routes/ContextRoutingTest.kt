@@ -207,6 +207,36 @@ class ContextRoutingTest {
     }
 
     @Test
+    fun `get context by name`() = testApplication {
+        val mockedContext = DatabaseContext(
+            id = "id",
+            teamId = "teamId",
+            formId = "formId",
+            name = "name",
+        )
+
+        application {
+            testModule(
+                contextRepository = object : MockContextRepository {
+                    override fun getContextsByName(name: String): List<DatabaseContext> = listOf(mockedContext)
+                },
+                authService = object : MockAuthService {
+                    override suspend fun hasContextAccess(call: ApplicationCall, contextId: String): Boolean = true
+                },
+            )
+        }
+
+        val response = client.get("/api/contexts/name?name=${mockedContext.name}") {
+            header(HttpHeaders.Authorization, "Bearer ${generateTestToken()}")
+        }
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        val fetchedContextList: List<DatabaseContext> = Json.decodeFromString(response.bodyAsText())
+        assertEquals(1, fetchedContextList.size)
+        assertEquals(mockedContext, fetchedContextList.first())
+    }
+
+    @Test
     fun `get context missing teamId returns BadRequest`() = testApplication {
         application {
             testModule()
