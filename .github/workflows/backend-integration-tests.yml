@@ -14,7 +14,7 @@ concurrency:
 jobs:
   postgres:
     name: Postgres
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout code
@@ -33,9 +33,5 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-      - name: Ensure Docker is running
-        run: |
-          sudo systemctl start docker
-          docker info
       - name: Run Integration tests
         run: ./gradlew test -PintegrationTest --no-daemon
