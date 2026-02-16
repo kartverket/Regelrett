@@ -63,11 +63,6 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@8379f6a1328ee0e06e2bb424dadb7b159856a326 # v4.4.0
 
-      - name: Ensure Docker is running
-        run: |
-          sudo systemctl start docker
-          docker info
-
       - name: Run Tests
         run: ./gradlew test -PintegrationTest --no-daemon
 
