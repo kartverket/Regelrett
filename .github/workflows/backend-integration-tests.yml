@@ -14,11 +14,16 @@ concurrency:
 jobs:
   postgres:
     name: Postgres
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
       - name: Setup gradle
         uses: gradle/actions/setup-gradle@v4.4.3
       - name: Setup postgres
@@ -34,7 +39,7 @@ jobs:
             ~/.gradle/caches
             ~/.gradle/wrapper
       - name: Run Integration tests
+        env:
+          DOCKER_HOST: unix:///var/run/docker.sock
+          TESTCONTAINERS_RYUK_DISABLED: true
         run: ./gradlew test -PintegrationTest --no-daemon
-
-
-
