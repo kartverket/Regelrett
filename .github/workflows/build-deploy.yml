@@ -24,7 +24,7 @@ permissions:
 env:
   REGION: europe-north1
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: kartverket/regelrett
   ARGO_VERSION_FILE: image-url-regelrett
 
 jobs:
@@ -64,8 +64,7 @@ jobs:
         uses: gradle/actions/setup-gradle@8379f6a1328ee0e06e2bb424dadb7b159856a326 # v4.4.0
 
       - name: Run Tests
-        working-directory: backend
-        run: gradle test -PintegrationTest
+        run: ./gradlew test -PintegrationTest --no-daemon
 
       - name: Set tag
         id: set-tag
