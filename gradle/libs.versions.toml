@@ -9,7 +9,7 @@ ajalt-clikt-version = "5.0.3"
 mamoe-yamlkt-version = "0.13.0"
 zaxxer-hikari-version = "7.0.2"
 ben-manes-caffeine-version = "3.2.2"
-testcontainers-version = "2.0.2"
+testcontainers-version = "1.21.4"
 postgresql-driver-version = "42.7.7"
 ktlint-version = "13.1.0"
 
