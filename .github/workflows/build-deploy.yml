@@ -24,7 +24,7 @@ permissions:
 env:
   REGION: europe-north1
   REGISTRY: ghcr.io
-  IMAGE_NAME: regelrett
+  IMAGE_NAME: kartverket/regelrett
   ARGO_VERSION_FILE: image-url-regelrett
 
 jobs:
