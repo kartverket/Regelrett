@@ -39,4 +39,7 @@ jobs:
             ~/.gradle/caches
             ~/.gradle/wrapper
       - name: Run Integration tests
+        env:
+          DOCKER_HOST: unix:///var/run/docker.sock
+          TESTCONTAINERS_RYUK_DISABLED: true
         run: ./gradlew test -PintegrationTest --no-daemon
