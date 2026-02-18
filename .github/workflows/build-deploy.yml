@@ -61,7 +61,7 @@ jobs:
         run: docker pull postgres:15-alpine
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@8379f6a1328ee0e06e2bb424dadb7b159856a326 # v4.4.0
+        uses: gradle/actions/setup-gradle@78f7dee6337f393c0a872d0afbda4c51a20e543d # v4.4.0
 
       - name: Run Tests
         run: ./gradlew test -PintegrationTest --no-daemon
