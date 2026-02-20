@@ -33,6 +33,21 @@ axios.interceptors.request.use(
   },
 );
 
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (
+      error.response?.status === 401 &&
+      !window.location.pathname.startsWith("/login")
+    ) {
+      window.location.replace("/login");
+      return;
+    }
+    return Promise.reject(error);
+  },
+);
+
+
 /**
  * Generic fetch function to be used as queryFn and mutationFn in TanStack Query
  * @param {Object} options - The options object for the Axios request
