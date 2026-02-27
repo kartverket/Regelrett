@@ -8,11 +8,16 @@ import io.ktor.server.testing.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import no.bekk.MockAuthService
+import no.bekk.MockFormService
 import no.bekk.TestUtils.generateTestToken
 import no.bekk.TestUtils.testModule
 import no.bekk.database.DatabaseContext
+import no.bekk.database.DatabaseContextWithMetrics
+import no.bekk.database.DatabaseContextMetrics
 import no.bekk.database.DatabaseContextRequest
 import no.bekk.exception.ConflictException
+import no.bekk.model.internal.Form
+import no.bekk.providers.FormProvider
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -485,5 +490,73 @@ class ContextRoutingTest {
             setBody(Json.encodeToString(CopyContextRequest("contextToCopyFrom")))
         }
         assertEquals(HttpStatusCode.Forbidden, response.status)
+    }
+
+    @Test
+    fun `get context by name with includeMetrics returns metrics`() = testApplication {
+        val mockedContext = DatabaseContext(
+            id = "id",
+            teamId = "teamId",
+            formId = "formId",
+            name = "name",
+        )
+        val mockedQuestion = no.bekk.model.internal.Question(
+            id = "q1",
+            recordId = "rec1",
+            question = "Test question",
+            metadata = no.bekk.model.internal.QuestionMetadata(
+                answerMetadata = no.bekk.model.internal.AnswerMetadata(
+                    type = no.bekk.model.internal.AnswerType.TEXT_SINGLE_LINE,
+                    expiry = 30,
+                ),
+            ),
+        )
+        val expiredAnswer = no.bekk.database.DatabaseAnswer(
+            actor = "actor",
+            recordId = "rec1",
+            questionId = "q1",
+            answer = "some answer",
+            updated = "2020-01-01T00:00:00",
+            answerType = "TEXT_SINGLE_LINE",
+            answerUnit = null,
+            contextId = "id",
+        )
+        val mockedForm = Form(id = "formId", name = "formName", columns = emptyList(), records = listOf(mockedQuestion))
+
+        application {
+            testModule(
+                contextRepository = object : MockContextRepository {
+                    override fun getContextsByName(name: String): List<DatabaseContext> = listOf(mockedContext)
+                },
+                answerRepository = object : MockAnswerRepository {
+                    override fun getLatestAnswersByContextIdFromDatabase(contextId: String): List<no.bekk.database.DatabaseAnswer> = listOf(expiredAnswer)
+                },
+                authService = object : MockAuthService {
+                    override suspend fun hasContextAccess(call: ApplicationCall, contextId: String): Boolean = true
+                },
+                formService = object : MockFormService {
+                    override fun getFormProvider(formId: String): FormProvider = object : FormProvider {
+                        override val name = "formName"
+                        override val id = "formId"
+                        override val readAccessGroupId: String? = null
+                        override suspend fun getForm(): Form = mockedForm
+                        override suspend fun getQuestion(recordId: String) = TODO()
+                        override suspend fun getColumns() = emptyList<no.bekk.model.internal.Column>()
+                        override suspend fun getSchema() = no.bekk.model.internal.Schema("formId", "formName")
+                    }
+                },
+            )
+        }
+
+        val response = client.get("/api/contexts/name?name=${mockedContext.name}&includeMetrics=true") {
+            header(HttpHeaders.Authorization, "Bearer ${generateTestToken()}")
+        }
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        val result: List<DatabaseContextWithMetrics> = Json.decodeFromString(response.bodyAsText())
+        assertEquals(1, result.size)
+        val item = result.first()
+        assertEquals(mockedContext.id, item.id)
+        assertEquals(1, item.expiredCount)
     }
 }
