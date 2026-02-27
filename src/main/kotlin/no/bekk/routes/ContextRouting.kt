@@ -10,10 +10,12 @@ import kotlinx.serialization.json.Json
 import no.bekk.authentication.AuthService
 import no.bekk.database.*
 import no.bekk.exception.ConflictException
+import no.bekk.model.internal.Question
 import no.bekk.plugins.ErrorHandlers
 import no.bekk.services.FormService
 import no.bekk.util.RequestContext.getRequestInfo
 import org.slf4j.LoggerFactory
+import kotlin.collections.get
 
 fun Route.contextRouting(
     authService: AuthService,
@@ -75,7 +77,8 @@ fun Route.contextRouting(
         get {
             val teamId = call.request.queryParameters["teamId"] ?: throw BadRequestException("Missing teamId parameter")
             val formId = call.request.queryParameters["formId"]
-            logger.info("Received GET /contexts with teamId $teamId with formId $formId")
+            val includeMetrics = call.request.queryParameters["includeMetrics"] == "true"
+            logger.info("Received GET /contexts with teamId $teamId with formId $formId (includeMetrics=$includeMetrics)")
             if (!authService.hasTeamAccess(call, teamId)) {
                 call.respond(HttpStatusCode.Forbidden)
                 return@get
@@ -87,8 +90,20 @@ fun Route.contextRouting(
                 return@get
             } else {
                 val contexts = contextRepository.getContextsByTeamId(teamId)
+                if(includeMetrics){
+                    val questions = try {
+                        formService.getFormProvider(contexts.first().formId).getForm().records
+                    } catch (e: Exception) {
+                        emptyList()
+                    }
+                    val latestAnswersByContextId = contexts.associate { ctx ->
+                        ctx.id to answerRepository.getLatestAnswersByContextIdFromDatabase(ctx.id).associateBy { it.recordId }
+                    }
+
+                    call.respond(HttpStatusCode.OK, Json.encodeToString(buildContextMetrics(contexts, questions, latestAnswersByContextId)))
+                }else{
                 call.respond(HttpStatusCode.OK, Json.encodeToString(contexts))
-                return@get
+                return@get}
             }
         }
 
@@ -104,30 +119,16 @@ fun Route.contextRouting(
                 }
             }
             if (includeMetrics) {
-                val today = java.time.LocalDate.now()
-                val response = contexts.map { ctx ->
-                    val questions = try {
-                        formService.getFormProvider(ctx.formId).getForm().records
-                    } catch (e: Exception) {
-                        emptyList()
-                    }
-                    val latestAnswers = answerRepository.getLatestAnswersByContextIdFromDatabase(ctx.id)
-                        .associateBy { it.recordId }
-                    val expiredCount = questions.count { q ->
-                        val expiry = q.metadata.answerMetadata.expiry ?: return@count false
-                        val answer = latestAnswers[q.recordId] ?: return@count false
-                        val updatedDate = java.time.LocalDate.parse(answer.updated.substring(0, 10))
-                        updatedDate.plusDays(expiry.toLong()).isBefore(today)
-                    }
-                    DatabaseContextWithMetrics(
-                        id = ctx.id,
-                        teamId = ctx.teamId,
-                        formId = ctx.formId,
-                        name = ctx.name,
-                        expiredCount = expiredCount,
-                    )
+                val questions = try {
+                    formService.getFormProvider(contexts.first().formId).getForm().records
+                } catch (e: Exception) {
+                    emptyList()
                 }
-                call.respond(HttpStatusCode.OK, Json.encodeToString(response))
+                val latestAnswersByContextId = contexts.associate { ctx ->
+                    ctx.id to answerRepository.getLatestAnswersByContextIdFromDatabase(ctx.id).associateBy { it.recordId }
+                }
+
+                call.respond(HttpStatusCode.OK, Json.encodeToString(buildContextMetrics(contexts, questions, latestAnswersByContextId)))
             } else {
                 call.respond(HttpStatusCode.OK, Json.encodeToString(contexts))
             }
@@ -257,6 +258,33 @@ fun Route.contextRouting(
                 }
             }
         }
+    }
+}
+
+fun buildContextMetrics(
+    contexts: List<DatabaseContext>,
+    questions: List<Question>,
+    latestAnswersByContextId: Map<String, Map<String, DatabaseAnswer>>,
+): List<DatabaseContextWithMetrics> {
+    val today = java.time.LocalDate.now()
+    return contexts.map { ctx ->
+        val latestAnswers = latestAnswersByContextId[ctx.id] ?: emptyMap()
+        val expiredCount = questions.count { q ->
+            val expiry = q.metadata.answerMetadata.expiry ?: return@count false
+            val answer = latestAnswers[q.recordId] ?: return@count false
+            val updatedDate = java.time.LocalDate.parse(answer.updated.substring(0, 10))
+            updatedDate.plusDays(expiry.toLong()).isBefore(today)
+        }
+        val answeredCount = questions.count { q -> latestAnswers.containsKey(q.recordId) }
+        DatabaseContextWithMetrics(
+            id = ctx.id,
+            teamId = ctx.teamId,
+            formId = ctx.formId,
+            name = ctx.name,
+            expiredCount = expiredCount,
+            answeredCount = answeredCount,
+            totalCount = questions.size,
+        )
     }
 }
 

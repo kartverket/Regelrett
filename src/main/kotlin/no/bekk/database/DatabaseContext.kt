@@ -35,6 +35,8 @@ data class DatabaseContextWithMetrics(
     val formId: String,
     val name: String,
     val expiredCount: Int,
+    val answeredCount: Int,
+    val totalCount: Int,
 )
 
 @Serializable
