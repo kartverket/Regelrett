@@ -11,6 +11,7 @@ import no.bekk.authentication.AuthService
 import no.bekk.database.*
 import no.bekk.exception.ConflictException
 import no.bekk.plugins.ErrorHandlers
+import no.bekk.services.FormService
 import no.bekk.util.RequestContext.getRequestInfo
 import org.slf4j.LoggerFactory
 
@@ -19,6 +20,7 @@ fun Route.contextRouting(
     answerRepository: AnswerRepository,
     contextRepository: ContextRepository,
     commentRepository: CommentRepository,
+    formService: FormService,
 ) {
     val logger = LoggerFactory.getLogger("no.bekk.routes.ContextRouting")
     route("/contexts") {
@@ -92,7 +94,8 @@ fun Route.contextRouting(
 
         get("/name") {
             val name = call.request.queryParameters["name"] ?: throw BadRequestException("Missing name")
-            logger.info("Received GET /name with $name")
+            val includeMetrics = call.request.queryParameters["includeMetrics"] == "true"
+            logger.info("Received GET /name with $name (includeMetrics=$includeMetrics)")
             val contexts = contextRepository.getContextsByName(name)
             for (context in contexts) {
                 if (!authService.hasContextAccess(call, context.id)) {
@@ -100,7 +103,34 @@ fun Route.contextRouting(
                     return@get
                 }
             }
-            call.respond(HttpStatusCode.OK, Json.encodeToString(contexts))
+            if (includeMetrics) {
+                val today = java.time.LocalDate.now()
+                val response = contexts.map { ctx ->
+                    val questions = try {
+                        formService.getFormProvider(ctx.formId).getForm().records
+                    } catch (e: Exception) {
+                        emptyList()
+                    }
+                    val latestAnswers = answerRepository.getLatestAnswersByContextIdFromDatabase(ctx.id)
+                        .associateBy { it.recordId }
+                    val expiredCount = questions.count { q ->
+                        val expiry = q.metadata.answerMetadata.expiry ?: return@count false
+                        val answer = latestAnswers[q.recordId] ?: return@count false
+                        val updatedDate = java.time.LocalDate.parse(answer.updated.substring(0, 10))
+                        updatedDate.plusDays(expiry.toLong()).isBefore(today)
+                    }
+                    DatabaseContextWithMetrics(
+                        id = ctx.id,
+                        teamId = ctx.teamId,
+                        formId = ctx.formId,
+                        name = ctx.name,
+                        expiredCount = expiredCount,
+                    )
+                }
+                call.respond(HttpStatusCode.OK, Json.encodeToString(response))
+            } else {
+                call.respond(HttpStatusCode.OK, Json.encodeToString(contexts))
+            }
             return@get
         }
 
