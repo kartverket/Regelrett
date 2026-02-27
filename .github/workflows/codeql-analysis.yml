@@ -38,7 +38,7 @@ jobs:
       uses: gradle/actions/setup-gradle@v4.4.3
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
+      uses: github/codeql-action/init@v4
       with:
         languages: ${{ matrix.language }}
 
@@ -48,4 +48,4 @@ jobs:
         ./gradlew --no-daemon -Dorg.gradle.jvmargs=-Xmx2g clean test
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
+      uses: github/codeql-action/analyze@v4
