@@ -10,12 +10,16 @@ val RequestLoggingPlugin =
     createApplicationPlugin(name = "RequestLoggingPlugin") {
         val logger = LoggerFactory.getLogger("no.bekk.plugins.RequestLogging")
         onCall { call ->
-            call.request.origin.apply {
-                logger.info("${call.getRequestInfo()} Request started")
+            if (call.request.uri != "/health") {
+                call.request.origin.apply {
+                    logger.info("${call.getRequestInfo()} Request started")
+                }
             }
         }
 
         onCallRespond { call ->
-            logger.info("${call.getRequestInfo()} Response: ${call.response.status()}")
+            if (call.request.uri != "/health") {
+                logger.info("${call.getRequestInfo()} Response: ${call.response.status()}")
+            }
         }
     }

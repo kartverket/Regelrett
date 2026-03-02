@@ -20,6 +20,7 @@ fun Route.formRouting(formService: FormService) {
                 val forms = formService.getFormProviders().map {
                     it.getForm().let { FormsMetadataDto(it.id, it.name) }
                 }
+                logger.info("${call.getRequestInfo()} Successfully retrieved ${forms.size} forms")
                 call.respond(HttpStatusCode.OK, forms)
             } catch (e: Exception) {
                 logger.error("${call.getRequestInfo()} Error retrieving forms", e)
@@ -38,6 +39,7 @@ fun Route.formRouting(formService: FormService) {
                 }
 
                 val table = formService.getFormProvider(formId).getForm()
+                logger.info("${call.getRequestInfo()} Form found: $formId")
                 call.respond(HttpStatusCode.OK, table)
             } catch (e: ValidationException) {
                 ErrorHandlers.handleValidationException(call, e)

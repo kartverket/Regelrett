@@ -279,7 +279,7 @@ class AirTableProvider(
                 true
             }
             else -> {
-                logger.error("Failed to refresh webhook $webhookId with status $responseStatus")
+                logger.warn("Failed to refresh webhook $webhookId for table $tableId with status $responseStatus")
                 false
             }
         }
