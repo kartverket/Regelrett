@@ -117,9 +117,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Run Pharos"
-        uses: kartverket/pharos@v0.2.5
+        uses: kartverket/pharos@test-sysdig-scanner
         with:
-          image_url: ${{ env.REGISTRY }}/${{ needs.build.outputs.image }}
+          image_url: ${{ env.REGISTRY }}/${{ needs.build.outputs.image }}          
+          tfsec: false
+          trivy: true # TODO: change to false to only scan with sysdig
+          sysdig: true
+          sysdig_token: ${{ secrets.SECURE_API_TOKEN }}
 
   deploy-dev:
     name: Deploy to dev
