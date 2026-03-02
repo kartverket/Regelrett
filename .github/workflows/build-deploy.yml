@@ -121,7 +121,7 @@ jobs:
         with:
           image_url: ${{ env.REGISTRY }}/${{ needs.build.outputs.image }}          
           tfsec: false
-          trivy: true # TODO: change to false to only scan with sysdig
+          trivy: false # TODO: change to false to only scan with sysdig
           sysdig: true
           sysdig_token: ${{ secrets.SECURE_API_TOKEN }}
 
