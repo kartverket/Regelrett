@@ -86,7 +86,7 @@ fun Application.configureRouting(
         route("/api") {
             answerRouting(dependencies.authService, dependencies.answerRepository)
             commentRouting(dependencies.authService, dependencies.commentRepository)
-            contextRouting(dependencies.authService, dependencies.answerRepository, dependencies.contextRepository, dependencies.commentRepository, dependencies.formService)
+            contextRouting(dependencies.authService, dependencies.answerRepository, dependencies.contextRepository, dependencies.commentRepository)
             formRouting(dependencies.formService)
             userInfoRouting(dependencies.authService)
             uploadCSVRouting(dependencies.authService, dependencies.database)
