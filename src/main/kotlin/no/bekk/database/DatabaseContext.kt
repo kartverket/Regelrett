@@ -29,11 +29,22 @@ data class DatabaseContextRequest(
 )
 
 @Serializable
+data class DatabaseContextWithMetrics(
+    val id: String,
+    val teamId: String,
+    val formId: String,
+    val name: String,
+    val expiredCount: Int,
+    val answeredCount: Int,
+    val totalCount: Int,
+)
+
+@Serializable
 data class DatabaseContextMetrics(
     val id: String,
     val teamId: String,
     val formId: String,
     val name: String,
-    val answerCount: Int,
+    val answerCount: Int = 0,
     val oldestUpdate: String?,
 )
