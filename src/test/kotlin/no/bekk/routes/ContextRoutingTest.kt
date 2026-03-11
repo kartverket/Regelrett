@@ -12,9 +12,8 @@ import no.bekk.MockFormService
 import no.bekk.TestUtils.generateTestToken
 import no.bekk.TestUtils.testModule
 import no.bekk.database.DatabaseContext
-import no.bekk.database.DatabaseContextWithMetrics
-import no.bekk.database.DatabaseContextMetrics
 import no.bekk.database.DatabaseContextRequest
+import no.bekk.database.DatabaseContextWithMetrics
 import no.bekk.exception.ConflictException
 import no.bekk.model.internal.Form
 import no.bekk.providers.FormProvider

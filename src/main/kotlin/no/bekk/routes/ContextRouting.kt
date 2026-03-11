@@ -90,20 +90,23 @@ fun Route.contextRouting(
                 return@get
             } else {
                 val contexts = contextRepository.getContextsByTeamId(teamId)
-                if(includeMetrics){
-                    val questions = try {
-                        formService.getFormProvider(contexts.first().formId).getForm().records
-                    } catch (e: Exception) {
-                        emptyList()
-                    }
+                if (includeMetrics) {
                     val latestAnswersByContextId = contexts.associate { ctx ->
                         ctx.id to answerRepository.getLatestAnswersByContextIdFromDatabase(ctx.id).associateBy { it.recordId }
                     }
-
-                    call.respond(HttpStatusCode.OK, Json.encodeToString(buildContextMetrics(contexts, questions, latestAnswersByContextId)))
-                }else{
-                call.respond(HttpStatusCode.OK, Json.encodeToString(contexts))
-                return@get}
+                    val allMetrics = contexts.groupBy { it.formId }.flatMap { (formId, contextsForForm) ->
+                        val questions = try {
+                            formService.getFormProvider(formId).getForm().records
+                        } catch (e: Exception) {
+                            emptyList()
+                        }
+                        buildContextMetrics(contextsForForm, questions, latestAnswersByContextId)
+                    }
+                    call.respond(HttpStatusCode.OK, Json.encodeToString(allMetrics))
+                } else {
+                    call.respond(HttpStatusCode.OK, Json.encodeToString(contexts))
+                    return@get
+                }
             }
         }
 
@@ -119,16 +122,18 @@ fun Route.contextRouting(
                 }
             }
             if (includeMetrics) {
-                val questions = try {
-                    formService.getFormProvider(contexts.first().formId).getForm().records
-                } catch (e: Exception) {
-                    emptyList()
-                }
                 val latestAnswersByContextId = contexts.associate { ctx ->
                     ctx.id to answerRepository.getLatestAnswersByContextIdFromDatabase(ctx.id).associateBy { it.recordId }
                 }
-
-                call.respond(HttpStatusCode.OK, Json.encodeToString(buildContextMetrics(contexts, questions, latestAnswersByContextId)))
+                val allMetrics = contexts.groupBy { it.formId }.flatMap { (formId, contextsForForm) ->
+                    val questions = try {
+                        formService.getFormProvider(formId).getForm().records
+                    } catch (e: Exception) {
+                        emptyList()
+                    }
+                    buildContextMetrics(contextsForForm, questions, latestAnswersByContextId)
+                }
+                call.respond(HttpStatusCode.OK, Json.encodeToString(allMetrics))
             } else {
                 call.respond(HttpStatusCode.OK, Json.encodeToString(contexts))
             }
