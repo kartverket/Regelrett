@@ -9,7 +9,7 @@ spec:
   type: "service"
   lifecycle: "production"
   owner: "skvis"
-  system: "funksjon-skjema-register"
+  system: "skjema-register"
   providesApis:
   - "regelrett-api"
 ---
@@ -41,3 +41,14 @@ spec:
     info:
         title: regelrett API
     paths:
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: skjema-register
+  title: Skjemaregister
+  labels:
+    gcp-project-id: skvis-prod-9329
+spec:
+  owner: skvis
