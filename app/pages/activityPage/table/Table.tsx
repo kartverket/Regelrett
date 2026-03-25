@@ -24,6 +24,7 @@ import { ColumnActions } from "@/pages/activityPage/table/ColumnActions";
 import { cn } from "@/lib/utils";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
 import { TableStatistics } from "../TableStatistics";
+import { isOlderThan } from "@/utils/formatTime";
 
 type Props = {
   columnMetadata: Column[];
@@ -167,7 +168,13 @@ export function TableComponent({
       filterFn: (row, _, filterValue) => {
         const latestAnswer = row.original.answers?.at(-1)?.answer;
         const status = latestAnswer ? "utfylt" : "ikke utfylt";
-        return filterValue.includes(status);
+        const expired = isOlderThan(
+          row.original.answers.at(-1)?.updated ?? new Date(),
+          row.original.metadata?.answerMetadata.expiry,
+        )
+          ? "utgaatt"
+          : "ikke utgaatt";
+        return filterValue.includes(status) || filterValue.includes(expired);
       },
       enableColumnFilter: true,
       header: () => null, // don't show header
