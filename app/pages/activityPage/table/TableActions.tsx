@@ -57,6 +57,7 @@ export const TableActions = <TData,>({
             filterOptions={[
               { name: "Utfylt", value: "utfylt" },
               { name: "Ikke utfylt", value: "ikke utfylt" },
+              { name: "Utgått", value: "utgaatt" },
             ]}
             filterName="Status"
             column={statusFilterKolonne}
