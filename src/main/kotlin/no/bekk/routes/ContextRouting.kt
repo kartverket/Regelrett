@@ -278,7 +278,7 @@ fun buildContextMetrics(
             val expiry = q.metadata.answerMetadata.expiry ?: return@count false
             val answer = latestAnswers[q.recordId] ?: return@count false
             val updatedDate = java.time.LocalDate.parse(answer.updated.substring(0, 10))
-            updatedDate.plusDays(expiry.toLong()).isBefore(today)
+            updatedDate.plusWeeks(expiry.toLong()).isBefore(today)
         }
         val answeredCount = questions.count { q -> latestAnswers.containsKey(q.recordId) }
         DatabaseContextWithMetrics(
