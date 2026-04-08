@@ -11,11 +11,16 @@ import no.bekk.MockAuthService
 import no.bekk.MockFormService
 import no.bekk.TestUtils.generateTestToken
 import no.bekk.TestUtils.testModule
+import no.bekk.database.DatabaseAnswer
 import no.bekk.database.DatabaseContext
 import no.bekk.database.DatabaseContextRequest
 import no.bekk.database.DatabaseContextWithMetrics
 import no.bekk.exception.ConflictException
+import no.bekk.model.internal.AnswerMetadata
+import no.bekk.model.internal.AnswerType
 import no.bekk.model.internal.Form
+import no.bekk.model.internal.Question
+import no.bekk.model.internal.QuestionMetadata
 import no.bekk.providers.FormProvider
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -499,18 +504,18 @@ class ContextRoutingTest {
             formId = "formId",
             name = "name",
         )
-        val mockedQuestion = no.bekk.model.internal.Question(
+        val mockedQuestion = Question(
             id = "q1",
             recordId = "rec1",
             question = "Test question",
-            metadata = no.bekk.model.internal.QuestionMetadata(
-                answerMetadata = no.bekk.model.internal.AnswerMetadata(
-                    type = no.bekk.model.internal.AnswerType.TEXT_SINGLE_LINE,
+            metadata = QuestionMetadata(
+                answerMetadata = AnswerMetadata(
+                    type = AnswerType.TEXT_SINGLE_LINE,
                     expiry = 30,
                 ),
             ),
         )
-        val expiredAnswer = no.bekk.database.DatabaseAnswer(
+        val expiredAnswer = DatabaseAnswer(
             actor = "actor",
             recordId = "rec1",
             questionId = "q1",
