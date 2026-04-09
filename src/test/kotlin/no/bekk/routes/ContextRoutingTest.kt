@@ -533,7 +533,7 @@ class ContextRoutingTest {
                     override fun getContextsByName(name: String): List<DatabaseContext> = listOf(mockedContext)
                 },
                 answerRepository = object : MockAnswerRepository {
-                    override fun getLatestAnswersByContextIdFromDatabase(contextId: String): List<no.bekk.database.DatabaseAnswer> = listOf(expiredAnswer)
+                    override fun getLatestAnswersByContextIdFromDatabase(contextId: String): List<DatabaseAnswer> = listOf(expiredAnswer)
                 },
                 authService = object : MockAuthService {
                     override suspend fun hasContextAccess(call: ApplicationCall, contextId: String): Boolean = true
