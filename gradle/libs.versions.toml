@@ -12,6 +12,7 @@ ben-manes-caffeine-version = "3.2.2"
 testcontainers-version = "1.21.4"
 postgresql-driver-version = "42.7.7"
 ktlint-version = "13.1.0"
+netty-version = "4.2.12.Final"
 
 [libraries]
 ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor-version" }
@@ -46,6 +47,7 @@ ben-manes-caffeine = { module = "com.github.ben-manes.caffeine:caffeine", versio
 testcontainers-testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers-version" }
 testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers-version" }
 junit-platform-launcher = { module = 'org.junit.platform:junit-platform-launcher' }
+netty-codec-http2 = { module='io.netty:netty-codec-http2', version.ref = 'netty-version' } #kan fjernes når ktor oppggraderer til å bruke ny versjon netty2
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-version" }
