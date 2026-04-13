@@ -2,8 +2,8 @@
 [versions]
 kotlin-version = "2.2.10"
 kotlinx-html-version = "0.12.0"
-ktor-version = "3.3.3"
-logback-version = "1.5.22"
+ktor-version = "3.4.2"
+logback-version = "1.5.25"
 flyway-version = "11.14.0"
 ajalt-clikt-version = "5.0.3"
 mamoe-yamlkt-version = "0.13.0"
@@ -47,7 +47,9 @@ ben-manes-caffeine = { module = "com.github.ben-manes.caffeine:caffeine", versio
 testcontainers-testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers-version" }
 testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers-version" }
 junit-platform-launcher = { module = 'org.junit.platform:junit-platform-launcher' }
+junit-jupiter = { module = 'org.junit.jupiter:junit-jupiter', version = "5.12.2" }
 netty-codec-http2 = { module='io.netty:netty-codec-http2', version.ref = 'netty-version' } #kan fjernes når ktor oppggraderer til å bruke ny versjon netty2
+
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-version" }
