@@ -63,11 +63,20 @@ export function TableComponent({
   const columnHelper = createColumnHelper<Question>();
 
   function urlFilterParamsToColumnFilterState(params: string[]) {
+    const filters: Record<string, string[]> = {
+      ...Object.fromEntries(
+      columnMetadata
+        .filter(({ name }) => filterByAnswer || name !== "Svar")
+        .map((col) => [col.name, col.options?.map((opt) => opt.name)]),
+    ),
+      Status: ["utgaatt", "ikke utfylt", "utfylt"]
+    };
     const grouped: Record<string, string[]> = {};
 
     for (const param of params) {
       const [id, ...rest] = param.split("_");
       const value = rest.join("_");
+      if(!filters[id]?.includes(value)) continue;
       grouped[id] = [...(grouped[id] ?? []), value];
     }
 
@@ -161,20 +170,27 @@ export function TableComponent({
   const statusColumn = columnHelper.accessor(
     (row) => {
       const answer = row.answers?.at(-1)?.answer;
-      return answer ? "utfylt" : "ikke utfylt";
+      const latest = row.answers?.at(-1);
+      const isExpired = isOlderThan(
+        latest?.updated ?? new Date(),
+        row.metadata?.answerMetadata.expiry,
+      );
+      return {
+        status: answer ? "utfylt" : "ikke utfylt",
+        expired: isExpired ? "utgaatt" : "ikke utgaatt",
+      };
     },
     {
       id: "Status",
-      filterFn: (row, _, filterValue) => {
-        const latestAnswer = row.original.answers?.at(-1)?.answer;
-        const status = latestAnswer ? "utfylt" : "ikke utfylt";
-        const expired = isOlderThan(
-          row.original.answers.at(-1)?.updated ?? new Date(),
-          row.original.metadata?.answerMetadata.expiry,
-        )
-          ? "utgaatt"
-          : "ikke utgaatt";
-        return filterValue.includes(status) || filterValue.includes(expired);
+      filterFn: (row, columnId, filterValue) => {
+        const value = row.getValue(columnId) as {
+          status: string;
+          expired: string;
+        };
+        return (
+          filterValue.includes(value.status) ||
+          filterValue.includes(value.expired)
+        );
       },
       enableColumnFilter: true,
       header: () => null, // don't show header
