@@ -47,7 +47,7 @@ ben-manes-caffeine = { module = "com.github.ben-manes.caffeine:caffeine", versio
 testcontainers-testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers-version" }
 testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers-version" }
 junit-platform-launcher = { module = 'org.junit.platform:junit-platform-launcher' }
-junit-jupiter = { module = 'org.junit.jupiter:junit-jupiter', version = "5.12.2" }
+junit-jupiter = { module = 'org.junit.jupiter:junit-jupiter', version = "6.0.3" }
 netty-codec-http2 = { module='io.netty:netty-codec-http2', version.ref = 'netty-version' } #kan fjernes når ktor oppggraderer til å bruke ny versjon netty2
 
 
