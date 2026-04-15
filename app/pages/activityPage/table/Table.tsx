@@ -63,7 +63,7 @@ export function TableComponent({
   const columnHelper = createColumnHelper<Question>();
 
   function urlFilterParamsToColumnFilterState(params: string[]) {
-    const filters: Record<string, string[]> = {
+    const allowedFilters: Record<string, string[]> = {
       ...Object.fromEntries(
       columnMetadata
         .filter(({ name }) => filterByAnswer || name !== "Svar")
@@ -76,7 +76,7 @@ export function TableComponent({
     for (const param of params) {
       const [id, ...rest] = param.split("_");
       const value = rest.join("_");
-      if(!filters[id]?.includes(value)) continue;
+      if (!allowedFilters[id]?.includes(value)) continue;
       grouped[id] = [...(grouped[id] ?? []), value];
     }
 
