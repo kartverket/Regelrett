@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-ARG BASE_IMAGE=eclipse-temurin:25.0.2_10-jre-alpine-3.23
+ARG BASE_IMAGE=eclipse-temurin:21-jre-alpine
 ARG JS_IMAGE=node:22-alpine
 ARG JS_PLATFORM=linux/amd64
 ARG GRADLE_IMAGE=gradle:8.14-jdk21-alpine
