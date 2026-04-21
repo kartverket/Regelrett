@@ -12,6 +12,8 @@ class TestDatabase {
         url = postgresContainer.jdbcUrl,
         username = postgresContainer.username,
         password = postgresContainer.password,
+        migrationUsername = postgresContainer.username,
+        migrationPassword = postgresContainer.password,
     )
 
     fun stopTestDatabase() {

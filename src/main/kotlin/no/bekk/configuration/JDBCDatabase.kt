@@ -25,7 +25,7 @@ class JDBCDatabase(
             .defaultSchema("regelrett")
             .dataSource(
                 dbConfig.url,
-                dbConfig.migrationUser,
+                dbConfig.migrationUsername,
                 dbConfig.migrationPassword,
             )
             .validateMigrationNaming(true)

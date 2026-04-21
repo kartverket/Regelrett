@@ -240,7 +240,7 @@ class ConfigBuilder {
             url = "jdbc:postgresql://$host/$name",
             username = username,
             password = password,
-            migrationUser = yaml.getStringOrNull("database", "migration_user") ?: username,
+            migrationUsername = yaml.getStringOrNull("database", "migration_user") ?: username,
             migrationPassword = yaml.getStringOrNull("database", "migration_password") ?: password,
         )
     }
