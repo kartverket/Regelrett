@@ -91,6 +91,8 @@ class DatabaseConfig(
     val url: String,
     val username: String,
     val password: String,
+    val migrationUser: String,
+    val migrationPassword: String,
 )
 
 class AnswerHistoryCleanupConfig(

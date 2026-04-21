@@ -75,6 +75,11 @@ database:
   user: "postgres"
   password: pwd
 
+  # Specify username and password for the db-migration. Usefull when you want to differentiate between privileges for the migration-user and application-user.
+  # If not set then migration-username and -password will match user and password set above or defaults.
+  migration_user: null
+  migration_password: null
+
   # Max idle conn setting default is 2
   max_idle_conn: 2
 
