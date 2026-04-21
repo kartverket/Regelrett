@@ -1,14 +1,14 @@
 import { useParams } from "react-router";
-import { Page } from "../../components/layout/Page";
+import { Page } from "@/components/layout/Page";
 import { TableComponent } from "./table/Table";
-import { useAnswers } from "../../hooks/useAnswers";
-import { useComments } from "../../hooks/useComments";
-import { useForm } from "../../hooks/useForm";
-import { mapTableDataRecords } from "../../utils/mapperUtil";
-import { AnswerType } from "../../api/types";
-import { ErrorState } from "../../components/ErrorState";
-import { useContext, useContextPermissions } from "../../hooks/useContext";
-import { useUser } from "../../hooks/useUser";
+import { useAnswers } from "@/hooks/useAnswers";
+import { useComments } from "@/hooks/useComments";
+import { useForm } from "@/hooks/useForm";
+import { mapTableDataRecords } from "@/utils/mapperUtil";
+import { AnswerType } from "@/api/types";
+import { ErrorState } from "@/components/ErrorState";
+import { useContext, useContextPermissions } from "@/hooks/useContext";
+import { useUser } from "@/hooks/useUser";
 import { useState } from "react";
 import { SettingsModal } from "./settingsModal/SettingsModal";
 import RedirectBackButton from "../../components/buttons/RedirectBackButton";
@@ -107,7 +107,7 @@ export default function ActivityPage() {
                   </p>
                   <div className="flex items-center">
                     <h3 className="text-2xl font-bold">{context?.name}</h3>
-                    {permissions?.canWrite ?? (
+                    {permissions?.canWrite && (
                       <Button
                         variant="ghost"
                         size="lg"
