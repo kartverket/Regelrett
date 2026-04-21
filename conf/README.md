@@ -266,6 +266,14 @@ The database user
 
 The database user's password. If the password contains `#`, `:` or `-` you have to wrap it with quotes. For example "#password"
 
+#### `migration_user`
+
+The database migration username. Usefull when you want to differentiate between privileges for the migration-user and application-user. If not set then migration-username will match the database user.
+
+#### `migration-password`
+
+The database migration user's password. Usefull when you want to differentiate between privileges for the migration-user and application-user. If not set then migration-password will match the database user.
+
 #### `max_idle_conn`
 
 The maximum number of connections in the idle connection pool.
