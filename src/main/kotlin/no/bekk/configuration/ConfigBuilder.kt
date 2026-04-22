@@ -234,10 +234,14 @@ class ConfigBuilder {
     fun buildDatabaseConfig(yaml: YamlConfig): DatabaseConfig {
         val host = yaml.getStringOrNull("database", "host") ?: "127.0.0.1:5432"
         val name = yaml.getStringOrNull("database", "name") ?: "regelrett"
+        val username = yaml.getStringOrNull("database", "user") ?: "postgres"
+        val password = yaml.getStringOrNull("database", "password") ?: ""
         return DatabaseConfig(
             url = "jdbc:postgresql://$host/$name",
-            username = yaml.getStringOrNull("database", "user") ?: "postgres",
-            password = yaml.getStringOrNull("database", "password") ?: "",
+            username = username,
+            password = password,
+            migrationUsername = yaml.getStringOrNull("database", "migration_user") ?: username,
+            migrationPassword = yaml.getStringOrNull("database", "migration_password") ?: password,
         )
     }
 

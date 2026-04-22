@@ -31,7 +31,7 @@ class ApplicationTest {
         microsoftGraph = MicrosoftGraphConfig("", "", ""),
         oAuth = OAuthConfig("https://test.com", "test", "", "", "", "", "", "", ""),
         server = ServerConfig("", "", "", 0, false, false, emptyList(), 4096, 8192, 8192),
-        database = DatabaseConfig("", "", ""),
+        database = DatabaseConfig("", "", "", "", ""),
         answerHistoryCleanup = AnswerHistoryCleanupConfig(""),
         frontendDevServer = FrontendDevServerConfig("", 0, "", ""),
         raw = YamlConfig(Yaml.decodeYamlMapFromString("value: null")),
