@@ -97,3 +97,95 @@ schemasources:
     # schema source relative to project resources.
     resource_path: /schemas/schema1
 ```
+### Schema structure
+While the schema structure is flexible, regelrett enforces certain requirements regarding format and required fields.
+
+A schema of type YAML should follow the structure outlined below.
+
+
+#### name
+Required, Specifies the name of the Schema.
+
+#### columns
+Defines the columns of the schema.
+
+Each column must include:
+
+`name`: The name of the column
+
+`type`: The column type. Supported values: OPTION_MULTIPLE, OPTION_SINGLE and TEXT
+
+For columns of type OPTION_MULTIPLE and OPTION_SINGLE, you may also define:
+- `options`: A list of allowed values
+- `color`: A color associated with each option
+This restricts the possible inputs for all records in that column.
+
+Important:
+The answer column must be named "svar"
+It must be the third column (index 3) in the column definition
+
+#### Records
+Represents the rows of the schema. Each record contains data corresponding to all defined columns. Each record must include:
+
+`id` : A unique identifier for the record.
+This value is not visible to the user, but the same value should also be inserted into a corresponding ID column.
+
+`metadata`: Contains metadata related to the record’s answer, as well as optional configuration.
+
+`answerMetadata`: Defines how the answer for the record should be handled. Contains the following fields:
+
+- `Type`: Required, select the type of this records answer, select between: `SELECT_MULTIPLE`,`SELECT_SINGLE`, `TEXT_MULTI_LINE`, `TEXT_SINGLE_LINE`, `PERCENT`, `CHECKBOX`, `TIME`
+
+- `Unit`: Optional, List of strings - specefy units of the answers.
+
+- `expiry`: Optional, int - set number of weeks an answer is valid, until it is flagged as expired in Regelrett
+
+`optionalFields`: Defines values for each column in the record.
+Each key must correspond to a column name
+Each value represents the data for that column in the given record
+
+
+```yaml
+name: "YAML-data" 
+columns: 
+  - type: "OPTION_SINGLE"  #Choose between OPTION_MULTIPLE, OPTION_SINGLE or TEXT
+    name: "Kortnavn" #Column name
+  - type: "OPTION_SINGLE"
+    name: "ID" #ID columns should always be included in every Schema. 
+  - type: "OPTION_SINGLE"
+    name: "Kontroller"
+  - type: "OPTION_SINGLE"
+    name: "Svar"
+  - type: "OPTION_SINGLE"
+    name: "Priority"
+    options: #Specefies the options for the entire column, meaning you can not overrirde theese options on the record specefications.
+      - name: "MÅ" 
+        color: "orangeDark1" #choose a color to go with you option thoriggout the entire column.
+      - name: "KAN"
+        color: "greenBright"
+records:
+  - id: "Z-420" #Mandatory recordID, not visible to user.
+    question: "How many countries are there in the world?" 
+    metadata:
+      answerMetadata:
+        type: "SELECT_SINGLE" #Sets this question's type to be a single-select drop-down menu with following options.
+        options: 
+          - "180"
+          - "190"
+          - "195"
+          - "205"
+      optionalFields:
+        - key: "ID"
+          value:
+            - "Z-420"
+        - key: "Kontroller"
+          value:
+            - "How many countries are there in the world?"
+        - key: "Kortnavn"
+          value:
+            - "Antall land"
+        - key: "Priority"
+          value:
+            - "MÅ"
+
+```
