@@ -34,7 +34,7 @@ class ConfigReader {
         val yamlConfigs = Yaml.decodeFromString<Configs>(serializer(), yamlFile)
 
         return yamlConfigs.copy(
-            yamlConfigs.schemasources.map {
+            schemasources = yamlConfigs.schemasources.map {
                 UpsertDataFromConfig(
                     expandEnv(it.name),
                     expandEnv(it.type),
@@ -47,7 +47,9 @@ class ConfigReader {
                     expandEnv(it.webhook_id),
                     expandEnv(it.webhook_secret),
                     expandEnv(it.read_access_group_id),
-                )
+                    expandEnv(it.resource_path),
+
+                    )
             },
         )
     }
