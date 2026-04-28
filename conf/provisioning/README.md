@@ -158,7 +158,7 @@ columns:
     name: "Svar"
   - type: "OPTION_SINGLE"
     name: "Priority"
-    options: #Specefies the options for the entire column, meaning you can not overrirde theese options on the record specefications.
+    options: #Specifies the options for the entire column, meaning you can not override these options in the record specifications.
       - name: "MÅ" 
         color: "orangeDark1" #choose a color to go with you option thoriggout the entire column.
       - name: "KAN"
