@@ -160,7 +160,7 @@ columns:
     name: "Priority"
     options: #Specifies the options for the entire column, meaning you can not override these options in the record specifications.
       - name: "MÅ" 
-        color: "orangeDark1" #choose a color to go with you option thoriggout the entire column.
+        color: "orangeDark1" #choose a color to go with this option throughout the entire column.
       - name: "KAN"
         color: "greenBright"
 records:
