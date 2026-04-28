@@ -1,0 +1,95 @@
+name: "Sjekkliste for KI-bruk i teamet"
+columns:
+  - type: "OPTION_SINGLE"
+    name: "Område"
+    options:
+      - name: "Bruksområde"
+      - name: "Tiltak"
+      - name: "Kompetanse"
+  - type: "TEXT"
+    name: "Kortnavn"
+  - type: "TEXT"
+    name: "Beskrivelse"
+  - type: "OPTION_MULTIPLE"
+    name: "Svar"
+  - type: "TEXT"
+    name: "ID"
+records:
+  - id: "BR-01"
+    question: "Hva skal Copilot brukes til?"
+    metadata:
+      answerMetadata:
+        type: "SELECT_MULTIPLE"
+        options:
+          - "Generere ny kode"
+          - "Forbedre eksisterende kode"
+          - "Skrive tester"
+          - "Dokumentasjon"
+          - "Struktur/refaktorering"
+          - "Feilsøking/navigering"
+          - "Arkitekturtest"
+          - "Annet, se kommentar"
+        expiry: 12
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Hva skal Copilot brukes til?"
+        - key: "Kortnavn"
+          value:
+            - "Anvendelse"
+        - key: "Område"
+          value:
+            - "Bruksområde"
+  - id: "BR-02"
+    question: "Bruksområde"
+    metadata:
+      answerMetadata:
+        type: "SELECT_MULTIPLE"
+        options:
+          - "Copilot brukes som kodeassistent i IDE"
+          - "Copilot brukes til PR-analyse/forslag på Github"
+          - "Agent-modus brukes lokalt"
+          - "Agent-modus brukes på Github"          
+          - "Annet, se kommentar"
+        expiry: 12
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Hvor og hvordan kjøres Copilot?"
+        - key: "Kortnavn"
+          value:
+            - "Bruksområde"
+        - key: "Område"
+          value:
+            - "Bruksområde"
+  - id: "TI-01"
+    question: "PR-review er påkrevd for all KI-generert kode"
+    metadata:
+      answerMetadata:
+        type: "CHECKBOX"
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "PR-review er påkrevd for all KI-generert kode"
+        - key: "Kortnavn"
+          value:
+            - "PR-review"   
+        - key: "Område"
+          value:
+            - "Tiltak"
+  - id: "TI-02"
+    question: "Ingen auto-commit eller auto-fix uten review"
+    metadata:
+      answerMetadata:
+        type: "CHECKBOX"
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Ingen auto-commit eller auto-fix uten review"
+        - key: "Kortnavn"
+          value:
+            - "Menneskelig oversyn"   
+        - key: "Område"
+          value:
+            - "Tiltak"
+
