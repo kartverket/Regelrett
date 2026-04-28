@@ -49,6 +49,36 @@ fun Route.uploadCSVRouting(authService: AuthService, database: Database) {
                 ErrorHandlers.handleGenericException(call, e)
             }
         }
+        get("/progress") {
+            try {
+                logger.info("${call.getRequestInfo()} Received GET /dump-csv/Progress")
+
+                if (!authService.hasSuperUserAccess(call)) {
+                    logger.warn("${call.getRequestInfo()} Unauthorized access attempt to CSV Progress dump")
+                    throw AuthorizationException("Superuser access required for CSV Progress dump")
+                }
+
+                val csvData = getLatestAnswersAndComments(database)
+                val csv = csvData.toCsv()
+
+                val fileName = "data.csv"
+                call.response.header(
+                    HttpHeaders.ContentDisposition,
+                    ContentDisposition.Attachment.withParameter(ContentDisposition.Parameters.FileName, fileName).toString(),
+                )
+
+                logger.info("${call.getRequestInfo()} Successfully generated CSV dump with ${csvData.size} records")
+                call.respondBytes(
+                    bytes = csv.toByteArray(Charsets.UTF_8),
+                    contentType = ContentType.Text.CSV.withCharset(Charsets.UTF_8),
+                )
+            } catch (e: AuthorizationException) {
+                ErrorHandlers.handleAuthorizationException(call, e)
+            } catch (e: Exception) {
+                logger.error("${call.getRequestInfo()} Error generating CSV dump", e)
+                ErrorHandlers.handleGenericException(call, e)
+            }
+        }
     }
 }
 
@@ -98,6 +128,48 @@ fun getLatestAnswersAndComments(database: Database): List<AnswersCSVDump> {
     }
 }
 
+fun getLatestAnswerMetadata(database: Database): List<MetaAnswersCSVDump> {
+    val sqlStatement = """
+        SELECT 
+            a.question_id, 
+            a.updated as answer_updated,
+            a.context_id,
+            ctx.name as context_name,
+            ctx.table_id as table_id,
+            ctx.team_id
+        FROM 
+            answers a
+        JOIN 
+            (SELECT question_id, record_id, MAX(updated) as latest 
+             FROM answers 
+             GROUP BY question_id, record_id, context_id) as latest_answers
+            ON a.question_id = latest_answers.question_id 
+               AND a.record_id = latest_answers.record_id 
+               AND a.updated = latest_answers.latest
+        JOIN 
+            contexts ctx ON a.context_id = ctx.id
+        WHERE 
+            a.answer IS NOT NULL AND TRIM(a.answer) != '';
+    """.trimIndent()
+
+    return try {
+        val resultList = mutableListOf<MetaAnswersCSVDump>()
+        database.getConnection().use { conn ->
+            conn.prepareStatement(sqlStatement).use { statement ->
+                val resultSet = statement.executeQuery()
+                while (resultSet.next()) {
+                    resultList.add(mapRowToAnswersCSVDump(resultSet))
+                }
+            }
+        }
+        logger.debug("Successfully fetched ${resultList.size} records for CSV dump")
+        resultList
+    } catch (e: SQLException) {
+        logger.error("Database error while fetching data for CSV dump", e)
+        throw DatabaseException("Failed to fetch data for CSV dump", "getLatestAnswersAndComments", e)
+    }
+}
+
 fun List<AnswersCSVDump>.toCsv(): String {
     val stringWriter = StringWriter()
     stringWriter.append("questionId,answer,answer_type,answer_unit,answer_updated,answer_actor,context_id,context_name,table_id,team_id\n")
@@ -118,8 +190,19 @@ fun mapRowToAnswersCSVDump(rs: ResultSet): AnswersCSVDump = AnswersCSVDump(
     contextId = rs.getString("context_id"),
     tableName = rs.getString("table_id"),
     teamId = rs.getString("team_id"),
-    contextName = rs.getString("context_name"),
+    contextName = authService.getUserByUserId(rs.getString("context_name")),
 )
+
+
+fun mapRowToMetaAnswersCSVDump(rs: ResultSet): MetaAnswersCSVDump = MetaAnswersCSVDump(
+    questionId = rs.getString("question_id"),
+    answerUpdated = rs.getDate("answer_updated"),
+    contextId = rs.getString("context_id"),
+    contextName = rs.getString("context_name"),
+    tableName = rs.getString("table_id"),
+    teamName = rs.getString("team_id"),
+)
+
 
 data class AnswersCSVDump(
     val questionId: String,
@@ -133,3 +216,13 @@ data class AnswersCSVDump(
     val teamId: String,
     val contextName: String,
 )
+
+data class MetaAnswersCSVDump(
+    val questionId: String,
+    val answerUpdated: Date,
+    val contextId: String,
+    val contextName: String,
+    val tableName: String,
+    val teamName: String,
+)
+
