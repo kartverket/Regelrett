@@ -209,6 +209,7 @@ class ConfigBuilder {
         clientId = yaml.getString("oauth", "client_id"),
         clientSecret = yaml.getString("oauth", "client_secret"),
         superUserGroup = yaml.getStringOrNull("oauth", "super_user_group") ?: "",
+        reportingUserGroup = yaml.getStringOrNull("oauth", "reporting_user_group") ?: "",
     )
 
     fun buildServerConfig(yaml: YamlConfig): ServerConfig {

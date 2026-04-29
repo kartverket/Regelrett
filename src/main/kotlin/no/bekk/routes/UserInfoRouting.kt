@@ -23,8 +23,9 @@ fun Route.userInfoRouting(authService: AuthService) {
                     val groups = async { authService.getGroupsOrEmptyList(call) }
                     val user = async { authService.getCurrentUser(call) }
                     val superuser = async { authService.hasSuperUserAccess(call) }
+                    val reportinguser = async { authService.hasReportingUserAccess(call) }
 
-                    call.respond(HttpStatusCode.OK, UserInfoResponse(groups.await(), user.await(), superuser.await()))
+                    call.respond(HttpStatusCode.OK, UserInfoResponse(groups.await(), user.await(), superuser.await(), reportinguser.await()))
                 }
             } catch (e: Exception) {
                 logger.error("${call.getRequestInfo()} Error fetching user info", e)

@@ -23,6 +23,8 @@ interface AuthService {
 
     suspend fun hasSuperUserAccess(call: ApplicationCall): Boolean
 
+    suspend fun hasReportingUserAccess(call: ApplicationCall): Boolean
+
     suspend fun getTeamIdFromName(call: ApplicationCall, teamName: String): String?
 }
 
@@ -80,7 +82,7 @@ class AuthServiceImpl(
         if (hasAccess) {
             logger.debug("Team access granted for teamId: $teamId")
         } else {
-            logger.debug("Team access denied for teamId: $teamId - Team not in user's groups: $groups")
+            logger.debug("Team access denied for teamId: {} - Team not in user's groups: {}", teamId, groups)
         }
 
         return hasAccess
@@ -127,6 +129,10 @@ class AuthServiceImpl(
     override suspend fun hasSuperUserAccess(
         call: ApplicationCall,
     ): Boolean = hasTeamAccess(call, oAuthConfig.superUserGroup)
+
+    override suspend fun hasReportingUserAccess(
+        call: ApplicationCall,
+    ): Boolean = hasTeamAccess(call, oAuthConfig.reportingUserGroup)
 
     override suspend fun getTeamIdFromName(call: ApplicationCall, teamName: String): String? {
         val microsoftGroups = getGroupsOrEmptyList(call)
