@@ -74,15 +74,16 @@ class MicrosoftServiceImpl(private val config: Config, private val client: HttpC
     }
 
     override suspend fun fetchGroups(bearerToken: String, filter: String?): List<MicrosoftGraphGroup> {
-        val url = "${config.microsoftGraph.baseUrl}${config.microsoftGraph.memberOfPath}" + "?\$count=true&\$select=id,displayName" + (filter?.let { "&\$filter=$it" } ?: "")
+        val url = "${config.microsoftGraph.baseUrl}${config.microsoftGraph.memberOfPath}" + $$"?$count=true&$select=id,displayName"
 
+        val combinedFilter = listOfNotNull(filter?.takeIf { it.isNotBlank() }, config.microsoftGraph.groupFilter.takeIf { it.isNotBlank() }).joinToString(" and ")
         return try {
             ExternalServiceTimer.time("Microsoft", "fetchGroups") {
                 val response: HttpResponse = client.get(url) {
                     bearerAuth(bearerToken)
                     header("ConsistencyLevel", "eventual")
-                    if (!config.microsoftGraph.groupFilter.isBlank()) {
-                        parameter("\$filter", config.microsoftGraph.groupFilter)
+                    if (combinedFilter.isNotBlank()) {
+                        parameter("\$filter", combinedFilter)
                     }
                 }
 
@@ -172,5 +173,4 @@ class MicrosoftServiceImpl(private val config: Config, private val client: HttpC
             throw ExternalServiceException("Microsoft Graph", "Failed to fetch user $userId: ${e.message}", cause = e)
         }
     }
-
 }
