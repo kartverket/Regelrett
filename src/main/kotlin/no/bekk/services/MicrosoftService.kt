@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory
 
 interface MicrosoftService {
     suspend fun requestTokenOnBehalfOf(jwtToken: String?): String
-    suspend fun fetchGroups(bearerToken: String): List<MicrosoftGraphGroup>
+    suspend fun fetchGroups(bearerToken: String, filter: String? = null): List<MicrosoftGraphGroup>
     suspend fun fetchCurrentUser(bearerToken: String): MicrosoftGraphUser
     suspend fun fetchUserByUserId(bearerToken: String, userId: String): MicrosoftGraphUser
 }
@@ -74,7 +74,7 @@ class MicrosoftServiceImpl(private val config: Config, private val client: HttpC
     }
 
     override suspend fun fetchGroups(bearerToken: String, filter: String?): List<MicrosoftGraphGroup> {
-        val url = "${config.microsoftGraph.baseUrl + config.microsoftGraph.memberOfPath}?\$count=true&\$select=id,displayName${filter?.let { " &\$filter" to it } ?: ""}"
+        val url = "${config.microsoftGraph.baseUrl}${config.microsoftGraph.memberOfPath}" + "?\$count=true&\$select=id,displayName" + (filter?.let { "&\$filter=$it" } ?: "")
 
         return try {
             ExternalServiceTimer.time("Microsoft", "fetchGroups") {

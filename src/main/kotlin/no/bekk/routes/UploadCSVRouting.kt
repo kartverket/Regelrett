@@ -8,6 +8,8 @@ import no.bekk.configuration.Database
 import no.bekk.exception.AuthorizationException
 import no.bekk.exception.DatabaseException
 import no.bekk.plugins.ErrorHandlers
+import no.bekk.services.FormService
+import no.bekk.services.FormsMetadataDto
 import no.bekk.util.RequestContext.getRequestInfo
 import org.slf4j.LoggerFactory
 import java.io.StringWriter
@@ -17,7 +19,7 @@ import java.util.*
 
 private val logger = LoggerFactory.getLogger("no.bekk.routes.UploadCSVRouting")
 
-fun Route.uploadCSVRouting(authService: AuthService, database: Database) {
+fun Route.uploadCSVRouting(authService: AuthService, formService: FormService, database: Database) {
     route("/dump-csv") {
         get {
             try {
@@ -58,7 +60,26 @@ fun Route.uploadCSVRouting(authService: AuthService, database: Database) {
                     throw AuthorizationException("Superuser access required for CSV Progress dump")
                 }
 
-                val csvData = getLatestAnswersAndComments(database)
+
+                val progressRows = getLatestAnswerMetadata(database)
+
+                val teamIds = progressRows.map { it.teamId }.distinct()
+
+
+                val teamsByIds = authService.getGroupsOrEmptyList(call, "id in $teamIds").associateBy { it.id }
+                val formsbyIds = formService.getFormProviders().associateBy { it.id }
+
+                progressRows.map { row ->
+                    AnswerProgressDTO(
+                        questionId = row.questionId,
+                        answerUpdated = row.answerUpdated,
+                        contextId = row.contextId,
+                        contextName = row.contextName,
+                        formName = formsbyIds[row.formId]?.name ?: row.questionId,
+                        teamName = teamsByIds[row.teamId]?.displayName ?: row.teamId,
+                    )
+                }
+
                 val csv = csvData.toCsv()
 
                 val fileName = "data.csv"
@@ -128,7 +149,7 @@ fun getLatestAnswersAndComments(database: Database): List<AnswersCSVDump> {
     }
 }
 
-fun getLatestAnswerMetadata(database: Database): List<MetaAnswersCSVDump> {
+fun getLatestAnswerMetadata(database: Database): List<MetaAnswersDB> {
     val sqlStatement = """
         SELECT 
             a.question_id, 
@@ -153,17 +174,21 @@ fun getLatestAnswerMetadata(database: Database): List<MetaAnswersCSVDump> {
     """.trimIndent()
 
     return try {
-        val resultList = mutableListOf<MetaAnswersCSVDump>()
         database.getConnection().use { conn ->
             conn.prepareStatement(sqlStatement).use { statement ->
-                val resultSet = statement.executeQuery()
-                while (resultSet.next()) {
-                    resultList.add(mapRowToAnswersCSVDump(resultSet))
+                val result = statement.executeQuery()
+                buildList {
+                while (result.next()) {
+                    add(MetaAnswersDB(    questionId = result.getString("question_id"),
+                        answerUpdated = result.getDate("answer_updated"),
+                        contextId = result.getString("context_id"),
+                        contextName = result.getString("context_name"),
+                        formId = result.getString("table_id"),
+                        teamId = result.getString("team_id"),))
+                }
                 }
             }
-        }
-        logger.debug("Successfully fetched ${resultList.size} records for CSV dump")
-        resultList
+        }.also{logger.debug("Successfully fetched ${it.size} records for CSV dump")}
     } catch (e: SQLException) {
         logger.error("Database error while fetching data for CSV dump", e)
         throw DatabaseException("Failed to fetch data for CSV dump", "getLatestAnswersAndComments", e)
@@ -175,6 +200,16 @@ fun List<AnswersCSVDump>.toCsv(): String {
     stringWriter.append("questionId,answer,answer_type,answer_unit,answer_updated,answer_actor,context_id,context_name,table_id,team_id\n")
     this.forEach {
         stringWriter.append("\"${it.questionId}\",\"${it.answer}\",\"${it.answerType}\",\"${it.answerUnit}\",\"${it.answerUpdated}\",\"${it.answerActor}\",\"${it.contextId}\",\"${it.contextName}\",\"${it.tableName}\",\"${it.teamId}\"\n")
+    }
+
+    return stringWriter.toString()
+}
+
+fun List<AnswerProgressDTO>.toCsv(): String {
+    val stringWriter = StringWriter()
+    stringWriter.append("questionId,answer_updated,context_id,context_name,form_name,team_name\n")
+    this.forEach {
+        stringWriter.append("\"${it.questionId}\",\"${it.answerUpdated}\",\"${it.contextId}\",\"${it.contextName}\",\"${it.formName}\",\"${it.teamName}\"\n")
     }
 
     return stringWriter.toString()
@@ -194,15 +229,6 @@ fun mapRowToAnswersCSVDump(rs: ResultSet): AnswersCSVDump = AnswersCSVDump(
 )
 
 
-fun mapRowToMetaAnswersCSVDump(rs: ResultSet): MetaAnswersCSVDump = MetaAnswersCSVDump(
-    questionId = rs.getString("question_id"),
-    answerUpdated = rs.getDate("answer_updated"),
-    contextId = rs.getString("context_id"),
-    contextName = rs.getString("context_name"),
-    tableName = rs.getString("table_id"),
-    teamName = rs.getString("team_id"),
-)
-
 
 data class AnswersCSVDump(
     val questionId: String,
@@ -217,12 +243,21 @@ data class AnswersCSVDump(
     val contextName: String,
 )
 
-data class MetaAnswersCSVDump(
+data class AnswerProgressDTO(
     val questionId: String,
     val answerUpdated: Date,
     val contextId: String,
     val contextName: String,
-    val tableName: String,
+    val formName: String,
     val teamName: String,
+)
+
+data class MetaAnswersDB(
+    val questionId: String,
+    val answerUpdated: Date,
+    val contextId: String,
+    val contextName: String,
+    val formId: String,
+    val teamId: String,
 )
 

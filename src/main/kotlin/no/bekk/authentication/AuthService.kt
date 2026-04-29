@@ -9,7 +9,7 @@ import no.bekk.services.MicrosoftService
 import org.slf4j.LoggerFactory
 
 interface AuthService {
-    suspend fun getGroupsOrEmptyList(call: ApplicationCall): List<MicrosoftGraphGroup>
+    suspend fun getGroupsOrEmptyList(call: ApplicationCall, filter: String? = null): List<MicrosoftGraphGroup>
 
     suspend fun getCurrentUser(call: ApplicationCall): MicrosoftGraphUser
 
@@ -33,13 +33,13 @@ class AuthServiceImpl(
     private val formService: FormService,
 ) : AuthService {
     private val logger = LoggerFactory.getLogger(AuthServiceImpl::class.java)
-    override suspend fun getGroupsOrEmptyList(call: ApplicationCall): List<MicrosoftGraphGroup> {
+    override suspend fun getGroupsOrEmptyList(call: ApplicationCall, filter: String?): List<MicrosoftGraphGroup> {
         val jwtToken =
             call.request.headers["Authorization"]?.removePrefix("Bearer ")
                 ?: throw IllegalStateException("Authorization header missing")
         val oboToken = microsoftService.requestTokenOnBehalfOf(jwtToken)
 
-        return microsoftService.fetchGroups(oboToken)
+        return microsoftService.fetchGroups(oboToken, filter)
     }
 
     override suspend fun getCurrentUser(call: ApplicationCall): MicrosoftGraphUser {
