@@ -45,7 +45,7 @@ export const TableCell = ({
     );
   }
 
-  if (value == null) {
+  if (value == null || !value.length) {
     return <></>;
   }
 
@@ -84,10 +84,6 @@ export const TableCell = ({
         </Badge>
       );
     }
-    case OptionalFieldType.TEXT:
-      return <p>{value[0]}</p>
-    default:
-      return <p>Denne svartypen blir ikke støttet</p>;
   }
 
   if (column.name === "Kortnavn" || column.name === "Navn") {
