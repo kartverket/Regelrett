@@ -242,12 +242,12 @@ fun List<AnswersCSVDump>.toFullCsv(): String = csvOf(
 
 fun List<AnswerProgressDTO>.toProgressCsv(): String = csvOf(
     headers = listOf(
-        "questionId",
-        "answer_updated",
-        "context_id",
-        "context_name",
-        "form_name",
-        "team_name",
+        "sporsmaal_id",
+        "svar_oppdatert",
+        "skjemautfyllings_id",
+        "skjemautfyllingstittel",
+        "skjemanavn",
+        "teamnavn",
     ),
     rows = map {
         listOf(
