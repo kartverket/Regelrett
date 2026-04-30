@@ -1,11 +1,11 @@
-import { Page } from "../../components/layout/Page";
-import { useUser } from "../../hooks/useUser";
+import { Page } from "@/components/layout/Page";
+import { useUser } from "@/hooks/useUser";
 import RedirectBackButton from "../../components/buttons/RedirectBackButton";
 import TeamContexts from "./TeamContexts";
 import {
   handleExportFullCSV,
   handleExportProgressCSV,
-} from "../../utils/csvExportUtils";
+} from "@/utils/csvExportUtils";
 import { ErrorState } from "@/components/ErrorState";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";

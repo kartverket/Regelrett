@@ -1,4 +1,4 @@
-import { axiosFetch } from "../api/Fetch";
+import { axiosFetch } from "@/api/Fetch";
 import { toast } from "sonner";
 
 const API_URL_BASE = "/api";

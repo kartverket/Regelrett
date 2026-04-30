@@ -1,6 +1,6 @@
-import { axiosFetch } from "../api/Fetch";
+import { axiosFetch } from "@/api/Fetch";
 import { useQuery } from "@tanstack/react-query";
-import type { User } from "../api/types";
+import type { User } from "@/api/types";
 
 const API_URL_BASE = "/api";
 
