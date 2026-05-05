@@ -4,7 +4,9 @@ columns:
     name: "Område"
     options:
       - name: "Kritikalitet"
+        color: "orangeLight1"
       - name: "Tiltak"
+        color: "greenLight1"
   - type: "TEXT"
     name: "Kortnavn"
   - type: "TEXT"
@@ -33,6 +35,9 @@ records:
         - key: "Område"
           value:
             - "Kritikalitet"
+        - key: "ID"
+          value: 
+            - "KR-01"
   - id: "KR-02"
     question: "Påvirker denne kodebasen, når den kjøres opp, konfidensiell eller skjermingsverdig informasjon?"
     metadata:
@@ -51,6 +56,9 @@ records:
         - key: "Område"
           value:
             - "Kritikalitet"
+        - key: "ID"
+          value: 
+            - "KR-02"
   - id: "KR-03"
     question: "Utgjør denne kodebasen, når den kjøres opp, komponenter i skjermingsverdig infrastruktur eller informasjonssystem?"
     metadata:
@@ -69,6 +77,9 @@ records:
         - key: "Område"
           value:
             - "Kritikalitet"
+        - key: "ID"
+          value: 
+            - "KR-03"
   - id: "KR-04"
     question: "Påvirker denne kodebasen, når den kjøres opp, masterdata som understøtter GNF eller nasjonale sikkerhetsinteresser?"
     metadata:
@@ -87,6 +98,9 @@ records:
         - key: "Område"
           value:
             - "Kritikalitet"
+        - key: "ID"
+          value: 
+            - "KR-04"
   - id: "TI-01"
     question: "PR-review er påkrevd for all KI-generert kode"
     metadata:
@@ -102,6 +116,9 @@ records:
         - key: "Område"
           value:
             - "Tiltak"
+        - key: "ID"
+          value: 
+            - "TI-01"
   - id: "TI-02"
     question: "CodeQL er aktivert"
     metadata:
@@ -117,6 +134,9 @@ records:
         - key: "Område"
           value:
             - "Tiltak"
+        - key: "ID"
+          value: 
+            - "TI-02"
   - id: "TI-03"
     question: "Dependabot er aktivert"
     metadata:
@@ -132,6 +152,9 @@ records:
         - key: "Område"
           value:
             - "Tiltak"
+        - key: "ID"
+          value: 
+            - "TI-03"
   - id: "TI-04"
     question: "Deploy-pipeline stoppes ved funn av kritiske sårbarheter"
     metadata:
@@ -146,7 +169,10 @@ records:
             - "Blokkering av deploy"   
         - key: "Område"
           value:
-            - "Tiltak"          
+            - "Tiltak"
+        - key: "ID"
+          value: 
+            - "TI-04"
   - id: "TI-05"
     question: "Ingen auto-commit eller auto-fix uten review"
     metadata:
@@ -162,6 +188,9 @@ records:
         - key: "Område"
           value:
             - "Tiltak"
+        - key: "ID"
+          value: 
+            - "TI-05"
   - id: "TI-06"
     question: "Ekstra reviewer ved høykritisk kode"
     metadata:
@@ -177,6 +206,9 @@ records:
         - key: "Område"
           value:
             - "Tiltak"
+        - key: "ID"
+          value: 
+            - "TI-06"
   - id: "TI-07"
     question: "Teamet er bevisste på hvilke filer, hemmeligheter og miljøvariabler som er tilgjengelige i miljøet der Copilot kjøres"
     metadata:
@@ -192,6 +224,9 @@ records:
         - key: "Område"
           value:
             - "Tiltak"
+        - key: "ID"
+          value: 
+            - "TI-07"
   - id: "TI-08"
     question: "Copilot brukes innenfor rammene fra plattform-/verktøy-ROS"
     metadata:
@@ -206,4 +241,7 @@ records:
             - "Etterlevelse"
         - key: "Område"
           value:
-            - "Tiltak"  
+            - "Tiltak"
+        - key: "ID"
+          value: 
+            - "TI-08"

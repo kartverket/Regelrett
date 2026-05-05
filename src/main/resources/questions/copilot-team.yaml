@@ -4,7 +4,9 @@ columns:
     name: "Område"
     options:
       - name: "Bruksområde"
+        color: "tealLight1"
       - name: "Opplæring"
+        color: "yellowLight1"
   - type: "TEXT"
     name: "Kortnavn"
   - type: "TEXT"
@@ -39,6 +41,9 @@ records:
         - key: "Område"
           value:
             - "Bruksområde"
+        - key: "ID"
+          value: 
+            - "BR-01"
   - id: "BR-02"
     question: "Hvor og hvordan kjøres Copilot?"
     metadata:
@@ -61,6 +66,9 @@ records:
         - key: "Område"
           value:
             - "Bruksområde"
+        - key: "ID"
+          value: 
+            - "BR-02"
   - id: "OP-01"
     question: "Teamet er kjent med forskjellen på assistent- og agentisk bruk"
     metadata: 
@@ -76,6 +84,9 @@ records:
         - key: "Område"
           value:
             - "Opplæring"
+        - key: "ID"
+          value: 
+            - "OP-01"
   - id: "OP-02"
     question: "Teamet har gjennomgått Copilots begrensninger"
     metadata: 
@@ -91,6 +102,9 @@ records:
         - key: "Område"
           value:
             - "Opplæring"
+        - key: "ID"
+          value: 
+            - "OP-02"
   - id: "OP-03"
     question: "Teamet har gjennomgått KI-sikkerhetsintro med team SKVIS"
     metadata: 
@@ -106,6 +120,9 @@ records:
         - key: "Område"
           value:
             - "Opplæring"
+        - key: "ID"
+          value: 
+            - "OP-03"
   - id: "OP-04"
     question: "Teamet har gjennomgått teknisk retningslinje for KI i utvikling"
     metadata: 
@@ -120,6 +137,9 @@ records:
             - "Retningslinjer"
         - key: "Område"
           value:
-            - "Opplæring" 
+            - "Opplæring"
+        - key: "ID"
+          value: 
+            - "OP-04"
 
 
