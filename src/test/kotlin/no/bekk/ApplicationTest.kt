@@ -29,7 +29,7 @@ class ApplicationTest {
         mode = "development",
         paths = PathsConfig(""),
         microsoftGraph = MicrosoftGraphConfig("", "", ""),
-        oAuth = OAuthConfig("https://test.com", "test", "", "", "", "", "", "", ""),
+        oAuth = OAuthConfig("https://test.com", "test", "", "", "", "", "", "", "", ""),
         server = ServerConfig("", "", "", 0, false, false, emptyList(), 4096, 8192, 8192),
         database = DatabaseConfig("", "", "", "", ""),
         answerHistoryCleanup = AnswerHistoryCleanupConfig(""),

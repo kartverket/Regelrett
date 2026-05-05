@@ -9,7 +9,7 @@ import no.bekk.services.MicrosoftService
 import org.slf4j.LoggerFactory
 
 interface AuthService {
-    suspend fun getGroupsOrEmptyList(call: ApplicationCall): List<MicrosoftGraphGroup>
+    suspend fun getGroupsOrEmptyList(call: ApplicationCall, filter: String? = null): List<MicrosoftGraphGroup>
 
     suspend fun getCurrentUser(call: ApplicationCall): MicrosoftGraphUser
 
@@ -23,6 +23,8 @@ interface AuthService {
 
     suspend fun hasSuperUserAccess(call: ApplicationCall): Boolean
 
+    suspend fun hasReportingUserAccess(call: ApplicationCall): Boolean
+
     suspend fun getTeamIdFromName(call: ApplicationCall, teamName: String): String?
 }
 
@@ -33,13 +35,13 @@ class AuthServiceImpl(
     private val formService: FormService,
 ) : AuthService {
     private val logger = LoggerFactory.getLogger(AuthServiceImpl::class.java)
-    override suspend fun getGroupsOrEmptyList(call: ApplicationCall): List<MicrosoftGraphGroup> {
+    override suspend fun getGroupsOrEmptyList(call: ApplicationCall, filter: String?): List<MicrosoftGraphGroup> {
         val jwtToken =
             call.request.headers["Authorization"]?.removePrefix("Bearer ")
                 ?: throw IllegalStateException("Authorization header missing")
         val oboToken = microsoftService.requestTokenOnBehalfOf(jwtToken)
 
-        return microsoftService.fetchGroups(oboToken)
+        return microsoftService.fetchGroups(oboToken, filter)
     }
 
     override suspend fun getCurrentUser(call: ApplicationCall): MicrosoftGraphUser {
@@ -80,7 +82,7 @@ class AuthServiceImpl(
         if (hasAccess) {
             logger.debug("Team access granted for teamId: $teamId")
         } else {
-            logger.debug("Team access denied for teamId: $teamId - Team not in user's groups: $groups")
+            logger.debug("Team access denied for teamId: {} - Team not in user's groups: {}", teamId, groups)
         }
 
         return hasAccess
@@ -127,6 +129,10 @@ class AuthServiceImpl(
     override suspend fun hasSuperUserAccess(
         call: ApplicationCall,
     ): Boolean = hasTeamAccess(call, oAuthConfig.superUserGroup)
+
+    override suspend fun hasReportingUserAccess(
+        call: ApplicationCall,
+    ): Boolean = hasTeamAccess(call, oAuthConfig.reportingUserGroup)
 
     override suspend fun getTeamIdFromName(call: ApplicationCall, teamName: String): String? {
         val microsoftGroups = getGroupsOrEmptyList(call)

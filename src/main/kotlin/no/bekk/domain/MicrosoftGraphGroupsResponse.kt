@@ -25,4 +25,5 @@ data class UserInfoResponse(
     val groups: List<MicrosoftGraphGroup>,
     val user: MicrosoftGraphUser,
     val superuser: Boolean,
+    val reportinguser: Boolean,
 )

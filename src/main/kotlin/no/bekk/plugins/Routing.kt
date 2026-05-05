@@ -89,7 +89,7 @@ fun Application.configureRouting(
             contextRouting(dependencies.authService, dependencies.answerRepository, dependencies.contextRepository, dependencies.commentRepository, dependencies.formService)
             formRouting(dependencies.formService)
             userInfoRouting(dependencies.authService)
-            uploadCSVRouting(dependencies.authService, dependencies.database)
+            uploadCSVRouting(dependencies.authService, dependencies.formService, dependencies.database)
         }
     }
 

@@ -68,6 +68,7 @@ data class OAuthConfig(
     val clientId: String,
     val clientSecret: String,
     val superUserGroup: String,
+    val reportingUserGroup: String,
 )
 
 fun getIssuer(oAuthConfig: OAuthConfig) = oAuthConfig.baseUrl + "/" + oAuthConfig.tenantId + oAuthConfig.issuerPath
