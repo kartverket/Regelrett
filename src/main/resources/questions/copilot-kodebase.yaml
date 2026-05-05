@@ -181,7 +181,7 @@ records:
       optionalFields:
         - key: "Beskrivelse"
           value:
-            - "Deploy-pipeline stoppes ved kritiske funn\n\nAutomatiske deploy-pipelines bør ha kontrollere for å unngå innføring av uakseptabel risiko. Teamet vurderer selv om man har kontroll på dette i sin deploy-rutine/pipeline"
+            - "Deploy-pipeline stoppes ved kritiske funn. Automatiske deploy-pipelines bør ha kontrollere for å unngå innføring av uakseptabel risiko. Teamet vurderer selv om man har kontroll på dette i sin deploy-rutine/pipeline"
         - key: "Kortnavn"
           value:
             - "Blokkering av deploy"   
@@ -253,7 +253,7 @@ records:
       optionalFields:
         - key: "Beskrivelse"
           value:
-            - "Copilot brukes innenfor rammene fra plattform-/verktøy-ROS\n\nCopilot skal kun brukes der det er tillatt. Intern kodestandard og policy skal følges. Bruken skal være i tråd med definerte formål."
+            - "Copilot brukes innenfor rammene fra plattform-/verktøy-ROS: Copilot skal kun brukes der det er tillatt. Intern kodestandard og policy skal følges. Bruken skal være i tråd med definerte formål."
         - key: "Kortnavn"
           value:
             - "Etterlevelse"
