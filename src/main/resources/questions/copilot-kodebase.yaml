@@ -1,0 +1,209 @@
+name: "Kontrollere for KI-bruk i kodebase"
+columns:
+  - type: "OPTION_SINGLE"
+    name: "Område"
+    options:
+      - name: "Kritikalitet"
+      - name: "Tiltak"
+  - type: "TEXT"
+    name: "Kortnavn"
+  - type: "TEXT"
+    name: "Beskrivelse"
+  - type: "OPTION_MULTIPLE"
+    name: "Svar"
+  - type: "TEXT"
+    name: "ID"
+records:
+  - id: "KR-01"
+    question: "Hvilken kritikalitet har koden i denne kodebasen?"
+    metadata:
+      answerMetadata:
+        type: "SELECT_SINGLE"
+        options:
+          - "Lavkritisk kode"
+          - "Mellomkritisk kode"
+          - "Høykritisk kode"
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Hvilken kritikalitet har koden i denne kodebasen?"
+        - key: "Kortnavn"
+          value:
+            - "Kodens kritikalitet"   
+        - key: "Område"
+          value:
+            - "Kritikalitet"
+  - id: "KR-02"
+    question: "Påvirker denne kodebasen, når den kjøres opp, konfidensiell eller skjermingsverdig informasjon?"
+    metadata:
+      answerMetadata:
+        type: "SELECT_SINGLE"
+        options:
+          - "Ja"
+          - "Nei"
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Påvirker denne kodebasen, når den kjøres opp, konfidensiell eller skjermingsverdig informasjon?\n\nKonfidensiell informasjon er informasjon som dekkes av sikkerhetsloven (begrenset eller høyere)."
+        - key: "Kortnavn"
+          value:
+            - "Påvirker konfidensiell informasjon"   
+        - key: "Område"
+          value:
+            - "Kritikalitet"
+  - id: "KR-03"
+    question: "Utgjør denne kodebasen, når den kjøres opp, komponenter i skjermingsverdig infrastruktur eller informasjonssystem?"
+    metadata:
+      answerMetadata:
+        type: "SELECT_SINGLE"
+        options:
+          - "Ja"
+          - "Nei"
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Utgjør denne kodebasen, når den kjøres opp, komponenter i skjermingsverdig infrastruktur eller informasjonssystem?"
+        - key: "Kortnavn"
+          value:
+            - "Del av skjermingsverdig infrastruktur"   
+        - key: "Område"
+          value:
+            - "Kritikalitet"
+  - id: "KR-04"
+    question: "Påvirker denne kodebasen, når den kjøres opp, masterdata som understøtter GNF eller nasjonale sikkerhetsinteresser?"
+    metadata:
+      answerMetadata:
+        type: "SELECT_SINGLE"
+        options:
+          - "Ja"
+          - "Nei"
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Påvirker denne kodebasen, når den kjøres opp, masterdata som understøtter GNF eller nasjonale sikkerhetsinteresser?"
+        - key: "Kortnavn"
+          value:
+            - "Påvirker GNF/NSI masterdata"   
+        - key: "Område"
+          value:
+            - "Kritikalitet"
+  - id: "TI-01"
+    question: "PR-review er påkrevd for all KI-generert kode"
+    metadata:
+      answerMetadata:
+        type: "CHECKBOX"
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "PR-review er påkrevd for all KI-generert kode"
+        - key: "Kortnavn"
+          value:
+            - "PR-review"   
+        - key: "Område"
+          value:
+            - "Tiltak"
+  - id: "TI-02"
+    question: "CodeQL er aktivert"
+    metadata:
+      answerMetadata:
+        type: "CHECKBOX"
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "CodeQL er aktivert"
+        - key: "Kortnavn"
+          value:
+            - "CodeQL"   
+        - key: "Område"
+          value:
+            - "Tiltak"
+  - id: "TI-03"
+    question: "Dependabot er aktivert"
+    metadata:
+      answerMetadata:
+        type: "CHECKBOX"
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Dependabot er aktiverte"
+        - key: "Kortnavn"
+          value:
+            - "Dependabot"   
+        - key: "Område"
+          value:
+            - "Tiltak"
+  - id: "TI-04"
+    question: "Deploy-pipeline stoppes ved funn av kritiske sårbarheter"
+    metadata:
+      answerMetadata:
+        type: "CHECKBOX"
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Deploy-pipeline stoppes ved funn av kritiske sårbarheter"
+        - key: "Kortnavn"
+          value:
+            - "Blokkering av deploy"   
+        - key: "Område"
+          value:
+            - "Tiltak"          
+  - id: "TI-05"
+    question: "Ingen auto-commit eller auto-fix uten review"
+    metadata:
+      answerMetadata:
+        type: "CHECKBOX"
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Ingen auto-commit eller auto-fix uten review"
+        - key: "Kortnavn"
+          value:
+            - "Menneskelig oversyn"   
+        - key: "Område"
+          value:
+            - "Tiltak"
+  - id: "TI-06"
+    question: "Ekstra reviewer ved høykritisk kode"
+    metadata:
+      answerMetadata:
+        type: "CHECKBOX"
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Ekstra reviewer ved høykritisk kode"
+        - key: "Kortnavn"
+          value:
+            - "Ekstra reviewer"   
+        - key: "Område"
+          value:
+            - "Tiltak"
+  - id: "TI-07"
+    question: "Teamet er bevisste på hvilke filer, hemmeligheter og miljøvariabler som er tilgjengelige i miljøet der Copilot kjøres"
+    metadata:
+      answerMetadata:
+        type: "CHECKBOX"
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Teamet er bevisste på hvilke filer, hemmeligheter og miljøvariabler som er tilgjengelige i miljøet der Copilot kjøres"
+        - key: "Kortnavn"
+          value:
+            - "Kontroll på Copilot-miljø"  
+        - key: "Område"
+          value:
+            - "Tiltak"
+  - id: "TI-08"
+    question: "Copilot brukes innenfor rammene fra plattform-/verktøy-ROS"
+    metadata:
+      answerMetadata:
+        type: "CHECKBOX"
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Copilot brukes innenfor rammene fra plattform-/verktøy-ROS\n\nCopilot skal kun brukes der det er tillatt. Intern kodestandard og policy skal følges. Bruken skal være i tråd med definerte formål."
+        - key: "Kortnavn"
+          value:
+            - "Etterlevelse"
+        - key: "Område"
+          value:
+            - "Tiltak"  

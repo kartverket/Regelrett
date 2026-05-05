@@ -1,11 +1,10 @@
-name: "Sjekkliste for KI-bruk i teamet"
+name: "Kontrollere for KI-bruk i teamet"
 columns:
   - type: "OPTION_SINGLE"
     name: "Område"
     options:
       - name: "Bruksområde"
-      - name: "Tiltak"
-      - name: "Kompetanse"
+      - name: "Opplæring"
   - type: "TEXT"
     name: "Kortnavn"
   - type: "TEXT"
@@ -41,7 +40,7 @@ records:
           value:
             - "Bruksområde"
   - id: "BR-02"
-    question: "Bruksområde"
+    question: "Hvor og hvordan kjøres Copilot?"
     metadata:
       answerMetadata:
         type: "SELECT_MULTIPLE"
@@ -62,34 +61,65 @@ records:
         - key: "Område"
           value:
             - "Bruksområde"
-  - id: "TI-01"
-    question: "PR-review er påkrevd for all KI-generert kode"
-    metadata:
-      answerMetadata:
+  - id: "OP-01"
+    question: "Teamet er kjent med forskjellen på assistent- og agentisk bruk"
+    metadata: 
+      answerMetadata: 
         type: "CHECKBOX"
       optionalFields:
         - key: "Beskrivelse"
           value:
-            - "PR-review er påkrevd for all KI-generert kode"
+            - "Teamet er kjent med forskjellen på assistent- og agentisk bruk"
         - key: "Kortnavn"
-          value:
-            - "PR-review"   
+          value: 
+            - "Moduskjennskap"
         - key: "Område"
           value:
-            - "Tiltak"
-  - id: "TI-02"
-    question: "Ingen auto-commit eller auto-fix uten review"
-    metadata:
-      answerMetadata:
+            - "Opplæring"
+  - id: "OP-02"
+    question: "Teamet har gjennomgått Copilots begrensninger"
+    metadata: 
+      answerMetadata: 
         type: "CHECKBOX"
       optionalFields:
         - key: "Beskrivelse"
           value:
-            - "Ingen auto-commit eller auto-fix uten review"
+            - "Teamet har gjennomgått Copilots begrensninger.\n\nInfoside om Copilots tekniske begrensninger og kjente risikoer finnes i Sikkerhetshåndboka på Confluence."
         - key: "Kortnavn"
-          value:
-            - "Menneskelig oversyn"   
+          value: 
+            - "Begrensninger"
         - key: "Område"
           value:
-            - "Tiltak"
+            - "Opplæring"
+  - id: "OP-03"
+    question: "Teamet har gjennomgått KI-sikkerhetsintro med team SKVIS"
+    metadata: 
+      answerMetadata: 
+        type: "CHECKBOX"
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Teamet har gjennomgått KI-sikkerhetsintro med team SKVIS"
+        - key: "Kortnavn"
+          value: 
+            - "Sikkerhetsintro"
+        - key: "Område"
+          value:
+            - "Opplæring"
+  - id: "OP-04"
+    question: "Teamet har gjennomgått teknisk retningslinje for KI i utvikling"
+    metadata: 
+      answerMetadata: 
+        type: "CHECKBOX"
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Teamet har gjennomgått teknisk retningslinje for KI i utvikling.\n\nDokumentet finnes i ITs dokumentarkiv på Sharepoint."
+        - key: "Kortnavn"
+          value: 
+            - "Retningslinjer"
+        - key: "Område"
+          value:
+            - "Opplæring" 
+
 
