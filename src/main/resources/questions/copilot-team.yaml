@@ -74,6 +74,7 @@ records:
     metadata: 
       answerMetadata: 
         type: "CHECKBOX"
+        expiry: 26
       optionalFields:
         - key: "Beskrivelse"
           value:
@@ -92,6 +93,7 @@ records:
     metadata: 
       answerMetadata: 
         type: "CHECKBOX"
+        expiry: 26
       optionalFields:
         - key: "Beskrivelse"
           value:
@@ -110,6 +112,7 @@ records:
     metadata: 
       answerMetadata: 
         type: "CHECKBOX"
+        expiry: 26
       optionalFields:
         - key: "Beskrivelse"
           value:
@@ -128,6 +131,7 @@ records:
     metadata: 
       answerMetadata: 
         type: "CHECKBOX"
+        expiry: 26
       optionalFields:
         - key: "Beskrivelse"
           value:
