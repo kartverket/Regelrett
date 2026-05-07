@@ -113,7 +113,7 @@ records:
       optionalFields:
         - key: "Beskrivelse"
           value:
-            - "Teamet har gjennomgått KI-sikkerhetsintro med team SKVIS"
+            - "Teamet har gjennomgått KI-sikkerhetsintro med team SKVIS. Legg til en kommentar om hvem som har deltatt fra teamet."
         - key: "Kortnavn"
           value: 
             - "Sikkerhetsintro"
@@ -131,7 +131,7 @@ records:
       optionalFields:
         - key: "Beskrivelse"
           value:
-            - "Teamet har gjennomgått teknisk retningslinje for KI i utvikling. Dokumentet finnes i ITs dokumentarkiv på Sharepoint."
+            - "Teamet har gjennomgått teknisk retningslinje for KI i utvikling. Dokumentet finnes i KVIKK."
         - key: "Kortnavn"
           value: 
             - "Retningslinjer"

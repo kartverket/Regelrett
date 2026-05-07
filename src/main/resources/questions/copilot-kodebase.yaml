@@ -49,7 +49,7 @@ records:
       optionalFields:
         - key: "Beskrivelse"
           value:
-            - "Påvirker denne kodebasen, når den kjøres opp, konfidensiell eller skjermingsverdig informasjon?\n\nKonfidensiell informasjon er informasjon som dekkes av sikkerhetsloven (begrenset eller høyere)."
+            - "Påvirker denne kodebasen, når den kjøres opp, konfidensiell eller skjermingsverdig informasjon? Konfidensiell informasjon er informasjon som dekkes av sikkerhetsloven (begrenset eller høyere)."
         - key: "Kortnavn"
           value:
             - "Påvirker konfidensiell informasjon"   
@@ -245,21 +245,3 @@ records:
         - key: "ID"
           value: 
             - "TI-08"
-  - id: "TI-09"
-    question: "Copilot brukes innenfor rammene fra plattform-/verktøy-ROS"
-    metadata:
-      answerMetadata:
-        type: "CHECKBOX"
-      optionalFields:
-        - key: "Beskrivelse"
-          value:
-            - "Copilot brukes innenfor rammene fra plattform-/verktøy-ROS: Copilot skal kun brukes der det er tillatt. Intern kodestandard og policy skal følges. Bruken skal være i tråd med definerte formål."
-        - key: "Kortnavn"
-          value:
-            - "Etterlevelse"
-        - key: "Område"
-          value:
-            - "Tiltak"
-        - key: "ID"
-          value: 
-            - "TI-09"
