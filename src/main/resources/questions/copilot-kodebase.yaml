@@ -120,17 +120,17 @@ records:
           value: 
             - "TI-01"
   - id: "TI-02"
-    question: "PR-review er påkrevd for all KI-generert kode"
+    question: "Menneskelig PR-review er påkrevd for all KI-generert kode"
     metadata:
       answerMetadata:
         type: "CHECKBOX"
       optionalFields:
         - key: "Beskrivelse"
           value:
-            - "PR-review er påkrevd for all KI-generert kode"
+            - "Menneskelig PR-review er påkrevd for all KI-generert kode"
         - key: "Kortnavn"
           value:
-            - "PR-review"   
+            - "Menneskelig PR-review"   
         - key: "Område"
           value:
             - "Tiltak"
@@ -192,17 +192,17 @@ records:
           value: 
             - "TI-05"
   - id: "TI-06"
-    question: "Ingen auto-commit eller auto-fix uten review"
+    question: "Ingen kodeendringer i hovedbranch uten PR-review. Dette reguleres med branch-protection i Github."
     metadata:
       answerMetadata:
         type: "CHECKBOX"
       optionalFields:
         - key: "Beskrivelse"
           value:
-            - "Ingen auto-commit eller auto-fix uten review"
+            - "Ingen kodeendringer i hovedbranch uten PR-review. Dette reguleres med branch-protection i Github."
         - key: "Kortnavn"
           value:
-            - "Menneskelig oversyn"   
+            - "Kontrollerte kodeendringer"   
         - key: "Område"
           value:
             - "Tiltak"
