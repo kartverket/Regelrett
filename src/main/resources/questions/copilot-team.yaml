@@ -1,0 +1,149 @@
+name: "Kontrollere for KI-bruk i teamet"
+columns:
+  - type: "OPTION_SINGLE"
+    name: "Område"
+    options:
+      - name: "Bruksområde"
+        color: "tealLight1"
+      - name: "Opplæring"
+        color: "yellowLight1"
+  - type: "TEXT"
+    name: "Kortnavn"
+  - type: "TEXT"
+    name: "Beskrivelse"
+  - type: "OPTION_MULTIPLE"
+    name: "Svar"
+  - type: "TEXT"
+    name: "ID"
+records:
+  - id: "BR-01"
+    question: "Hva skal Copilot brukes til?"
+    metadata:
+      answerMetadata:
+        type: "SELECT_MULTIPLE"
+        options:
+          - "Generere ny kode"
+          - "Forbedre eksisterende kode"
+          - "Skrive tester"
+          - "Dokumentasjon"
+          - "Struktur/refaktorering"
+          - "Feilsøking/navigering"
+          - "Arkitekturtest"
+          - "Annet, se kommentar"
+        expiry: 12
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Hva skal Copilot brukes til?"
+        - key: "Kortnavn"
+          value:
+            - "Anvendelse"
+        - key: "Område"
+          value:
+            - "Bruksområde"
+        - key: "ID"
+          value: 
+            - "BR-01"
+  - id: "BR-02"
+    question: "Hvor og hvordan kjøres Copilot?"
+    metadata:
+      answerMetadata:
+        type: "SELECT_MULTIPLE"
+        options:
+          - "Copilot brukes som kodeassistent i IDE"
+          - "Copilot brukes til PR-analyse/forslag på Github"
+          - "Agent-modus brukes lokalt"
+          - "Agent-modus brukes på Github"          
+          - "Annet, se kommentar"
+        expiry: 12
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Hvor og hvordan kjøres Copilot?"
+        - key: "Kortnavn"
+          value:
+            - "Bruksområde"
+        - key: "Område"
+          value:
+            - "Bruksområde"
+        - key: "ID"
+          value: 
+            - "BR-02"
+  - id: "OP-01"
+    question: "Teamet er kjent med forskjellen på assistent- og agentisk bruk"
+    metadata: 
+      answerMetadata: 
+        type: "CHECKBOX"
+        expiry: 26
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Teamet er kjent med forskjellen på assistent- og agentisk bruk"
+        - key: "Kortnavn"
+          value: 
+            - "Moduskjennskap"
+        - key: "Område"
+          value:
+            - "Opplæring"
+        - key: "ID"
+          value: 
+            - "OP-01"
+  - id: "OP-02"
+    question: "Teamet har gjennomgått Copilots begrensninger"
+    metadata: 
+      answerMetadata: 
+        type: "CHECKBOX"
+        expiry: 26
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Teamet har gjennomgått Copilots begrensninger. Infoside om Copilots tekniske begrensninger og kjente risikoer finnes i Sikkerhetshåndboka på Confluence."
+        - key: "Kortnavn"
+          value: 
+            - "Begrensninger"
+        - key: "Område"
+          value:
+            - "Opplæring"
+        - key: "ID"
+          value: 
+            - "OP-02"
+  - id: "OP-03"
+    question: "Teamet har gjennomgått KI-sikkerhetsintro med team SKVIS"
+    metadata: 
+      answerMetadata: 
+        type: "CHECKBOX"
+        expiry: 26
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Teamet har gjennomgått KI-sikkerhetsintro med team SKVIS. Legg til en kommentar om hvem som har deltatt fra teamet."
+        - key: "Kortnavn"
+          value: 
+            - "Sikkerhetsintro"
+        - key: "Område"
+          value:
+            - "Opplæring"
+        - key: "ID"
+          value: 
+            - "OP-03"
+  - id: "OP-04"
+    question: "Teamet har gjennomgått teknisk retningslinje for KI i utvikling"
+    metadata: 
+      answerMetadata: 
+        type: "CHECKBOX"
+        expiry: 26
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Teamet har gjennomgått teknisk retningslinje for KI i utvikling. Dokumentet finnes i KVIKK."
+        - key: "Kortnavn"
+          value: 
+            - "Retningslinjer"
+        - key: "Område"
+          value:
+            - "Opplæring"
+        - key: "ID"
+          value: 
+            - "OP-04"
+
+

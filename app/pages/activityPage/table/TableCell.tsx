@@ -45,7 +45,7 @@ export const TableCell = ({
     );
   }
 
-  if (value == null) {
+  if (value == null || !value.length) {
     return <></>;
   }
 

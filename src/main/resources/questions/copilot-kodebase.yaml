@@ -1,0 +1,259 @@
+name: "Kontrollere for KI-bruk i kodebase"
+columns:
+  - type: "OPTION_SINGLE"
+    name: "Område"
+    options:
+      - name: "Kritikalitet"
+        color: "orangeLight1"
+      - name: "Tiltak"
+        color: "greenLight1"
+  - type: "TEXT"
+    name: "Kortnavn"
+  - type: "TEXT"
+    name: "Beskrivelse"
+  - type: "OPTION_MULTIPLE"
+    name: "Svar"
+  - type: "TEXT"
+    name: "ID"
+records:
+  - id: "KR-01"
+    question: "Hvilken kritikalitet har koden i denne kodebasen?"
+    metadata:
+      answerMetadata:
+        type: "SELECT_SINGLE"
+        options:
+          - "Lavkritisk kode"
+          - "Mellomkritisk kode"
+          - "Høykritisk kode"
+        expiry: 26
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Hvilken kritikalitet har koden i denne kodebasen?"
+        - key: "Kortnavn"
+          value:
+            - "Kodens kritikalitet"   
+        - key: "Område"
+          value:
+            - "Kritikalitet"
+        - key: "ID"
+          value: 
+            - "KR-01"
+  - id: "KR-02"
+    question: "Påvirker denne kodebasen, når den kjøres opp, konfidensiell eller skjermingsverdig informasjon?"
+    metadata:
+      answerMetadata:
+        type: "SELECT_SINGLE"
+        options:
+          - "Ja"
+          - "Nei"
+        expiry: 26
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Påvirker denne kodebasen, når den kjøres opp, konfidensiell eller skjermingsverdig informasjon? Konfidensiell informasjon er informasjon som dekkes av sikkerhetsloven (begrenset eller høyere)."
+        - key: "Kortnavn"
+          value:
+            - "Påvirker konfidensiell informasjon"   
+        - key: "Område"
+          value:
+            - "Kritikalitet"
+        - key: "ID"
+          value: 
+            - "KR-02"
+  - id: "KR-03"
+    question: "Utgjør denne kodebasen, når den kjøres opp, komponenter i skjermingsverdig infrastruktur eller informasjonssystem?"
+    metadata:
+      answerMetadata:
+        type: "SELECT_SINGLE"
+        options:
+          - "Ja"
+          - "Nei"
+        expiry: 26
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Utgjør denne kodebasen, når den kjøres opp, komponenter i skjermingsverdig infrastruktur eller informasjonssystem?"
+        - key: "Kortnavn"
+          value:
+            - "Del av skjermingsverdig infrastruktur"   
+        - key: "Område"
+          value:
+            - "Kritikalitet"
+        - key: "ID"
+          value: 
+            - "KR-03"
+  - id: "KR-04"
+    question: "Påvirker denne kodebasen, når den kjøres opp, masterdata som understøtter GNF eller nasjonale sikkerhetsinteresser?"
+    metadata:
+      answerMetadata:
+        type: "SELECT_SINGLE"
+        options:
+          - "Ja"
+          - "Nei"
+        expiry: 26
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Påvirker denne kodebasen, når den kjøres opp, masterdata som understøtter GNF eller nasjonale sikkerhetsinteresser?"
+        - key: "Kortnavn"
+          value:
+            - "Påvirker GNF/NSI masterdata"   
+        - key: "Område"
+          value:
+            - "Kritikalitet"
+        - key: "ID"
+          value: 
+            - "KR-04"
+  - id: "TI-01"
+    question: "Risikoer ved innførte feil i kodebasen er hensyntatt i operasjonell RoS"
+    metadata:
+      answerMetadata:
+        type: "CHECKBOX"
+        expiry: 26
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Risikoer ved innførte feil i kodebasen er hensyntatt i operasjonell RoS.\n\nBruk av KI-verktøy kan innføre nye risikoer eller påvirke sannsynlighet og konsekvens ved eksisterende scenarioer.\nRelevante risikoer å vurdere:\n- Feil funksjonalitet\n- Sårbar kode som ikke oppdages\n- Brudd på API‑kontrakter\n- Feil konfigurasjon / drift\n- Feil som påvirker andre tjenester\n- Logiske feil som ikke oppdages umiddelbart\n- Risiko for logiske hallusineringer"
+        - key: "Kortnavn"
+          value:
+            - "KI hensyntatt i operasjonell RoS"   
+        - key: "Område"
+          value:
+            - "Tiltak"
+        - key: "ID"
+          value: 
+            - "TI-01"
+  - id: "TI-02"
+    question: "Menneskelig PR-review er påkrevd for all KI-generert kode"
+    metadata:
+      answerMetadata:
+        type: "CHECKBOX"
+        expiry: 26
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Menneskelig PR-review er påkrevd for all KI-generert kode"
+        - key: "Kortnavn"
+          value:
+            - "Menneskelig PR-review"   
+        - key: "Område"
+          value:
+            - "Tiltak"
+        - key: "ID"
+          value: 
+            - "TI-02"
+  - id: "TI-03"
+    question: "CodeQL er aktivert"
+    metadata:
+      answerMetadata:
+        type: "CHECKBOX"
+        expiry: 26
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "CodeQL er aktivert"
+        - key: "Kortnavn"
+          value:
+            - "CodeQL"   
+        - key: "Område"
+          value:
+            - "Tiltak"
+        - key: "ID"
+          value: 
+            - "TI-03"
+  - id: "TI-04"
+    question: "Dependabot er aktivert"
+    metadata:
+      answerMetadata:
+        type: "CHECKBOX"
+        expiry: 26
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Dependabot er aktiverte"
+        - key: "Kortnavn"
+          value:
+            - "Dependabot"   
+        - key: "Område"
+          value:
+            - "Tiltak"
+        - key: "ID"
+          value: 
+            - "TI-04"
+  - id: "TI-05"
+    question: "Deploy-pipeline stoppes ved kritiske funn"
+    metadata:
+      answerMetadata:
+        type: "CHECKBOX"
+        expiry: 26
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Deploy-pipeline stoppes ved kritiske funn. Automatiske deploy-pipelines bør ha kontrollere for å unngå innføring av uakseptabel risiko. Teamet vurderer selv om man har kontroll på dette i sin deploy-rutine/pipeline"
+        - key: "Kortnavn"
+          value:
+            - "Blokkering av deploy"   
+        - key: "Område"
+          value:
+            - "Tiltak"
+        - key: "ID"
+          value: 
+            - "TI-05"
+  - id: "TI-06"
+    question: "Ingen kodeendringer i hovedbranch uten PR-review. Dette reguleres med branch-protection i Github."
+    metadata:
+      answerMetadata:
+        type: "CHECKBOX"
+        expiry: 26
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Ingen kodeendringer i hovedbranch uten PR-review. Dette reguleres med branch-protection i Github."
+        - key: "Kortnavn"
+          value:
+            - "Kontrollerte kodeendringer"   
+        - key: "Område"
+          value:
+            - "Tiltak"
+        - key: "ID"
+          value: 
+            - "TI-06"
+  - id: "TI-07"
+    question: "Ekstra reviewer ved høykritisk kode"
+    metadata:
+      answerMetadata:
+        type: "CHECKBOX"
+        expiry: 26
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Ekstra reviewer ved høykritisk kode"
+        - key: "Kortnavn"
+          value:
+            - "Ekstra reviewer"   
+        - key: "Område"
+          value:
+            - "Tiltak"
+        - key: "ID"
+          value: 
+            - "TI-07"
+  - id: "TI-08"
+    question: "Teamet er bevisste på hvilke filer, hemmeligheter og miljøvariabler som er tilgjengelige i miljøet der Copilot kjøres"
+    metadata:
+      answerMetadata:
+        type: "CHECKBOX"
+        expiry: 26
+      optionalFields:
+        - key: "Beskrivelse"
+          value:
+            - "Teamet er bevisste på hvilke filer, hemmeligheter og miljøvariabler som er tilgjengelige i miljøet der Copilot kjøres"
+        - key: "Kortnavn"
+          value:
+            - "Kontroll på Copilot-miljø"  
+        - key: "Område"
+          value:
+            - "Tiltak"
+        - key: "ID"
+          value: 
+            - "TI-08"
