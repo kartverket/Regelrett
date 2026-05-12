@@ -1,4 +1,5 @@
 name: "YAML-data"
+answerColumnName: "Answer"
 columns:
   - type: "OPTION_SINGLE"
     name: "Kortnavn"
@@ -7,9 +8,9 @@ columns:
   - type: "OPTION_SINGLE"
     name: "Kontroller"
   - type: "OPTION_SINGLE"
-    name: "Svar"
-  - type: "OPTION_SINGLE"
     name: "Priority"
+  - type: "OPTION_SINGLE"
+    name: "Answer"
     options:
       - name: "MÅ"
         color: "orangeDark1"
