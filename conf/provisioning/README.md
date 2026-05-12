@@ -90,6 +90,30 @@ schemasources:
     webhook_id: exampleid
     # <string, optional, for Airtable schema sources>
     webhook_secret: S3cr3t!
+    # <string, optional, for Airtable schema sources> The name of the
+    # AirTable field that holds the answer options for each record.
+    # Defaults to "Svar".
+    answer_column: Svar
+    # <string, optional, for Airtable schema sources> The name of the
+    # AirTable field that holds the answer type (e.g. SELECT_SINGLE).
+    # Defaults to "Svartype".
+    answer_type_column: Svartype
+    # <string, optional, for Airtable schema sources> The name of the
+    # AirTable field that holds the answer units (e.g. ms, sek).
+    # Defaults to "Svarenhet".
+    answer_unit_column: Svarenhet
+    # <string, optional, for Airtable schema sources> The name of the
+    # AirTable field that holds the answer expiry in weeks.
+    # Defaults to "Svarvarighet".
+    answer_expiry_column: Svarvarighet
+    # <string, optional, for Airtable schema sources> The name of the
+    # AirTable field that holds the question text.
+    # Defaults to "Aktivitet".
+    question_column: Aktivitet
+    # <string, optional, for Airtable schema sources> The column name
+    # displayed in the UI as the answer column. Defaults to the value
+    # of answer_column, which defaults to "Svar".
+    answer_column_name: Svar
     ##### Additional parameters for specifying Yaml schema     #####
     ##### sources.                                             #####
     # Either url or resourcePath must be set
@@ -106,6 +130,17 @@ A schema of type YAML should follow the structure outlined below.
 #### name
 Required, Specifies the name of the Schema.
 
+#### answerColumnName
+Specifies which column contains the answers. You may name the column freely, for example "Answer". If this field is not specified, Regelrett will use "Svar" as the default column name.
+
+For **YAML** schemas, set this directly in the schema file:
+
+```yaml
+answerColumnName: "Answer"
+```
+
+For **AirTable** schemas, use `answer_column_name` in the provisioning config (see above). Additionally, set `answer_column` to the actual AirTable field name used to store answer options (these two values are often the same).
+
 #### columns
 Defines the columns of the schema.
 
@@ -120,9 +155,6 @@ For columns of type OPTION_MULTIPLE and OPTION_SINGLE, you may also define:
 - `color`: A color associated with each option
 This restricts the possible inputs for all records in that column.
 
-Important:
-The answer column must be named "svar"
-It must be the third column (index 3) in the column definition
 
 #### Records
 Represents the rows of the schema. Each record contains data corresponding to all defined columns. Each record must include:

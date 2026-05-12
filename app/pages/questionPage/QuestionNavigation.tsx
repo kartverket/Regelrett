@@ -37,6 +37,8 @@ export default function QuestionNavigation({
   const filterState = getFilterState(formQuery);
   const sortingState = getSortingState(formQuery);
 
+  const answerColumnName = formQuery.data.answerColumnName;
+
   let records = mapTableDataRecords(
     formQuery.data,
     allCommentsQuery.data,
@@ -44,11 +46,11 @@ export default function QuestionNavigation({
   );
 
   if (filterState.length > 0) {
-    records = records.filter(getFilterFn(filterState));
+    records = records.filter(getFilterFn(filterState, answerColumnName));
   }
 
   if (sortingState[0]?.id != undefined) {
-    records.sort(sortQuestionsFn(sortingState[0].id));
+    records.sort(sortQuestionsFn(sortingState[0].id, answerColumnName));
   }
 
   if (sortingState[0]?.desc) {
@@ -107,11 +109,11 @@ function getSortingState(
   );
 }
 
-function getSortValue(question: Question, sortColummn: string): string {
+function getSortValue(question: Question, sortColummn: string, answerColumnName: string): string {
   switch (sortColummn) {
     case "Kommentar":
       return question.comments.at(-1)?.comment ?? "";
-    case "Svar":
+    case answerColumnName:
       return question.answers.at(-1)?.updated?.getTime().toString() ?? "0";
     default:
       return (
@@ -122,11 +124,11 @@ function getSortValue(question: Question, sortColummn: string): string {
   }
 }
 
-function sortQuestionsFn(columnId: string) {
+function sortQuestionsFn(columnId: string, answerColumnName: string) {
   return function (a: Question, b: Question) {
     return getSortFuncForColumn(columnId)(
-      getSortValue(a, columnId),
-      getSortValue(b, columnId),
+      getSortValue(a, columnId, answerColumnName),
+      getSortValue(b, columnId, answerColumnName),
     );
   };
 }
@@ -142,6 +144,7 @@ function getFilterState(
 
 function getFilterFn(
   filterState: ColumnFiltersState,
+  answerColumnName: string,
 ): (question: Question) => boolean {
   return function (question: Question): boolean {
     const map = new Map<string, boolean>();
@@ -155,7 +158,7 @@ function getFilterFn(
           (filter.value == "ikke utfylt" && question.answers.length == 0));
 
       const answerPredicate =
-        filter.id == "Svar" && filter.value == question.answers.at(-1)?.answer;
+        filter.id == answerColumnName && filter.value == question.answers.at(-1)?.answer;
 
       map.set(
         filter.id,

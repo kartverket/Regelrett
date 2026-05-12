@@ -48,8 +48,13 @@ class ConfigReader {
                     expandEnv(it.webhook_secret),
                     expandEnv(it.read_access_group_id),
                     expandEnv(it.resource_path),
-
-                    )
+                    expandEnv(it.answer_column),
+                    expandEnv(it.answer_type_column),
+                    expandEnv(it.answer_unit_column),
+                    expandEnv(it.answer_expiry_column),
+                    expandEnv(it.question_column),
+                    expandEnv(it.answer_column_name),
+                )
             },
         )
     }

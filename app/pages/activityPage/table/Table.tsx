@@ -62,11 +62,13 @@ export function TableComponent({
 
   const columnHelper = createColumnHelper<Question>();
 
+  const answerColumnName = tableData.answerColumnName;
+
   function urlFilterParamsToColumnFilterState(params: string[]) {
     const allowedFilters: Record<string, string[]> = {
       ...Object.fromEntries(
       columnMetadata
-        .filter(({ name }) => filterByAnswer || name !== "Svar")
+        .filter(({ name }) => filterByAnswer || name !== answerColumnName)
         .map((col) => [col.name, col.options?.map((opt) => opt.name)]),
     ),
       Status: ["utgaatt", "ikke utfylt", "utfylt"]
@@ -95,7 +97,7 @@ export function TableComponent({
     );
   }, [sorting, tableData.id]);
 
-  const parsedColumns = tableData.columns.map((metaColumn, index) => {
+  const parsedColumns = tableData.columns.map((metaColumn) => {
     return columnHelper.accessor(
       (row) => {
         return (
@@ -114,7 +116,7 @@ export function TableComponent({
               metaColumn.name.toLowerCase() === "id"
                 ? "min-w-[120px]"
                 : undefined,
-              metaColumn.name.toLowerCase() === "svar"
+              metaColumn.name.toLowerCase() === answerColumnName.toLowerCase()
                 ? "min-w-[220px]"
                 : undefined,
             )}
@@ -128,7 +130,7 @@ export function TableComponent({
               value={getValue()}
               column={metaColumn}
               row={row}
-              answerable={index == 3}
+              answerable={metaColumn.name === answerColumnName}
               user={user}
             />
           </DataTableCell>
@@ -136,7 +138,7 @@ export function TableComponent({
         sortingFn: (a, b, columnId) => {
           const getLastUpdatedTime = (row: Row<Question>) =>
             row.original.answers?.at(-1)?.updated?.getTime() ?? 0;
-          if (columnId === "Svar") {
+          if (columnId === answerColumnName) {
             return getLastUpdatedTime(a) - getLastUpdatedTime(b);
           }
           const sortFunc = getSortFuncForColumn(columnId);
@@ -150,7 +152,7 @@ export function TableComponent({
           columnId: string,
           filterValue: string,
         ) => {
-          if (columnId == "Svar") {
+          if (columnId === answerColumnName) {
             return filterValue.includes(
               row.original.answers?.at(-1)?.answer ?? "",
             );
@@ -226,18 +228,18 @@ export function TableComponent({
     },
   );
 
-  // Find the index of the column where field.name is "Svar"
-  const svarIndex = parsedColumns.findIndex((column) => column.id === "Svar");
+  // Find the index of the column where field.name matches answerColumnName
+  const answerIndex = parsedColumns.findIndex((column) => column.id === answerColumnName);
 
   // If the column is found, inject the new columns
 
   const columns =
-    svarIndex >= 0
+    answerIndex >= 0
       ? [
-          ...parsedColumns.slice(0, svarIndex + 1),
+          ...parsedColumns.slice(0, answerIndex + 1),
           commentColumn,
           statusColumn,
-          ...parsedColumns.slice(svarIndex + 1),
+          ...parsedColumns.slice(answerIndex + 1),
         ]
       : [...parsedColumns, commentColumn, statusColumn];
 
@@ -299,6 +301,7 @@ export function TableComponent({
               .rows.map((row) => row.original) as Question[]
           }
           headerArray={headerNames}
+          answerColumnName={answerColumnName}
         />
         }
       </div>
@@ -307,6 +310,7 @@ export function TableComponent({
         filterByAnswer={filterByAnswer}
         table={table}
         formId={tableData.id}
+        answerColumnName={answerColumnName}
       />
       <div className="flex px-10 gap-4 items-center">
         <ColumnActions

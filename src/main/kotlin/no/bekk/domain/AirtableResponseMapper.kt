@@ -27,10 +27,12 @@ fun Record.mapToQuestion(
     answerOptions: List<String>?,
     answerUnits: List<String>?,
     answerExpiry: Int?,
+    answerColumn: String = "Svar",
+    questionColumn: String = "Aktivitet",
 ) = Question(
     id = fields.jsonObject["ID"]?.jsonPrimitive?.content ?: UUID.randomUUID().toString(),
     recordId = recordId,
-    question = fields.jsonObject["Aktivitet"]?.jsonPrimitive?.content ?: "",
+    question = fields.jsonObject[questionColumn]?.jsonPrimitive?.content ?: "",
     updated = createdTime,
     metadata = QuestionMetadata(
         answerMetadata = AnswerMetadata(
@@ -39,7 +41,7 @@ fun Record.mapToQuestion(
             units = answerUnits,
             expiry = answerExpiry,
         ),
-        optionalFields = metaDataFields.filterNot { it.name == "Svar" }.map {
+        optionalFields = metaDataFields.filterNot { it.name == answerColumn }.map {
             OptionalField(
                 key = it.name,
                 value = fields.jsonObject[it.name] // is JsonElement, can be JsonArray or JsonPrimitive

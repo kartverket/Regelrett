@@ -77,6 +77,12 @@ class FormServiceImpl : FormService {
                 webhookId = cmd.webhook_id,
                 webhookSecret = cmd.webhook_secret,
                 readAccessGroupId = cmd.read_access_group_id,
+                answerColumn = cmd.answer_column ?: "Svar",
+                answerTypeColumn = cmd.answer_type_column ?: "Svartype",
+                answerUnitColumn = cmd.answer_unit_column ?: "Svarenhet",
+                answerExpiryColumn = cmd.answer_expiry_column ?: "Svarvarighet",
+                questionColumn = cmd.question_column ?: "Aktivitet",
+                answerColumnName = cmd.answer_column_name ?: cmd.answer_column ?: "Svar",
             )
             "YAML" -> YamlProvider(
                 name = cmd.name,

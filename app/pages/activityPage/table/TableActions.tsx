@@ -11,6 +11,7 @@ interface Props<TData> {
   filterByAnswer: boolean;
   table: TanstackTable<TData>;
   formId: string;
+  answerColumnName: string;
 }
 
 export const TableActions = <TData,>({
@@ -18,6 +19,7 @@ export const TableActions = <TData,>({
   filterByAnswer,
   table,
   formId,
+  answerColumnName,
 }: Props<TData>) => {
   const storedRedirect = useStoredRedirect();
   const [_, setSearchParams] = useSearchParams();
@@ -67,7 +69,7 @@ export const TableActions = <TData,>({
         )}
 
         {tableMetadata
-          .filter(({ name }) => filterByAnswer || name !== "Svar")
+          .filter(({ name }) => filterByAnswer || name !== answerColumnName)
           .map((metaColumn) => {
             const column = table.getColumn(metaColumn.name);
             if (!column || !metaColumn.options) return null;
