@@ -95,6 +95,7 @@ class YamlProvider(
                     metadata = it.metadata,
                 )
             },
+            answerColumnName = form.answerColumnName,
         )
     }
 }

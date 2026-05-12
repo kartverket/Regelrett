@@ -194,6 +194,30 @@ In addition airtable schema source specifications include the following fields:
 
 #### `webhook_secret`
 
+#### `answer_column`
+
+The name of the AirTable field that holds the answer options for each record. Defaults to `"Svar"`.
+
+#### `answer_type_column`
+
+The name of the AirTable field that holds the answer type (e.g. `SELECT_SINGLE`, `TEXT_MULTI_LINE`). Defaults to `"Svartype"`.
+
+#### `answer_unit_column`
+
+The name of the AirTable field that holds the answer units (e.g. `ms`, `sek`). Defaults to `"Svarenhet"`.
+
+#### `answer_expiry_column`
+
+The name of the AirTable field that holds the answer expiry in weeks. Defaults to `"Svarvarighet"`.
+
+#### `question_column`
+
+The name of the AirTable field that holds the question text. Defaults to `"Aktivitet"`.
+
+#### `answer_column_name`
+
+The column name displayed in the UI as the answer column. Defaults to the value of `answer_column` (which itself defaults to `"Svar"`). Set this if the display name should differ from the AirTable field name.
+
 Yaml schema source specifications include the following fields:
 
 #### `endpoint`

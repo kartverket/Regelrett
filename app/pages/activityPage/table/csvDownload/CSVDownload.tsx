@@ -6,15 +6,16 @@ import { Download } from "lucide-react";
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   rows: Question[];
   headerArray: string[];
+  answerColumnName: string;
 }
 
-export function CSVDownload({ rows, headerArray, ...rest }: Props) {
+export function CSVDownload({ rows, headerArray, answerColumnName, ...rest }: Props) {
   const csvRows = rows
     .map((row) =>
       headerArray
         .map((header) => {
           switch (header) {
-            case "Svar":
+            case answerColumnName:
               return escapeCSVValue(row.answers.map((answer) => answer.answer));
             case "Kommentar":
               return escapeCSVValue(
