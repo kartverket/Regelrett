@@ -66,12 +66,11 @@ export function QuestionDetails({ question, answerUpdated, formId }: Props) {
 
   const description =
     findFieldValue("Sikkerhetskontroller") || findFieldValue("Beskrivelse");
-  const name = findFieldValue("Kortnavn") || findFieldValue("Navn");
 
   return (
     <div className="space-y-1">
       <p>{question.id}</p>
-      <p className="text-2xl font-bold">{name}</p>
+      <p className="text-2xl font-bold">{question.question}</p>
       <div className="flex flex-col gap-4 py-5">
         {fieldData?.map((field) => (
           <div className="flex items-center gap-4" key={field.key}>

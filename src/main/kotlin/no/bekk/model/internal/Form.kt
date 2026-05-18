@@ -21,6 +21,7 @@ data class FormWithoutId(
     val columns: List<Column>,
     val records: List<Question>,
     val answerColumnName: String = "Svar",
+    val questionColumnName: String? = null,
 )
 
 @Serializable
@@ -30,6 +31,7 @@ data class Form(
     val columns: List<Column>,
     val records: List<Question>,
     val answerColumnName: String = "Svar",
+    val questionColumnName: String? = null,
 )
 
 @Serializable

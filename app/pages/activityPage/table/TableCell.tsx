@@ -14,6 +14,7 @@ type Props = {
   column: Column;
   row: Row<Question>;
   answerable?: boolean;
+  isQuestionColumn?: boolean;
   user: User;
 };
 
@@ -23,6 +24,7 @@ export const TableCell = ({
   column,
   row,
   answerable = false,
+  isQuestionColumn = false,
   user,
 }: Props) => {
   if (answerable) {
@@ -47,6 +49,20 @@ export const TableCell = ({
 
   if (value == null || !value.length) {
     return <></>;
+  }
+
+  if (isQuestionColumn) {
+    return (
+      <div className="max-w-[650px] whitespace-normal">
+        <Link
+          to={row.original.recordId}
+          aria-label="Se detaljer"
+          className="p-0 text-sm h-0 whitespace-normal text-left text-primary hover:underline"
+        >
+          {value[0]}
+        </Link>
+      </div>
+    );
   }
 
   switch (column.type) {
@@ -84,20 +100,6 @@ export const TableCell = ({
         </Badge>
       );
     }
-  }
-
-  if (column.name === "Kortnavn" || column.name === "Navn") {
-    return (
-      <div className="max-w-[650px] whitespace-normal">
-        <Link
-          to={row.original.recordId}
-          aria-label="Se detaljer"
-          className="p-0 text-sm h-0 whitespace-normal text-left text-primary hover:underline"
-        >
-          {value[0]}
-        </Link>
-      </div>
-    );
   }
 
   return (

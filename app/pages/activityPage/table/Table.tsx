@@ -63,6 +63,7 @@ export function TableComponent({
   const columnHelper = createColumnHelper<Question>();
 
   const answerColumnName = tableData.answerColumnName;
+  const questionColumnName = tableData.questionColumnName;
 
   function urlFilterParamsToColumnFilterState(params: string[]) {
     const allowedFilters: Record<string, string[]> = {
@@ -131,6 +132,12 @@ export function TableComponent({
               column={metaColumn}
               row={row}
               answerable={metaColumn.name === answerColumnName}
+              isQuestionColumn={
+                questionColumnName
+                  ? metaColumn.name === questionColumnName
+                  : metaColumn.name.toLowerCase() === "kortnavn" ||
+                    metaColumn.name.toLowerCase() === "navn"
+              }
               user={user}
             />
           </DataTableCell>
@@ -262,18 +269,17 @@ export function TableComponent({
     getPaginationRowModel: getPaginationRowModel(),
     globalFilterFn: (row, _, filterValue) => {
       const searchTerm = String(filterValue).toLowerCase();
-      const optionalFields = row.original.metadata?.optionalFields;
-      const getFieldValue = (index: number): string => {
-        return optionalFields?.[index]?.value[0]?.toLowerCase() || "";
-      };
+      const optionalFields = row.original.metadata?.optionalFields ?? [];
+      const question = row.original.question?.toLowerCase() || "";
 
-      const rowData = {
-        field0: getFieldValue(0),
-        field1: getFieldValue(1),
-        field2: getFieldValue(2),
-      };
+      const fieldValues = optionalFields.map(
+        (field) => field.value[0]?.toLowerCase() || "",
+      );
 
-      return Object.values(rowData).some((field) => field.includes(searchTerm));
+      return (
+        question.includes(searchTerm) ||
+        fieldValues.some((field) => field.includes(searchTerm))
+      );
     },
     initialState: {
       columnFilters: search.has(`filter`)

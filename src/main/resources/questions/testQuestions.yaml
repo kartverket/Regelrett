@@ -1,5 +1,6 @@
 name: "YAML-data"
 answerColumnName: "Answer"
+questionColumnName: "Kortnavn"
 columns:
   - type: "OPTION_SINGLE"
     name: "Kortnavn"

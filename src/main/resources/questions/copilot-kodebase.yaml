@@ -1,4 +1,5 @@
 name: "Kontrollere for KI-bruk i kodebase"
+questionColumnName: "Kortnavn"
 columns:
   - type: "OPTION_SINGLE"
     name: "Område"

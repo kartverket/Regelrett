@@ -107,13 +107,10 @@ schemasources:
     # Defaults to "Svarvarighet".
     answer_expiry_column: Svarvarighet
     # <string, optional, for Airtable schema sources> The name of the
-    # AirTable field that holds the question text.
-    # Defaults to "Aktivitet".
+    # AirTable field that holds the question text. This column will be
+    # rendered as a clickable link in the table, navigating to the
+    # question detail page. Defaults to "Aktivitet".
     question_column: Aktivitet
-    # <string, optional, for Airtable schema sources> The column name
-    # displayed in the UI as the answer column. Defaults to the value
-    # of answer_column, which defaults to "Svar".
-    answer_column_name: Svar
     ##### Additional parameters for specifying Yaml schema     #####
     ##### sources.                                             #####
     # Either url or resourcePath must be set
@@ -140,6 +137,19 @@ answerColumnName: "Answer"
 ```
 
 For **AirTable** schemas, use `answer_column_name` in the provisioning config (see above). Additionally, set `answer_column` to the actual AirTable field name used to store answer options (these two values are often the same).
+
+#### questionColumnName
+Specifies which column contains the main question text. This column is rendered as a **clickable link** in the table, navigating to the question detail page.
+
+For **YAML** schemas, set this directly in the schema file:
+
+```yaml
+questionColumnName: "Kortnavn"
+```
+
+For **AirTable** schemas, use `question_column` in the provisioning config (see above). Defaults to `"Aktivitet"`.
+
+> **Note:** If this is not set correctly, no column in the table will be clickable. Make sure `question_column` (AirTable) or `questionColumnName` (YAML) matches an existing column name in your schema.
 
 #### columns
 Defines the columns of the schema.
@@ -179,6 +189,8 @@ Each value represents the data for that column in the given record
 
 ```yaml
 name: "YAML-data" 
+answerColumnName: "Svar"
+questionColumnName: "Kortnavn"  # This column will be the clickable link in the table
 columns: 
   - type: "OPTION_SINGLE"  #Choose between OPTION_MULTIPLE, OPTION_SINGLE or TEXT
     name: "Kortnavn" #Column name

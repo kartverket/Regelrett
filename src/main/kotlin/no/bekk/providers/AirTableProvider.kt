@@ -164,6 +164,7 @@ class AirTableProvider(
             columns = columns,
             records = questions,
             answerColumnName = answerColumnName,
+            questionColumnName = questionColumn,
         )
     }
 

@@ -80,6 +80,7 @@ export type Form = {
   name: string;
   records: Question[];
   answerColumnName: string;
+  questionColumnName: string | undefined;
 };
 
 export type User = {

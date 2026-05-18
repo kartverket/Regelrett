@@ -96,6 +96,7 @@ class YamlProvider(
                 )
             },
             answerColumnName = form.answerColumnName,
+            questionColumnName = form.questionColumnName,
         )
     }
 }

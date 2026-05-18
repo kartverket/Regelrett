@@ -1,4 +1,5 @@
 name: "Kontrollere for KI-bruk i teamet"
+questionColumnName: "Kortnavn"
 columns:
   - type: "OPTION_SINGLE"
     name: "Område"
