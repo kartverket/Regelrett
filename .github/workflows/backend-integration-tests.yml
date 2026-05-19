@@ -18,7 +18,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Setup gradle
         uses: gradle/actions/setup-gradle@v6.1.0
       - name: Setup postgres
