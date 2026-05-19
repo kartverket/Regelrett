@@ -38,6 +38,8 @@ export type Column = {
   options: Option[] | null;
   name: string;
   type: OptionalFieldType;
+  answerable: boolean;
+  isQuestion: boolean;
 };
 
 export type Option = {
@@ -79,8 +81,6 @@ export type Form = {
   columns: Column[];
   name: string;
   records: Question[];
-  answerColumnName: string;
-  questionColumnName: string | undefined;
 };
 
 export type User = {

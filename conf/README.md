@@ -196,7 +196,7 @@ In addition airtable schema source specifications include the following fields:
 
 #### `answer_column`
 
-The name of the AirTable field that holds the answer options for each record. Defaults to `"Svar"`.
+The name of the AirTable field that holds the answer options for each record. Defaults to `"Svar"`. This column is marked as the answer column in the UI (equivalent to `answerable: true` in YAML schemas).
 
 #### `answer_type_column`
 
@@ -212,7 +212,7 @@ The name of the AirTable field that holds the answer expiry in weeks. Defaults t
 
 #### `question_column`
 
-The name of the AirTable field that holds the question text. Defaults to `"Aktivitet"`.
+The name of the AirTable field that holds the question text. Defaults to `"Aktivitet"`. This column is rendered as a clickable link in the table (equivalent to `isQuestion: true` in YAML schemas).
 
 Yaml schema source specifications include the following fields:
 

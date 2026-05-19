@@ -62,14 +62,13 @@ export function TableComponent({
 
   const columnHelper = createColumnHelper<Question>();
 
-  const answerColumnName = tableData.answerColumnName;
-  const questionColumnName = tableData.questionColumnName;
+  const answerColumnName = tableData.columns.find((c) => c.answerable)?.name ?? "Svar";
 
   function urlFilterParamsToColumnFilterState(params: string[]) {
     const allowedFilters: Record<string, string[]> = {
       ...Object.fromEntries(
       columnMetadata
-        .filter(({ name }) => filterByAnswer || name !== answerColumnName)
+        .filter(({ answerable }) => filterByAnswer || !answerable)
         .map((col) => [col.name, col.options?.map((opt) => opt.name)]),
     ),
       Status: ["utgaatt", "ikke utfylt", "utfylt"]
@@ -117,7 +116,7 @@ export function TableComponent({
               metaColumn.name.toLowerCase() === "id"
                 ? "min-w-[120px]"
                 : undefined,
-              metaColumn.name.toLowerCase() === answerColumnName.toLowerCase()
+              metaColumn.answerable
                 ? "min-w-[220px]"
                 : undefined,
             )}
@@ -131,13 +130,8 @@ export function TableComponent({
               value={getValue()}
               column={metaColumn}
               row={row}
-              answerable={metaColumn.name === answerColumnName}
-              isQuestionColumn={
-                questionColumnName
-                  ? metaColumn.name === questionColumnName
-                  : metaColumn.name.toLowerCase() === "kortnavn" ||
-                    metaColumn.name.toLowerCase() === "navn"
-              }
+              answerable={metaColumn.answerable}
+              isQuestionColumn={metaColumn.isQuestion}
               user={user}
             />
           </DataTableCell>
@@ -235,7 +229,7 @@ export function TableComponent({
     },
   );
 
-  // Find the index of the column where field.name matches answerColumnName
+  // Find the index of the answerable column to inject comment/status columns after it
   const answerIndex = parsedColumns.findIndex((column) => column.id === answerColumnName);
 
   // If the column is found, inject the new columns
@@ -307,7 +301,7 @@ export function TableComponent({
               .rows.map((row) => row.original) as Question[]
           }
           headerArray={headerNames}
-          answerColumnName={answerColumnName}
+          columns={columnMetadata}
         />
         }
       </div>
@@ -316,7 +310,6 @@ export function TableComponent({
         filterByAnswer={filterByAnswer}
         table={table}
         formId={tableData.id}
-        answerColumnName={answerColumnName}
       />
       <div className="flex px-10 gap-4 items-center">
         <ColumnActions

@@ -145,6 +145,8 @@ class AirTableProvider(
                         options = field.options?.choices?.map { choice ->
                             Option(name = choice.name, color = choice.color)
                         },
+                        answerable = field.name == answerColumn,
+                        isQuestion = field.name == questionColumn,
                     )
                 } catch (e: IllegalArgumentException) {
                     logger.error("field type ${field.type} could not be mapped, and will be skipped")
@@ -162,8 +164,6 @@ class AirTableProvider(
             name = airtableClient.getBases().bases.find { it.id == baseId }?.name ?: tableMetadata.name,
             columns = columns,
             records = questions,
-            answerColumnName = answerColumn,
-            questionColumnName = questionColumn,
         )
     }
 
@@ -227,6 +227,8 @@ class AirTableProvider(
                 options = field.options?.choices?.map { choice ->
                     Option(name = choice.name, color = choice.color)
                 },
+                answerable = field.name == answerColumn,
+                isQuestion = field.name == questionColumn,
             )
         }
     }

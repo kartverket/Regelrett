@@ -1,9 +1,8 @@
 name: "YAML-data"
-answerColumnName: "Answer"
-questionColumnName: "Kortnavn"
 columns:
   - type: "OPTION_SINGLE"
     name: "Kortnavn"
+    isQuestion: true
   - type: "OPTION_SINGLE"
     name: "ID"
   - type: "OPTION_SINGLE"
@@ -12,6 +11,7 @@ columns:
     name: "Priority"
   - type: "OPTION_SINGLE"
     name: "Answer"
+    answerable: true
     options:
       - name: "MÅ"
         color: "orangeDark1"

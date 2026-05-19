@@ -37,7 +37,8 @@ export default function QuestionNavigation({
   const filterState = getFilterState(formQuery);
   const sortingState = getSortingState(formQuery);
 
-  const answerColumnName = formQuery.data.answerColumnName;
+  const answerColumnName =
+    formQuery.data.columns.find((c) => c.answerable)?.name ?? "Svar";
 
   let records = mapTableDataRecords(
     formQuery.data,

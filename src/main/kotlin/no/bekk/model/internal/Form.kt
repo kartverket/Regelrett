@@ -13,6 +13,8 @@ data class Column(
     val type: OptionalFieldType,
     val name: String,
     val options: List<Option>? = null,
+    val answerable: Boolean = false,
+    val isQuestion: Boolean = false,
 )
 
 @Serializable
@@ -20,8 +22,6 @@ data class FormWithoutId(
     val name: String,
     val columns: List<Column>,
     val records: List<Question>,
-    val answerColumnName: String = "Svar",
-    val questionColumnName: String? = null,
 )
 
 @Serializable
@@ -30,8 +30,6 @@ data class Form(
     val name: String,
     val columns: List<Column>,
     val records: List<Question>,
-    val answerColumnName: String = "Svar",
-    val questionColumnName: String? = null,
 )
 
 @Serializable

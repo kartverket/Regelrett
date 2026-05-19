@@ -34,9 +34,12 @@
 #     # <string, optional, for Airtable schema sources>
 #     webhook_secret: S3cr3t!
 #     # <string, optional, for Airtable schema sources> The name of the
+#     # AirTable field that holds the answer options. This column is marked
+#     # as the answer column in the UI. Defaults to "Svar".
+#     answer_column: Svar
+#     # <string, optional, for Airtable schema sources> The name of the
 #     # AirTable field that holds the question text. This column is rendered
-#     # as a clickable link in the table. Must match an existing column name.
-#     # Defaults to "Aktivitet".
+#     # as a clickable link in the table. Defaults to "Aktivitet".
 #     question_column: Aktivitet
 #     # <string, optional, for Airtable and YAML scheams sources>
 #     # entra id group id which is given read access to specefied schema
