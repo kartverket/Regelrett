@@ -26,5 +26,4 @@ data class UpsertDataFromConfig(
     val answer_unit_column: String? = null,
     val answer_expiry_column: String? = null,
     val question_column: String? = null,
-    val answer_column_name: String? = null,
 )

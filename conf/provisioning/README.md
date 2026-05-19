@@ -136,7 +136,7 @@ For **YAML** schemas, set this directly in the schema file:
 answerColumnName: "Answer"
 ```
 
-For **AirTable** schemas, use `answer_column_name` in the provisioning config (see above). Additionally, set `answer_column` to the actual AirTable field name used to store answer options (these two values are often the same).
+For **AirTable** schemas, use `answer_column` in the provisioning config to specify the AirTable field name used to store answer options. This value is also used as the display name in the UI.
 
 #### questionColumnName
 Specifies which column contains the main question text. This column is rendered as a **clickable link** in the table, navigating to the question detail page.

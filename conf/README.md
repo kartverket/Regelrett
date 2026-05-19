@@ -214,10 +214,6 @@ The name of the AirTable field that holds the answer expiry in weeks. Defaults t
 
 The name of the AirTable field that holds the question text. Defaults to `"Aktivitet"`.
 
-#### `answer_column_name`
-
-The column name displayed in the UI as the answer column. Defaults to the value of `answer_column` (which itself defaults to `"Svar"`). Set this if the display name should differ from the AirTable field name.
-
 Yaml schema source specifications include the following fields:
 
 #### `endpoint`

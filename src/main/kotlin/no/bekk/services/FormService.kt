@@ -82,7 +82,6 @@ class FormServiceImpl : FormService {
                 answerUnitColumn = cmd.answer_unit_column ?: "Svarenhet",
                 answerExpiryColumn = cmd.answer_expiry_column ?: "Svarvarighet",
                 questionColumn = cmd.question_column ?: "Aktivitet",
-                answerColumnName = cmd.answer_column_name ?: cmd.answer_column ?: "Svar",
             )
             "YAML" -> YamlProvider(
                 name = cmd.name,

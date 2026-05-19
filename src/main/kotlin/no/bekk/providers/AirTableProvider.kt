@@ -30,7 +30,6 @@ class AirTableProvider(
     private val answerUnitColumn: String = "Svarenhet",
     private val answerExpiryColumn: String = "Svarvarighet",
     private val questionColumn: String = "Aktivitet",
-    private val answerColumnName: String = "Svar",
 ) : FormProvider {
     private val logger = LoggerFactory.getLogger(AirTableProvider::class.java)
 
@@ -163,7 +162,7 @@ class AirTableProvider(
             name = airtableClient.getBases().bases.find { it.id == baseId }?.name ?: tableMetadata.name,
             columns = columns,
             records = questions,
-            answerColumnName = answerColumnName,
+            answerColumnName = answerColumn,
             questionColumnName = questionColumn,
         )
     }
