@@ -49,6 +49,7 @@ dependencies {
     implementation(libs.flyway.database.postgresql)
     implementation(libs.ben.manes.caffeine)
     implementation(libs.netty.codec.http2)
+    implementation(libs.netty.transport.native.epoll)
 
     testImplementation(libs.testcontainers.testcontainers)
     testImplementation(libs.testcontainers.postgresql)
