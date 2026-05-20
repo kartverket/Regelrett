@@ -29,7 +29,7 @@ fun Application.configureBackgroundTasks(formService: FormService) {
                 }
 
                 // Delay for 1 hour if one provider uses cache, and 24 hours if all providers uses webhooks.
-                val delayMillis = if (hasProvidersWithoutWebhook)  1.hours else 24.hours
+                val delayMillis = if (hasProvidersWithoutWebhook) 1.hours else 24.hours
                 delay(delayMillis)
             } catch (e: CancellationException) {
                 throw e
