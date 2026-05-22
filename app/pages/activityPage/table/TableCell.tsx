@@ -47,7 +47,7 @@ export const TableCell = ({
     return <></>;
   }
 
-  if (isQuestionColumn) {
+  if (column.isName) {
     return (
       <div className="max-w-[650px] whitespace-normal">
         <Link

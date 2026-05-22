@@ -112,6 +112,7 @@ export function TableComponent({
             column={column}
             header={metaColumn.name}
             setColumnVisibility={setColumnVisibility}
+            isNameColumn={metaColumn.isName}
             className={cn(
               metaColumn.name.toLowerCase() === "id"
                 ? "min-w-[120px]"

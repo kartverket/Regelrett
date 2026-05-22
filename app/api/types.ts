@@ -39,7 +39,7 @@ export type Column = {
   name: string;
   type: OptionalFieldType;
   answerable: boolean;
-  isQuestion: boolean;
+  isName: boolean;
 };
 
 export type Option = {

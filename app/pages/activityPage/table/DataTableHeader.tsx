@@ -18,6 +18,7 @@ interface Props<TData, TValue>
     React.SetStateAction<Record<string, boolean>>
   >;
   className?: string;
+  isNameColumn?: boolean;
 }
 
 export function DataTableHeader<TData, TValue>({
@@ -25,6 +26,7 @@ export function DataTableHeader<TData, TValue>({
   header,
   setColumnVisibility,
   className,
+  isNameColumn = false,
 }: Props<TData, TValue>) {
   const hideColumn = (name: string) => {
     column.clearSorting();
@@ -73,7 +75,7 @@ export function DataTableHeader<TData, TValue>({
             </DropdownMenuItem>
           )}
 
-          {column.id !== "Kortnavn" && column.id !== "Navn" && (
+          {!isNameColumn && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => hideColumn(header)}>

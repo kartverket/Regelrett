@@ -9,7 +9,7 @@ columns:
         color: "greenLight1"
   - type: "TEXT"
     name: "Kortnavn"
-    isQuestion: true
+    isName: true
   - type: "TEXT"
     name: "Beskrivelse"
   - type: "OPTION_MULTIPLE"

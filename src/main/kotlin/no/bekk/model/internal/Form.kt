@@ -14,7 +14,7 @@ data class Column(
     val name: String,
     val options: List<Option>? = null,
     val answerable: Boolean = false,
-    val isQuestion: Boolean = false,
+    val isName: Boolean = false,
 )
 
 @Serializable

@@ -212,7 +212,7 @@ The name of the AirTable field that holds the answer expiry in weeks. Defaults t
 
 #### `question_column`
 
-The name of the AirTable field that holds the question text. Defaults to `"Aktivitet"`. This column is rendered as a clickable link in the table (equivalent to `isQuestion: true` in YAML schemas).
+The name of the AirTable field to use as the name/title column. Defaults to `"Navn"`. The name/title column is the one rendered as a clickable link in the table (equivalent to setting `isName: true` on a column in YAML schemas).
 
 Yaml schema source specifications include the following fields:
 

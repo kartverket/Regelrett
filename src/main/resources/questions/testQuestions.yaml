@@ -2,7 +2,7 @@ name: "YAML-data"
 columns:
   - type: "OPTION_SINGLE"
     name: "Kortnavn"
-    isQuestion: true
+    isName: true
   - type: "OPTION_SINGLE"
     name: "ID"
   - type: "OPTION_SINGLE"

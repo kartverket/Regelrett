@@ -107,10 +107,10 @@ schemasources:
     # Defaults to "Svarvarighet".
     answer_expiry_column: Svarvarighet
     # <string, optional, for Airtable schema sources> The name of the
-    # AirTable field that holds the question text. This column will be
-    # rendered as a clickable link in the table, navigating to the
-    # question detail page. Defaults to "Aktivitet".
-    question_column: Aktivitet
+    # AirTable field to use as the name/title column. The name/title
+    # column is rendered as a clickable link navigating to the question
+    # detail page. Defaults to "Navn".
+    question_column: Navn
     ##### Additional parameters for specifying Yaml schema     #####
     ##### sources.                                             #####
     # Either url or resourcePath must be set
@@ -140,9 +140,9 @@ Each column may also include:
 
 `answerable`: Set to `true` on exactly one column to mark it as the answer column. This column receives special treatment: it is populated from stored answers rather than record metadata, and is used for answer-based sorting and filtering. If no column is marked `answerable`, Regelrett defaults to looking for a column named `"Svar"`.
 
-`isQuestion`: Set to `true` on exactly one column to mark it as the question column. This column is rendered as a **clickable link** in the table, navigating to the question detail page. If no column is marked `isQuestion`, no column will be clickable.
+`isName`: Set to `true` on exactly one column to mark it as the name/title column. This column is rendered as a **clickable link** in the table, navigating to the question detail page. If no column is marked `isName`, no column will be clickable.
 
-> **Note for AirTable schemas:** `answerable` and `isQuestion` are set automatically based on `answer_column` and `question_column` in the provisioning config — you do not set them in AirTable data.
+> **Note for AirTable schemas:** `answerable` and `isName` are set automatically based on `answer_column` and `question_column` in the provisioning config — you do not set them in AirTable data.
 
 For columns of type OPTION_MULTIPLE and OPTION_SINGLE, you may also define:
 - `options`: A list of allowed values
@@ -176,7 +176,7 @@ name: "YAML-data"
 columns: 
   - type: "OPTION_SINGLE"  #Choose between OPTION_MULTIPLE, OPTION_SINGLE or TEXT
     name: "Kortnavn" #Column name
-    isQuestion: true  # This column will be the clickable link in the table
+    isName: true  # This column will be the name/title and clickable link in the table
   - type: "OPTION_SINGLE"
     name: "ID" #ID columns should always be included in every Schema. 
   - type: "OPTION_SINGLE"
