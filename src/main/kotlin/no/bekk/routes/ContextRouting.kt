@@ -262,6 +262,32 @@ fun Route.contextRouting(
                     call.respond(HttpStatusCode.InternalServerError, "An unexpected error occurred.")
                 }
             }
+
+            patch("/name") {
+                try {
+                    logger.info("Received PATCH /{contextId}/name with id: ${call.parameters["contextId"]}")
+                    val contextId = call.parameters["contextId"] ?: throw BadRequestException("Missing contextId")
+
+                    if (!authService.hasContextAccess(call, contextId)) {
+                        call.respond(HttpStatusCode.Forbidden)
+                        return@patch
+                    }
+
+                    val payload = call.receive<NameUpdateRequest>()
+
+                    contextRepository.changeName(contextId, payload.name)
+                    call.respond(HttpStatusCode.OK)
+                    return@patch
+                } catch (e: BadRequestException) {
+                    logger.error("Bad request: ${e.message}", e)
+                    call.respond(HttpStatusCode.BadRequest, e.message ?: "Bad request")
+                } catch (e: ConflictException) {
+                    ErrorHandlers.handleConflictException(call, e)
+                } catch (e: Exception) {
+                    logger.error("Unexpected error when processing PATCH /contexts", e)
+                    call.respond(HttpStatusCode.InternalServerError, "An unexpected error occurred.")
+                }
+            }
         }
     }
 }
@@ -295,6 +321,10 @@ fun buildContextMetrics(
 
 @Serializable
 data class TeamUpdateRequest(val teamName: String? = null, val teamId: String? = null)
+
+@Serializable
+data class NameUpdateRequest(val name: String)
+
 
 @Serializable
 data class CopyContextRequest(val copyContextId: String?)
