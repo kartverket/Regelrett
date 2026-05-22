@@ -13,8 +13,6 @@ type Props = {
   value: Array<string>;
   column: Column;
   row: Row<Question>;
-  answerable?: boolean;
-  isQuestionColumn?: boolean;
   user: User;
 };
 
@@ -23,11 +21,9 @@ export const TableCell = ({
   value,
   column,
   row,
-  answerable = false,
-  isQuestionColumn = false,
   user,
 }: Props) => {
-  if (answerable) {
+  if (column.answerable) {
     return (
       <AnswerCell
         value={row.original.answers.at(-1)?.answer ?? ""}

@@ -130,8 +130,6 @@ export function TableComponent({
               value={getValue()}
               column={metaColumn}
               row={row}
-              answerable={metaColumn.answerable}
-              isQuestionColumn={metaColumn.isQuestion}
               user={user}
             />
           </DataTableCell>
