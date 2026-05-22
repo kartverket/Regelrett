@@ -25,11 +25,11 @@ class AirTableProvider(
     private val viewId: String? = null,
     val webhookSecret: String? = null,
     val webhookId: String? = null,
-    private val answerColumn: String = "Svar",
-    private val answerTypeColumn: String = "Svartype",
-    private val answerUnitColumn: String = "Svarenhet",
-    private val answerExpiryColumn: String = "Svarvarighet",
-    private val questionColumn: String = "Aktivitet",
+    private val answerColumn: String,
+    private val answerTypeColumn: String,
+    private val answerUnitColumn: String,
+    private val answerExpiryColumn: String,
+    private val questionColumn: String,
 ) : FormProvider {
     private val logger = LoggerFactory.getLogger(AirTableProvider::class.java)
 

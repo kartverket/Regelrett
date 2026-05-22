@@ -27,8 +27,8 @@ fun Record.mapToQuestion(
     answerOptions: List<String>?,
     answerUnits: List<String>?,
     answerExpiry: Int?,
-    answerColumn: String = "Svar",
-    questionColumn: String = "Aktivitet",
+    answerColumn: String,
+    questionColumn: String,
 ) = Question(
     id = fields.jsonObject["ID"]?.jsonPrimitive?.content ?: UUID.randomUUID().toString(),
     recordId = recordId,
