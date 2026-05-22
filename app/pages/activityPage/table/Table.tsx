@@ -14,6 +14,7 @@ import { DataTableCell } from "./DataTableCell";
 import { DataTableHeader } from "./DataTableHeader";
 import { TableCell } from "./TableCell";
 import type { Column, Question, Form, User } from "@/api/types";
+import { OptionalFieldType } from "@/api/types";
 import { getSortFuncForColumn } from "./TableSort";
 import { TableActions } from "./TableActions";
 import { useEffect, useState } from "react";
@@ -265,13 +266,13 @@ export function TableComponent({
       const optionalFields = row.original.metadata?.optionalFields ?? [];
       const question = row.original.question?.toLowerCase() || "";
 
-      const fieldValues = optionalFields.map(
-        (field) => field.value[0]?.toLowerCase() || "",
-      );
+      const textFieldValues = optionalFields
+        .filter((field) => field.type === OptionalFieldType.TEXT)
+        .map((field) => field.value[0]?.toLowerCase() || "");
 
       return (
         question.includes(searchTerm) ||
-        fieldValues.some((field) => field.includes(searchTerm))
+        textFieldValues.some((field) => field.includes(searchTerm))
       );
     },
     initialState: {
