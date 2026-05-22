@@ -29,16 +29,16 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         fetch-depth: 2
 
     - if: matrix.language == 'java-kotlin'
       name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v4.4.3
+      uses: gradle/actions/setup-gradle@v6.1.0
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
+      uses: github/codeql-action/init@v4
       with:
         languages: ${{ matrix.language }}
 
@@ -48,4 +48,4 @@ jobs:
         ./gradlew --no-daemon -Dorg.gradle.jvmargs=-Xmx2g clean test
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
+      uses: github/codeql-action/analyze@v4
