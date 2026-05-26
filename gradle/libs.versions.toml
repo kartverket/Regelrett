@@ -12,7 +12,7 @@ ben-manes-caffeine-version = "3.2.4"
 testcontainers-version = "1.21.4"
 postgresql-driver-version = "42.7.10"
 ktlint-version = "14.2.0"
-netty-version = "4.2.13.Final"
+netty-version = "4.2.14.Final"
 
 [libraries]
 ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor-version" }
