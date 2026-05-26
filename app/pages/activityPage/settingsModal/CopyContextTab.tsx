@@ -34,10 +34,10 @@ import { toast } from "sonner";
 
 const CopyFormSchema = z.object({
   context: z.string({
-    required_error: "Du må velge et eksisterende skjema.",
+    error: "Du må velge et eksisterende skjema.",
   }),
-  comments: z.enum(["yes", "no"], {
-    required_error: "Du må velge om du vil kopiere kommentarer eller ikke.",
+  comments: z.enum(["yes", "no"] as const, {
+    error: "Du må velge om du vil kopiere kommentarer eller ikke.",
   }),
 });
 
