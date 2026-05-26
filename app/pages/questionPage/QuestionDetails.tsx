@@ -1,4 +1,5 @@
 import type { Question } from "../../api/types";
+import { OptionalFieldType } from "../../api/types";
 import Markdown from "react-markdown";
 import { markdownComponents } from "../../utils/markdownComponents";
 import { LoadingState } from "../../components/LoadingState";
@@ -64,13 +65,23 @@ export function QuestionDetails({ question, answerUpdated, formId }: Props) {
       };
     });
 
-  const description =
-    findFieldValue("Sikkerhetskontroller") || findFieldValue("Beskrivelse");
+  const nameColumn = columns.find((col) => col.isName);
+  const questionName = nameColumn
+    ? (findFieldValue(nameColumn.name)?.[0] ?? question.question)
+    : question.question;
+
+  const descriptionColumn = columns.find(
+    (col) =>
+      col.type === OptionalFieldType.TEXT && !col.isName && !col.answerable,
+  );
+  const description = descriptionColumn
+    ? (findFieldValue(descriptionColumn.name)?.[0] ?? question.question)
+    : question.question;
 
   return (
     <div className="space-y-1">
       <p>{question.id}</p>
-      <p className="text-2xl font-bold">{question.question}</p>
+      <p className="text-2xl font-bold">{questionName}</p>
       <div className="flex flex-col gap-4 py-5">
         {fieldData?.map((field) => (
           <div className="flex items-center gap-4" key={field.key}>
@@ -108,7 +119,7 @@ export function QuestionDetails({ question, answerUpdated, formId }: Props) {
       </div>
       <div className="bg-secondary p-4 rounded-xl">
         <p className="font-bold">Beskrivelse:</p>
-        <Markdown components={markdownComponents}>{description?.[0]}</Markdown>
+        <Markdown components={markdownComponents}>{description}</Markdown>
       </div>
     </div>
   );
