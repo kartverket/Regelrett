@@ -210,6 +210,8 @@ fun Route.contextRouting(
                 } catch (e: BadRequestException) {
                     logger.error("Bad request: ${e.message}", e)
                     call.respond(HttpStatusCode.BadRequest, e.message ?: "Bad request")
+                } catch (e: ConflictException) {
+                    ErrorHandlers.handleConflictException(call, e)
                 } catch (e: Exception) {
                     logger.error("Unexpected error when processing PATCH /contexts", e)
                     call.respond(HttpStatusCode.InternalServerError, "An unexpected error occurred.")

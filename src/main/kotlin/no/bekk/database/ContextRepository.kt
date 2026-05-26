@@ -214,9 +214,14 @@ class ContextRepositoryImpl(private val database: Database) : ContextRepository 
                     return statement.executeUpdate() > 0
                 }
             }
-        } catch (e: SQLException) {
-            logger.error("Database error updating team for context $contextId with teamId $newTeamId", e)
-            throw DatabaseException("Failed to update team for context $contextId", "changeTeam", e)
+        }  catch (e: SQLException) {
+            if (e.sqlState == "23505") { // PostgreSQL unique_violation
+                logger.warn("Unique constraint violation when updating contextName: ${e.message}")
+                throw ConflictException("A context with the same team_id and form_id and name already exists.")
+            } else {
+                logger.error("Database error updating team for context $contextId with teamId $newTeamId", e)
+                throw DatabaseException("Failed to update team for context $contextId", "changeTeam", e)
+            }
         }
     }
 
@@ -235,7 +240,7 @@ class ContextRepositoryImpl(private val database: Database) : ContextRepository 
             if (e.sqlState == "23505") { // PostgreSQL unique_violation
                 logger.warn("Unique constraint violation when updating contextName: ${e.message}")
                 throw ConflictException("A context with the same team_id and form_id and name already exists.")
-            }else {
+            } else {
                 logger.error("Database error updating name for context $contextId with name $newName", e)
                 throw DatabaseException("Failed to update name for context $contextId", "changeName", e)
 

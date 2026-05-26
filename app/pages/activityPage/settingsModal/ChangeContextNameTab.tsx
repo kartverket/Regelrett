@@ -64,7 +64,7 @@ export function ChangeContextNameTab({ setOpen }: ChangeContextNameTabProps) {
           contextNameForm.setError("newName", {
             type: "manual",
             message:
-              "Et skjema med dette navnet eksisterer allerede, velg et unikt navn",
+              "En skjemautfylling med dette navnet eksisterer allerede, velg et unikt navn",
           });
         } else {
           contextNameForm.setError("newName", {
