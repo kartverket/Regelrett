@@ -2,7 +2,7 @@
 [versions]
 kotlin-version = "2.3.21"
 kotlinx-html-version = "0.12.0"
-ktor-version = "3.4.3"
+ktor-version = "3.5.0"
 logback-version = "1.5.32"
 flyway-version = "12.6.2"
 ajalt-clikt-version = "5.1.0"
