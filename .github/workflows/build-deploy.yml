@@ -51,7 +51,7 @@ jobs:
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.commit_sha != '' }}
         run: git checkout ${{ github.event.inputs.commit_sha }}
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: "temurin"
           java-version: "21"
