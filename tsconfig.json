@@ -11,9 +11,9 @@
             "ES2024"
         ],
         "types": [
-            "module",
             "node",
-            "vite/client"
+            "vite/client",
+            "vitest/globals"
         ],
         "target": "ES2024",
         "module": "preserve",
