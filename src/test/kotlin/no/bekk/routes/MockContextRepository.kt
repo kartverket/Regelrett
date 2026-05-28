@@ -30,6 +30,10 @@ interface MockContextRepository : ContextRepository {
         TODO("Not yet implemented")
     }
 
+    override fun changeName(contextId: String, newName: String): Boolean {
+        TODO("Not yet implemented")
+    }
+
     override fun getContextByTeamIdAndFormId(teamId: String, formId: String): List<DatabaseContext> {
         TODO("Not yet implemented")
     }
