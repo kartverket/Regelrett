@@ -217,7 +217,7 @@ class ContextRepositoryImpl(private val database: Database) : ContextRepository 
         } catch (e: SQLException) {
             if (e.sqlState == "23505") { // PostgreSQL unique_violation
                 logger.warn("Unique constraint violation when updating contextName: ${e.message}")
-                throw ConflictException("A context with the same team_id and form_id and name already exists.")
+                throw ConflictException("A context with the same team_id, form_id and name already exists.")
             } else {
                 logger.error("Database error updating team for context $contextId with teamId $newTeamId", e)
                 throw DatabaseException("Failed to update team for context $contextId", "changeTeam", e)
