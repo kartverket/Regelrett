@@ -9,6 +9,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChangeTeamTab } from "@/pages/activityPage/settingsModal/ChangeTeamTab";
 import { CopyContextTab } from "@/pages/activityPage/settingsModal/CopyContextTab";
+import { ChangeContextNameTab } from "@/pages/activityPage/settingsModal/ChangeContextNameTab";
 
 type SettingsModalProps = {
   setOpen: Dispatch<SetStateAction<boolean>>;
@@ -24,12 +25,15 @@ export function SettingsModal({ open, setOpen }: SettingsModalProps) {
         </DialogHeader>
 
         <Tabs defaultValue="team" className="w-[400px]">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="team" className="data-[state=active]:bg-card">
               Endre team
             </TabsTrigger>
             <TabsTrigger value="copy" className="data-[state=active]:bg-card">
               Kopier svar
+            </TabsTrigger>
+            <TabsTrigger value="name" className="data-[state=active]:bg-card">
+              Endre navn
             </TabsTrigger>
           </TabsList>
 
@@ -39,6 +43,10 @@ export function SettingsModal({ open, setOpen }: SettingsModalProps) {
 
           <TabsContent value="copy">
             <CopyContextTab setOpen={setOpen} />
+          </TabsContent>
+
+          <TabsContent value="name">
+            <ChangeContextNameTab setOpen={setOpen} />
           </TabsContent>
         </Tabs>
       </DialogContent>

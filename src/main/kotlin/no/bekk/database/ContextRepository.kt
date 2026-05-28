@@ -16,6 +16,7 @@ interface ContextRepository {
     fun getContext(id: String): DatabaseContext
     fun deleteContext(id: String): Boolean
     fun changeTeam(contextId: String, newTeamId: String): Boolean
+    fun changeName(contextId: String, newName: String): Boolean
     fun getContextMetrics(): List<DatabaseContextMetrics>
     fun getContextsByName(name: String): List<DatabaseContext>
 }
@@ -214,8 +215,35 @@ class ContextRepositoryImpl(private val database: Database) : ContextRepository 
                 }
             }
         } catch (e: SQLException) {
-            logger.error("Database error updating team for context $contextId with teamId $newTeamId", e)
-            throw DatabaseException("Failed to update team for context $contextId", "changeTeam", e)
+            if (e.sqlState == "23505") { // PostgreSQL unique_violation
+                logger.warn("Unique constraint violation when updating contextName: ${e.message}")
+                throw ConflictException("A context with the same team_id, form_id and name already exists.")
+            } else {
+                logger.error("Database error updating team for context $contextId with teamId $newTeamId", e)
+                throw DatabaseException("Failed to update team for context $contextId", "changeTeam", e)
+            }
+        }
+    }
+
+    override fun changeName(contextId: String, newName: String): Boolean {
+        logger.debug("Changing name for context $contextId")
+        val sqlStatement = "UPDATE contexts SET name = ? WHERE id = ?"
+        try {
+            database.getConnection().use { conn ->
+                conn.prepareStatement(sqlStatement).use { statement ->
+                    statement.setString(1, newName)
+                    statement.setObject(2, UUID.fromString(contextId))
+                    return statement.executeUpdate() > 0
+                }
+            }
+        } catch (e: SQLException) {
+            if (e.sqlState == "23505") { // PostgreSQL unique_violation
+                logger.warn("Unique constraint violation when updating contextName: ${e.message}")
+                throw ConflictException("A context with the same team_id and form_id and name already exists.")
+            } else {
+                logger.error("Database error updating name for context $contextId with name $newName", e)
+                throw DatabaseException("Failed to update name for context $contextId", "changeName", e)
+            }
         }
     }
 

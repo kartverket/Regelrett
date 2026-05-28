@@ -244,3 +244,30 @@ export function useChangeTeamForContext({
     },
   });
 }
+
+export function useChangeNameForContext({
+  contextId,
+}: {
+  contextId: string;
+}) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (newName: string) => {
+      return axiosFetch({
+        url: contextId
+          ? `${API_URL_BASE}/contexts/${contextId}/name`
+          : undefined,
+        method: "PATCH",
+        data: {
+          name: newName,
+        },
+      });
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["contexts", contextId],
+      });
+    },
+  });
+}

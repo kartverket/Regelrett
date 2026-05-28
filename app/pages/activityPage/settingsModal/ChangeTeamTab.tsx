@@ -66,6 +66,12 @@ export function ChangeTeamTab({ setOpen }: CopyContextTabProps) {
             type: "manual",
             message: "Teamet finnes ikke. Sjekk at du har skrevet riktig.",
           });
+        } else if (isAxiosError(error) && error.response?.status === 409) {
+          teamForm.setError("newTeamName", {
+            type: "manual",
+            message:
+              "Teamet du prøver å overføre til har allerede en skjemautfylling med samme navn for denne skjematypen. Endre navn på en av skjemautfyllingene",
+          });
         } else {
           teamForm.setError("newTeamName", {
             type: "manual",
