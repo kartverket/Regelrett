@@ -38,9 +38,15 @@
 #     # as the answer column in the UI. Defaults to "Svar".
 #     answer_column: Svar
 #     # <string, optional, for Airtable schema sources> The name of the
-#     # AirTable field that holds the question text. This column is rendered
-#     # as a clickable link in the table. Defaults to "Aktivitet".
-#     question_column: Aktivitet
+#     # AirTable field to use as the name/title column. This column is
+#     # rendered as a clickable link in the table, navigating to the
+#     # question detail page. Defaults to "Navn".
+#     name_column: Navn
+#     # <string, optional, for Airtable schema sources> The name of the
+#     # AirTable field to use as the description column. The description
+#     # is displayed in the question detail page. If not set, no description
+#     # will be shown.
+#     # description_column: Sikkerhetskontroller
 #     # <string, optional, for Airtable and YAML scheams sources>
 #     # entra id group id which is given read access to specefied schema
 #     read_access_group_id:

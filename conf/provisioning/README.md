@@ -110,7 +110,12 @@ schemasources:
     # AirTable field to use as the name/title column. The name/title
     # column is rendered as a clickable link navigating to the question
     # detail page. Defaults to "Navn".
-    question_column: Navn
+    name_column: Navn
+    # <string, optional, for Airtable schema sources> The name of the
+    # AirTable field to use as the description column. The description
+    # is displayed in the question detail page. If not set, no description
+    # will be shown.
+    # description_column: Sikkerhetskontroller
     ##### Additional parameters for specifying Yaml schema     #####
     ##### sources.                                             #####
     # Either url or resourcePath must be set
@@ -142,7 +147,7 @@ Each column may also include:
 
 `isName`: Set to `true` on exactly one column to mark it as the name/title column. This column is rendered as a **clickable link** in the table, navigating to the question detail page. If no column is marked `isName`, no column will be clickable.
 
-> **Note for AirTable schemas:** `answerable` and `isName` are set automatically based on `answer_column` and `question_column` in the provisioning config — you do not set them in AirTable data.
+> **Note for AirTable schemas:** `answerable` and `isName` are set automatically based on `answer_column` and `name_column` in the provisioning config — you do not set them in AirTable data.
 
 For columns of type OPTION_MULTIPLE and OPTION_SINGLE, you may also define:
 - `options`: A list of allowed values

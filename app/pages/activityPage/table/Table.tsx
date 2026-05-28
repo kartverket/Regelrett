@@ -264,14 +264,14 @@ export function TableComponent({
     globalFilterFn: (row, _, filterValue) => {
       const searchTerm = String(filterValue).toLowerCase();
       const optionalFields = row.original.metadata?.optionalFields ?? [];
-      const question = row.original.question?.toLowerCase() || "";
+      const description = row.original.description?.toLowerCase() || "";
 
       const textFieldValues = optionalFields
         .filter((field) => field.type === OptionalFieldType.TEXT)
         .map((field) => field.value[0]?.toLowerCase() || "");
 
       return (
-        question.includes(searchTerm) ||
+        description.includes(searchTerm) ||
         textFieldValues.some((field) => field.includes(searchTerm))
       );
     },

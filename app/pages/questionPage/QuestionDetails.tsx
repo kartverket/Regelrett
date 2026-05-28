@@ -1,5 +1,4 @@
 import type { Question } from "../../api/types";
-import { OptionalFieldType } from "../../api/types";
 import Markdown from "react-markdown";
 import { markdownComponents } from "../../utils/markdownComponents";
 import { LoadingState } from "../../components/LoadingState";
@@ -65,18 +64,7 @@ export function QuestionDetails({ question, answerUpdated, formId }: Props) {
       };
     });
 
-  const nameColumn = columns.find((col) => col.isName);
-  const questionName = nameColumn
-    ? (findFieldValue(nameColumn.name)?.[0] ?? question.question)
-    : question.question;
-
-  const descriptionColumn = columns.find(
-    (col) =>
-      col.type === OptionalFieldType.TEXT && !col.isName && !col.answerable,
-  );
-  const description = descriptionColumn
-    ? (findFieldValue(descriptionColumn.name)?.[0] ?? question.question)
-    : question.question;
+  const questionName = question.name ?? question.id;
 
   return (
     <div className="space-y-1">
@@ -119,7 +107,7 @@ export function QuestionDetails({ question, answerUpdated, formId }: Props) {
       </div>
       <div className="bg-secondary p-4 rounded-xl">
         <p className="font-bold">Beskrivelse:</p>
-        <Markdown components={markdownComponents}>{description}</Markdown>
+        <Markdown components={markdownComponents}>{question.description}</Markdown>
       </div>
     </div>
   );

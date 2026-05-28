@@ -29,7 +29,8 @@ class AirTableProvider(
     private val answerTypeColumn: String,
     private val answerUnitColumn: String,
     private val answerExpiryColumn: String,
-    private val questionColumn: String,
+    private val nameColumn: String,
+    private val descriptionColumn: String? = null,
 ) : FormProvider {
     private val logger = LoggerFactory.getLogger(AirTableProvider::class.java)
 
@@ -125,7 +126,8 @@ class AirTableProvider(
                         answerUnits = record.fields.jsonObject[answerUnitColumn]?.jsonArray?.map { it.jsonPrimitive.content },
                         answerExpiry = record.fields.jsonObject[answerExpiryColumn]?.jsonPrimitive?.intOrNull,
                         answerColumn = answerColumn,
-                        questionColumn = questionColumn,
+                        nameColumn = nameColumn,
+                        descriptionColumn = descriptionColumn,
                     )
                 } catch (e: IllegalArgumentException) {
                     logger.error("Answertype ${record.fields.jsonObject[answerTypeColumn]?.jsonPrimitive?.content} caused an error, and is skipped")
@@ -146,7 +148,7 @@ class AirTableProvider(
                             Option(name = choice.name, color = choice.color)
                         },
                         answerable = field.name == answerColumn,
-                        isName = field.name == questionColumn,
+                        isName = field.name == nameColumn,
                     )
                 } catch (e: IllegalArgumentException) {
                     logger.error("field type ${field.type} could not be mapped, and will be skipped")
@@ -207,7 +209,8 @@ class AirTableProvider(
             answerUnits = record.fields.jsonObject[answerUnitColumn]?.jsonArray?.map { it.jsonPrimitive.content },
             answerExpiry = record.fields.jsonObject[answerExpiryColumn]?.jsonPrimitive?.intOrNull,
             answerColumn = answerColumn,
-            questionColumn = questionColumn,
+            nameColumn = nameColumn,
+            descriptionColumn = descriptionColumn,
         )
 
         return question
@@ -228,7 +231,7 @@ class AirTableProvider(
                     Option(name = choice.name, color = choice.color)
                 },
                 answerable = field.name == answerColumn,
-                isName = field.name == questionColumn,
+                isName = field.name == nameColumn,
             )
         }
     }

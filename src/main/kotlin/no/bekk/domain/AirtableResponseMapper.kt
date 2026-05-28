@@ -28,11 +28,13 @@ fun Record.mapToQuestion(
     answerUnits: List<String>?,
     answerExpiry: Int?,
     answerColumn: String,
-    questionColumn: String,
+    nameColumn: String,
+    descriptionColumn: String? = null,
 ) = Question(
     id = fields.jsonObject["ID"]?.jsonPrimitive?.content ?: UUID.randomUUID().toString(),
     recordId = recordId,
-    question = fields.jsonObject[questionColumn]?.jsonPrimitive?.content ?: "",
+    description = descriptionColumn?.let { fields.jsonObject[it]?.jsonPrimitive?.content } ?: "",
+    name = fields.jsonObject[nameColumn]?.jsonPrimitive?.content,
     updated = createdTime,
     metadata = QuestionMetadata(
         answerMetadata = AnswerMetadata(

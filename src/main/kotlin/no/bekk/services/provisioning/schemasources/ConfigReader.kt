@@ -52,7 +52,8 @@ class ConfigReader {
                     expandEnv(it.answer_type_column),
                     expandEnv(it.answer_unit_column),
                     expandEnv(it.answer_expiry_column),
-                    expandEnv(it.question_column),
+                    expandEnv(it.name_column),
+                    expandEnv(it.description_column),
                 )
             },
         )

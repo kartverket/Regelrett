@@ -12,7 +12,8 @@ enum class OptionalFieldType {
 data class Question(
     val id: String,
     val recordId: String? = null,
-    val question: String,
+    val description: String,
+    val name: String? = null,
     val metadata: QuestionMetadata,
     val updated: String? = null,
 )

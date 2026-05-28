@@ -83,6 +83,7 @@ class YamlProvider(
     private fun parseAndConvertToForm(yamlString: String): Form {
         val form = Yaml.decodeFromString<FormWithoutId>(serializer(), yamlString)
 
+        val nameColumnName = form.columns.find { it.isName }?.name
         return Form(
             id = id,
             name = form.name,
@@ -91,7 +92,10 @@ class YamlProvider(
                 Question(
                     id = it.id,
                     recordId = it.id, // need to set recordId since all endpoints require it as of now
-                    question = it.question,
+                    description = it.question,
+                    name = nameColumnName?.let { colName ->
+                        it.metadata.optionalFields?.find { field -> field.key == colName }?.value?.firstOrNull()
+                    },
                     metadata = it.metadata,
                 )
             },

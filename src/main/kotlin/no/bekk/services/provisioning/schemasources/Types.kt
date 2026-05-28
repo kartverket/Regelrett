@@ -25,5 +25,6 @@ data class UpsertDataFromConfig(
     val answer_type_column: String = "Svartype",
     val answer_unit_column: String = "Svarenhet",
     val answer_expiry_column: String = "Svarvarighet",
-    val question_column: String = "Navn",
+    val name_column: String = "Navn",
+    val description_column: String? = null,
 )
