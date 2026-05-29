@@ -210,9 +210,13 @@ The name of the AirTable field that holds the answer units (e.g. `ms`, `sek`). D
 
 The name of the AirTable field that holds the answer expiry in weeks. Defaults to `"Svarvarighet"`.
 
-#### `question_column`
+#### `name_column`
 
 The name of the AirTable field to use as the name/title column. Defaults to `"Navn"`. The name/title column is the one rendered as a clickable link in the table (equivalent to setting `isName: true` on a column in YAML schemas).
+
+#### `description_column`
+
+The name of the AirTable field to use as the description column. The description is displayed on the question detail page. If not set, no description will be shown.
 
 Yaml schema source specifications include the following fields:
 

@@ -46,7 +46,7 @@
 #     # AirTable field to use as the description column. The description
 #     # is displayed in the question detail page. If not set, no description
 #     # will be shown.
-#     # description_column: Sikkerhetskontroller
+#     description_column: Sikkerhetskontroller
 #     # <string, optional, for Airtable and YAML scheams sources>
 #     # entra id group id which is given read access to specefied schema
 #     read_access_group_id:
