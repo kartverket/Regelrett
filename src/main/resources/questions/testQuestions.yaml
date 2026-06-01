@@ -2,14 +2,16 @@ name: "YAML-data"
 columns:
   - type: "OPTION_SINGLE"
     name: "Kortnavn"
+    isName: true
   - type: "OPTION_SINGLE"
     name: "ID"
   - type: "OPTION_SINGLE"
     name: "Kontroller"
   - type: "OPTION_SINGLE"
-    name: "Svar"
-  - type: "OPTION_SINGLE"
     name: "Priority"
+  - type: "OPTION_SINGLE"
+    name: "Answer"
+    answerable: true
     options:
       - name: "MÅ"
         color: "orangeDark1"

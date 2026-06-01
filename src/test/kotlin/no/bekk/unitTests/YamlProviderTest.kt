@@ -16,6 +16,6 @@ class YamlProviderTest {
 
         val question = yamlProvider.getQuestion("Z-424")
 
-        assertEquals(question.question, "Hvor lang er gjennomsnittlig responstid?")
+        assertEquals(question.description, "Hvor lang er gjennomsnittlig responstid?")
     }
 }

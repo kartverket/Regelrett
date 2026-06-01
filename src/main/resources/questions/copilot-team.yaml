@@ -9,10 +9,12 @@ columns:
         color: "yellowLight1"
   - type: "TEXT"
     name: "Kortnavn"
+    isName: true
   - type: "TEXT"
     name: "Beskrivelse"
   - type: "OPTION_MULTIPLE"
     name: "Svar"
+    answerable: true
   - type: "TEXT"
     name: "ID"
 records:

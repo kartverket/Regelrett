@@ -15,11 +15,6 @@ import no.bekk.providers.clients.AirTableClient
 import org.slf4j.LoggerFactory
 import java.net.HttpURLConnection
 
-private const val SVAR = "Svar"
-private const val SVARTYPE = "Svartype"
-private const val SVARENHET = "Svarenhet"
-private const val SVARVARIGHET = "Svarvarighet"
-
 class AirTableProvider(
     override val name: String,
     override val id: String,
@@ -30,6 +25,12 @@ class AirTableProvider(
     private val viewId: String? = null,
     val webhookSecret: String? = null,
     val webhookId: String? = null,
+    private val answerColumn: String,
+    private val answerTypeColumn: String,
+    private val answerUnitColumn: String,
+    private val answerExpiryColumn: String,
+    private val nameColumn: String,
+    private val descriptionColumn: String? = null,
 ) : FormProvider {
     private val logger = LoggerFactory.getLogger(AirTableProvider::class.java)
 
@@ -109,7 +110,7 @@ class AirTableProvider(
         }
 
         val questions = allRecords.records.mapNotNull { record ->
-            if (record.fields.jsonObject[SVARTYPE]?.jsonPrimitive?.content == null) {
+            if (record.fields.jsonObject[answerTypeColumn]?.jsonPrimitive?.content == null) {
                 null
             } else {
                 try {
@@ -118,15 +119,18 @@ class AirTableProvider(
                         metaDataFields = tableMetadata.fields,
                         answerType = mapAirTableFieldTypeToAnswerType(
                             AirTableFieldType.fromString(
-                                record.fields.jsonObject[SVARTYPE]?.jsonPrimitive?.content ?: "unknown",
+                                record.fields.jsonObject[answerTypeColumn]?.jsonPrimitive?.content ?: "unknown",
                             ),
                         ),
-                        answerOptions = record.fields.jsonObject[SVAR]?.jsonArray?.map { it.jsonPrimitive.content },
-                        answerUnits = record.fields.jsonObject[SVARENHET]?.jsonArray?.map { it.jsonPrimitive.content },
-                        answerExpiry = record.fields.jsonObject[SVARVARIGHET]?.jsonPrimitive?.intOrNull,
+                        answerOptions = record.fields.jsonObject[answerColumn]?.jsonArray?.map { it.jsonPrimitive.content },
+                        answerUnits = record.fields.jsonObject[answerUnitColumn]?.jsonArray?.map { it.jsonPrimitive.content },
+                        answerExpiry = record.fields.jsonObject[answerExpiryColumn]?.jsonPrimitive?.intOrNull,
+                        answerColumn = answerColumn,
+                        nameColumn = nameColumn,
+                        descriptionColumn = descriptionColumn,
                     )
                 } catch (e: IllegalArgumentException) {
-                    logger.error("Answertype ${record.fields.jsonObject[SVARTYPE]?.jsonPrimitive?.content} caused an error, and is skipped")
+                    logger.error("Answertype ${record.fields.jsonObject[answerTypeColumn]?.jsonPrimitive?.content} caused an error, and is skipped")
                     null
                 }
             }
@@ -143,6 +147,8 @@ class AirTableProvider(
                         options = field.options?.choices?.map { choice ->
                             Option(name = choice.name, color = choice.color)
                         },
+                        answerable = field.name == answerColumn,
+                        isName = field.name == nameColumn,
                     )
                 } catch (e: IllegalArgumentException) {
                     logger.error("field type ${field.type} could not be mapped, and will be skipped")
@@ -196,12 +202,15 @@ class AirTableProvider(
             metaDataFields = tableMetadata.fields,
             answerType = mapAirTableFieldTypeToAnswerType(
                 AirTableFieldType.fromString(
-                    record.fields.jsonObject[SVARTYPE]?.jsonPrimitive?.content ?: "unknown",
+                    record.fields.jsonObject[answerTypeColumn]?.jsonPrimitive?.content ?: "unknown",
                 ),
             ),
-            answerOptions = record.fields.jsonObject[SVAR]?.jsonArray?.map { it.jsonPrimitive.content },
-            answerUnits = record.fields.jsonObject[SVARENHET]?.jsonArray?.map { it.jsonPrimitive.content },
-            answerExpiry = record.fields.jsonObject[SVARVARIGHET]?.jsonPrimitive?.intOrNull,
+            answerOptions = record.fields.jsonObject[answerColumn]?.jsonArray?.map { it.jsonPrimitive.content },
+            answerUnits = record.fields.jsonObject[answerUnitColumn]?.jsonArray?.map { it.jsonPrimitive.content },
+            answerExpiry = record.fields.jsonObject[answerExpiryColumn]?.jsonPrimitive?.intOrNull,
+            answerColumn = answerColumn,
+            nameColumn = nameColumn,
+            descriptionColumn = descriptionColumn,
         )
 
         return question
@@ -221,6 +230,8 @@ class AirTableProvider(
                 options = field.options?.choices?.map { choice ->
                     Option(name = choice.name, color = choice.color)
                 },
+                answerable = field.name == answerColumn,
+                isName = field.name == nameColumn,
             )
         }
     }

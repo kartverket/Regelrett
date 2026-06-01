@@ -64,14 +64,12 @@ export function QuestionDetails({ question, answerUpdated, formId }: Props) {
       };
     });
 
-  const description =
-    findFieldValue("Sikkerhetskontroller") || findFieldValue("Beskrivelse");
-  const name = findFieldValue("Kortnavn") || findFieldValue("Navn");
+  const questionName = question.name ?? question.id;
 
   return (
     <div className="space-y-1">
       <p>{question.id}</p>
-      <p className="text-2xl font-bold">{name}</p>
+      <p className="text-2xl font-bold">{questionName}</p>
       <div className="flex flex-col gap-4 py-5">
         {fieldData?.map((field) => (
           <div className="flex items-center gap-4" key={field.key}>
@@ -109,7 +107,7 @@ export function QuestionDetails({ question, answerUpdated, formId }: Props) {
       </div>
       <div className="bg-secondary p-4 rounded-xl">
         <p className="font-bold">Beskrivelse:</p>
-        <Markdown components={markdownComponents}>{description?.[0]}</Markdown>
+        <Markdown components={markdownComponents}>{question.description}</Markdown>
       </div>
     </div>
   );

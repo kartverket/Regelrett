@@ -507,7 +507,7 @@ class ContextRoutingTest {
         val mockedQuestion = Question(
             id = "q1",
             recordId = "rec1",
-            question = "Test question",
+            description = "Test question",
             metadata = QuestionMetadata(
                 answerMetadata = AnswerMetadata(
                     type = AnswerType.TEXT_SINGLE_LINE,

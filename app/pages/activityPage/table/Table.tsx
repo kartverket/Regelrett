@@ -14,6 +14,7 @@ import { DataTableCell } from "./DataTableCell";
 import { DataTableHeader } from "./DataTableHeader";
 import { TableCell } from "./TableCell";
 import type { Column, Question, Form, User } from "@/api/types";
+import { OptionalFieldType } from "@/api/types";
 import { getSortFuncForColumn } from "./TableSort";
 import { TableActions } from "./TableActions";
 import { useEffect, useState } from "react";
@@ -62,11 +63,13 @@ export function TableComponent({
 
   const columnHelper = createColumnHelper<Question>();
 
+  const answerColumnName = tableData.columns.find((c) => c.answerable)?.name ?? "Svar";
+
   function urlFilterParamsToColumnFilterState(params: string[]) {
     const allowedFilters: Record<string, string[]> = {
       ...Object.fromEntries(
       columnMetadata
-        .filter(({ name }) => filterByAnswer || name !== "Svar")
+        .filter(({ answerable }) => filterByAnswer || !answerable)
         .map((col) => [col.name, col.options?.map((opt) => opt.name)]),
     ),
       Status: ["utgaatt", "ikke utfylt", "utfylt"]
@@ -95,7 +98,7 @@ export function TableComponent({
     );
   }, [sorting, tableData.id]);
 
-  const parsedColumns = tableData.columns.map((metaColumn, index) => {
+  const parsedColumns = tableData.columns.map((metaColumn) => {
     return columnHelper.accessor(
       (row) => {
         return (
@@ -110,11 +113,12 @@ export function TableComponent({
             column={column}
             header={metaColumn.name}
             setColumnVisibility={setColumnVisibility}
+            isNameColumn={metaColumn.isName}
             className={cn(
               metaColumn.name.toLowerCase() === "id"
                 ? "min-w-[120px]"
                 : undefined,
-              metaColumn.name.toLowerCase() === "svar"
+              metaColumn.answerable
                 ? "min-w-[220px]"
                 : undefined,
             )}
@@ -128,7 +132,6 @@ export function TableComponent({
               value={getValue()}
               column={metaColumn}
               row={row}
-              answerable={index == 3}
               user={user}
             />
           </DataTableCell>
@@ -136,7 +139,7 @@ export function TableComponent({
         sortingFn: (a, b, columnId) => {
           const getLastUpdatedTime = (row: Row<Question>) =>
             row.original.answers?.at(-1)?.updated?.getTime() ?? 0;
-          if (columnId === "Svar") {
+          if (columnId === answerColumnName) {
             return getLastUpdatedTime(a) - getLastUpdatedTime(b);
           }
           const sortFunc = getSortFuncForColumn(columnId);
@@ -150,7 +153,7 @@ export function TableComponent({
           columnId: string,
           filterValue: string,
         ) => {
-          if (columnId == "Svar") {
+          if (columnId === answerColumnName) {
             return filterValue.includes(
               row.original.answers?.at(-1)?.answer ?? "",
             );
@@ -226,18 +229,18 @@ export function TableComponent({
     },
   );
 
-  // Find the index of the column where field.name is "Svar"
-  const svarIndex = parsedColumns.findIndex((column) => column.id === "Svar");
+  // Find the index of the answerable column to inject comment/status columns after it
+  const answerIndex = parsedColumns.findIndex((column) => column.id === answerColumnName);
 
   // If the column is found, inject the new columns
 
   const columns =
-    svarIndex >= 0
+    answerIndex >= 0
       ? [
-          ...parsedColumns.slice(0, svarIndex + 1),
+          ...parsedColumns.slice(0, answerIndex + 1),
           commentColumn,
           statusColumn,
-          ...parsedColumns.slice(svarIndex + 1),
+          ...parsedColumns.slice(answerIndex + 1),
         ]
       : [...parsedColumns, commentColumn, statusColumn];
 
@@ -260,18 +263,17 @@ export function TableComponent({
     getPaginationRowModel: getPaginationRowModel(),
     globalFilterFn: (row, _, filterValue) => {
       const searchTerm = String(filterValue).toLowerCase();
-      const optionalFields = row.original.metadata?.optionalFields;
-      const getFieldValue = (index: number): string => {
-        return optionalFields?.[index]?.value[0]?.toLowerCase() || "";
-      };
+      const optionalFields = row.original.metadata?.optionalFields ?? [];
+      const description = row.original.description?.toLowerCase() || "";
 
-      const rowData = {
-        field0: getFieldValue(0),
-        field1: getFieldValue(1),
-        field2: getFieldValue(2),
-      };
+      const textFieldValues = optionalFields
+        .filter((field) => field.type === OptionalFieldType.TEXT)
+        .map((field) => field.value[0]?.toLowerCase() || "");
 
-      return Object.values(rowData).some((field) => field.includes(searchTerm));
+      return (
+        description.includes(searchTerm) ||
+        textFieldValues.some((field) => field.includes(searchTerm))
+      );
     },
     initialState: {
       columnFilters: search.has(`filter`)
@@ -299,6 +301,7 @@ export function TableComponent({
               .rows.map((row) => row.original) as Question[]
           }
           headerArray={headerNames}
+          columns={columnMetadata}
         />
         }
       </div>

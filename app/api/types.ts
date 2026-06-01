@@ -38,6 +38,8 @@ export type Column = {
   options: Option[] | null;
   name: string;
   type: OptionalFieldType;
+  answerable: boolean;
+  isName: boolean;
 };
 
 export type Option = {
@@ -65,7 +67,8 @@ export type Question = {
   id: string;
   recordId: string;
   metadata: QuestionMetadata;
-  question: string;
+  description: string;
+  name: string | undefined;
   updated: Date | undefined;
 };
 

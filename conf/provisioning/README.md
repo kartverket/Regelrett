@@ -90,6 +90,32 @@ schemasources:
     webhook_id: exampleid
     # <string, optional, for Airtable schema sources>
     webhook_secret: S3cr3t!
+    # <string, optional, for Airtable schema sources> The name of the
+    # AirTable field that holds the answer options for each record.
+    # Defaults to "Svar".
+    answer_column: Svar
+    # <string, optional, for Airtable schema sources> The name of the
+    # AirTable field that holds the answer type (e.g. SELECT_SINGLE).
+    # Defaults to "Svartype".
+    answer_type_column: Svartype
+    # <string, optional, for Airtable schema sources> The name of the
+    # AirTable field that holds the answer units (e.g. ms, sek).
+    # Defaults to "Svarenhet".
+    answer_unit_column: Svarenhet
+    # <string, optional, for Airtable schema sources> The name of the
+    # AirTable field that holds the answer expiry in weeks.
+    # Defaults to "Svarvarighet".
+    answer_expiry_column: Svarvarighet
+    # <string, optional, for Airtable schema sources> The name of the
+    # AirTable field to use as the name/title column. The name/title
+    # column is rendered as a clickable link navigating to the question
+    # detail page. Defaults to "Navn".
+    name_column: Navn
+    # <string, optional, for Airtable schema sources> The name of the
+    # AirTable field to use as the description column. The description
+    # is displayed in the question detail page. If not set, no description
+    # will be shown.
+    # description_column: Sikkerhetskontroller
     ##### Additional parameters for specifying Yaml schema     #####
     ##### sources.                                             #####
     # Either url or resourcePath must be set
@@ -115,14 +141,19 @@ Each column must include:
 
 `type`: The column type. Supported values: OPTION_MULTIPLE, OPTION_SINGLE and TEXT
 
+Each column may also include:
+
+`answerable`: Set to `true` on exactly one column to mark it as the answer column. This column receives special treatment: it is populated from stored answers rather than record metadata, and is used for answer-based sorting and filtering. If no column is marked `answerable`, Regelrett defaults to looking for a column named `"Svar"`.
+
+`isName`: Set to `true` on exactly one column to mark it as the name/title column. This column is rendered as a **clickable link** in the table, navigating to the question detail page. If no column is marked `isName`, no column will be clickable.
+
+> **Note for AirTable schemas:** `answerable` and `isName` are set automatically based on `answer_column` and `name_column` in the provisioning config — you do not set them in AirTable data.
+
 For columns of type OPTION_MULTIPLE and OPTION_SINGLE, you may also define:
 - `options`: A list of allowed values
 - `color`: A color associated with each option
 This restricts the possible inputs for all records in that column.
 
-Important:
-The answer column must be named "svar"
-It must be the third column (index 3) in the column definition
 
 #### Records
 Represents the rows of the schema. Each record contains data corresponding to all defined columns. Each record must include:
@@ -150,12 +181,14 @@ name: "YAML-data"
 columns: 
   - type: "OPTION_SINGLE"  #Choose between OPTION_MULTIPLE, OPTION_SINGLE or TEXT
     name: "Kortnavn" #Column name
+    isName: true  # This column will be the name/title and clickable link in the table
   - type: "OPTION_SINGLE"
     name: "ID" #ID columns should always be included in every Schema. 
   - type: "OPTION_SINGLE"
     name: "Kontroller"
   - type: "OPTION_SINGLE"
     name: "Svar"
+    answerable: true  # This column holds answers
   - type: "OPTION_SINGLE"
     name: "Priority"
     options: #Specifies the options for the entire column, meaning you can not override these options in the record specifications.

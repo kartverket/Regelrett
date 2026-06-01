@@ -67,7 +67,7 @@ export const TableActions = <TData,>({
         )}
 
         {tableMetadata
-          .filter(({ name }) => filterByAnswer || name !== "Svar")
+          .filter(({ answerable }) => filterByAnswer || !answerable)
           .map((metaColumn) => {
             const column = table.getColumn(metaColumn.name);
             if (!column || !metaColumn.options) return null;

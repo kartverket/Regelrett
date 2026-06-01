@@ -13,13 +13,22 @@ data class Column(
     val type: OptionalFieldType,
     val name: String,
     val options: List<Option>? = null,
+    val answerable: Boolean = false,
+    val isName: Boolean = false,
 )
 
 @Serializable
 data class FormWithoutId(
     val name: String,
     val columns: List<Column>,
-    val records: List<Question>,
+    val records: List<QuestionRecord>,
+)
+
+@Serializable
+data class QuestionRecord(
+    val id: String,
+    val question: String,
+    val metadata: QuestionMetadata,
 )
 
 @Serializable

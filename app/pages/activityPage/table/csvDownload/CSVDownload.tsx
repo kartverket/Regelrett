@@ -1,4 +1,4 @@
-import type { Question } from "../../../../api/types";
+import type { Column, Question } from "../../../../api/types";
 import { OptionalFieldType } from "../../../../api/types";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
@@ -6,15 +6,17 @@ import { Download } from "lucide-react";
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   rows: Question[];
   headerArray: string[];
+  columns: Column[];
 }
 
-export function CSVDownload({ rows, headerArray, ...rest }: Props) {
+export function CSVDownload({ rows, headerArray, columns, ...rest }: Props) {
+  const answerColumnName = columns.find((c) => c.answerable)?.name ?? "Svar";
   const csvRows = rows
     .map((row) =>
       headerArray
         .map((header) => {
           switch (header) {
-            case "Svar":
+            case answerColumnName:
               return escapeCSVValue(row.answers.map((answer) => answer.answer));
             case "Kommentar":
               return escapeCSVValue(
