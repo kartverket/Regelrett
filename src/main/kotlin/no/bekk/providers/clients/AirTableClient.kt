@@ -54,10 +54,10 @@ class AirTableClient(private val accessToken: String, private val baseUrl: Strin
         json.decodeFromString<MetadataResponse>(responseBody)
     }
 
-    suspend fun getRecords(baseId: String, tableId: String, viewId: String? = null, offset: String? = null): AirtableResponse = ExternalServiceTimer.time("AirTable", "getRecords") {
+    suspend fun getRecords(baseId: String, formId: String, viewId: String? = null, offset: String? = null): AirtableResponse = ExternalServiceTimer.time("AirTable", "getRecords") {
         val url = buildString {
             append(baseUrl)
-            append("/v0/$baseId/$tableId")
+            append("/v0/$baseId/$formId")
             if (viewId != null) {
                 append("?view=$viewId")
                 if (offset != null) {
@@ -72,8 +72,8 @@ class AirTableClient(private val accessToken: String, private val baseUrl: Strin
         json.decodeFromString<AirtableResponse>(responseBody)
     }
 
-    suspend fun getRecord(baseId: String, tableId: String, recordId: String): Record = ExternalServiceTimer.time("AirTable", "getRecord") {
-        val response = client.get(baseUrl + "/v0/$baseId/$tableId/$recordId")
+    suspend fun getRecord(baseId: String, formId: String, recordId: String): Record = ExternalServiceTimer.time("AirTable", "getRecord") {
+        val response = client.get(baseUrl + "/v0/$baseId/$formId/$recordId")
         val responseBody = response.bodyAsText()
         json.decodeFromString<Record>(responseBody)
     }

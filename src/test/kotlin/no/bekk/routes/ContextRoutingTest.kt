@@ -91,7 +91,7 @@ class ContextRoutingTest {
         application {
             testModule(
                 contextRepository = object : MockContextRepository {
-                    override fun insertContext(context: DatabaseContextRequest): DatabaseContext = throw ConflictException("A context with the same team_id, table_id and name already exists.")
+                    override fun insertContext(context: DatabaseContextRequest): DatabaseContext = throw ConflictException("A context with the same team_id, form_id and name already exists.")
                 },
                 authService = object : MockAuthService {
                     override suspend fun hasTeamAccess(call: ApplicationCall, teamId: String?): Boolean = true

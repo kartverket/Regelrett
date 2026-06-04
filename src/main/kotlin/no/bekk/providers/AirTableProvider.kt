@@ -21,7 +21,7 @@ class AirTableProvider(
     override val readAccessGroupId: String? = null,
     private val airtableClient: AirTableClient,
     private val baseId: String,
-    private val tableId: String,
+    private val formId: String,
     private val viewId: String? = null,
     val webhookSecret: String? = null,
     val webhookId: String? = null,
@@ -50,12 +50,12 @@ class AirTableProvider(
     override suspend fun getForm(): Form {
         val cachedTable = tableCache.getIfPresent(id)
         if (cachedTable != null) {
-            logger.info("Successfully retrieved table: $tableId from cache")
+            logger.info("Successfully retrieved table: $formId from cache")
             return cachedTable
         }
 
         val freshTable = getTableFromAirTable()
-        logger.info("Successfully retrieved table: $tableId from Airtable")
+        logger.info("Successfully retrieved table: $formId from Airtable")
         tableCache.put(id, freshTable)
 
         freshTable.records.forEach { record ->
@@ -104,9 +104,9 @@ class AirTableProvider(
         val allRecords = fetchAllRecordsFromTable()
         val airTableMetadata = fetchMetadataFromBase()
 
-        val tableMetadata = airTableMetadata.tables.first { it.id == tableId }
+        val tableMetadata = airTableMetadata.tables.first { it.id == formId }
         if (tableMetadata.fields == null) {
-            throw IllegalArgumentException("Table $tableId has no fields")
+            throw IllegalArgumentException("Table $formId has no fields")
         }
 
         val questions = allRecords.records.mapNotNull { record ->
@@ -172,9 +172,9 @@ class AirTableProvider(
     private suspend fun getSchemaFromAirTable(): Schema {
         val airTableMetadata = fetchMetadataFromBase()
 
-        val tableMetadata = airTableMetadata.tables.first { it.id == tableId }
+        val tableMetadata = airTableMetadata.tables.first { it.id == formId }
         if (tableMetadata.fields == null) {
-            throw IllegalArgumentException("Table $tableId has no fields")
+            throw IllegalArgumentException("Table $formId has no fields")
         }
 
         // Refresh webhook expiration date
@@ -192,9 +192,9 @@ class AirTableProvider(
         val record = fetchRecord(recordId)
         val airTableMetadata = fetchMetadataFromBase()
 
-        val tableMetadata = airTableMetadata.tables.first { it.id == tableId }
+        val tableMetadata = airTableMetadata.tables.first { it.id == formId }
         if (tableMetadata.fields == null) {
-            throw IllegalArgumentException("Table $tableId has no fields")
+            throw IllegalArgumentException("Table $formId has no fields")
         }
 
         val question = record.mapToQuestion(
@@ -219,9 +219,9 @@ class AirTableProvider(
     private suspend fun getColumnsFromAirTable(): List<Column> {
         val airTableMetadata = fetchMetadataFromBase()
 
-        val tableMetadata = airTableMetadata.tables.first { it.id == tableId }
+        val tableMetadata = airTableMetadata.tables.first { it.id == formId }
         if (tableMetadata.fields == null) {
-            throw IllegalArgumentException("Table $tableId has no fields")
+            throw IllegalArgumentException("Table $formId has no fields")
         }
         return tableMetadata.fields.map { field ->
             Column(
@@ -274,9 +274,9 @@ class AirTableProvider(
         return AirtableResponse(allRecords)
     }
 
-    private suspend fun fetchRecordsFromTable(offset: String? = null): AirtableResponse = airtableClient.getRecords(baseId, tableId, viewId, offset)
+    private suspend fun fetchRecordsFromTable(offset: String? = null): AirtableResponse = airtableClient.getRecords(baseId, formId, viewId, offset)
 
-    private suspend fun fetchRecord(recordId: String): Record = airtableClient.getRecord(baseId, tableId, recordId)
+    private suspend fun fetchRecord(recordId: String): Record = airtableClient.getRecord(baseId, formId, recordId)
 
     suspend fun refreshWebhook(): Boolean {
         if (webhookId.isNullOrEmpty()) {
@@ -286,11 +286,11 @@ class AirTableProvider(
 
         return when (val responseStatus = airtableClient.refreshWebhook(baseId, webhookId)) {
             HttpURLConnection.HTTP_OK -> {
-                logger.info("Successfully refreshed webhook $webhookId for table $tableId")
+                logger.info("Successfully refreshed webhook $webhookId for table $formId")
                 true
             }
             else -> {
-                logger.warn("Failed to refresh webhook $webhookId for table $tableId with status $responseStatus")
+                logger.warn("Failed to refresh webhook $webhookId for table $formId with status $responseStatus")
                 false
             }
         }

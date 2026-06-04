@@ -72,7 +72,7 @@ class FormServiceImpl : FormService {
                     cmd.url ?: throw IllegalArgumentException(missingProperty("url", "AirTable")),
                 ),
                 baseId = cmd.base_id ?: throw IllegalArgumentException(missingProperty("base_id", "AirTable")),
-                tableId = cmd.table_id ?: throw IllegalArgumentException(missingProperty("table_id", "AirTable")),
+                formId = cmd.table_id ?: throw IllegalArgumentException(missingProperty("table_id", "AirTable")),
                 viewId = cmd.view_id,
                 webhookId = cmd.webhook_id,
                 webhookSecret = cmd.webhook_secret,

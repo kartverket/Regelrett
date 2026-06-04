@@ -110,7 +110,7 @@ fun getLatestAnswersAndComments(database: Database): List<AnswersCSVDump> {
             a.actor as answer_actor,
             a.context_id,
             ctx.name as context_name,
-            ctx.table_id as table_id,
+            ctx.form_id as form_id,
             ctx.team_id
         FROM 
             answers a
@@ -152,7 +152,7 @@ fun getLatestAnswerMetadata(database: Database): List<MetaAnswersDB> {
             a.updated as answer_updated,
             a.context_id,
             ctx.name as context_name,
-            ctx.table_id as table_id,
+            ctx.form_id as form_id,
             ctx.team_id
         FROM 
             answers a
@@ -181,7 +181,7 @@ fun getLatestAnswerMetadata(database: Database): List<MetaAnswersDB> {
                                 answerUpdated = result.getDate("answer_updated"),
                                 contextId = result.getString("context_id"),
                                 contextName = result.getString("context_name"),
-                                formId = result.getString("table_id"),
+                                formId = result.getString("form_id"),
                                 teamId = result.getString("team_id"),
                             ),
                         )
@@ -221,7 +221,7 @@ fun List<AnswersCSVDump>.toFullCsv(): String = csvOf(
         "answer_actor",
         "context_id",
         "context_name",
-        "table_id",
+        "form_id",
         "team_id",
     ),
     rows = map {
@@ -234,7 +234,7 @@ fun List<AnswersCSVDump>.toFullCsv(): String = csvOf(
             it.answerActor,
             it.contextId,
             it.contextName,
-            it.tableName,
+            it.formName,
             it.teamId,
         )
     },
@@ -269,7 +269,7 @@ fun mapRowToAnswersCSVDump(rs: ResultSet): AnswersCSVDump = AnswersCSVDump(
     answerUpdated = rs.getDate("answer_updated"),
     answerActor = rs.getString("answer_actor"),
     contextId = rs.getString("context_id"),
-    tableName = rs.getString("table_id"),
+    formName = rs.getString("form_id"),
     teamId = rs.getString("team_id"),
     contextName = rs.getString("context_name"),
 )
@@ -282,7 +282,7 @@ data class AnswersCSVDump(
     val answerUpdated: Date,
     val answerActor: String,
     val contextId: String,
-    val tableName: String,
+    val formName: String,
     val teamId: String,
     val contextName: String,
 )

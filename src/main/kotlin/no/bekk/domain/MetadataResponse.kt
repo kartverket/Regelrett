@@ -28,7 +28,7 @@ data class Field(
 @Serializable
 data class Options(
     val choices: List<Choice>? = null,
-    val linkedTableId: String? = null,
+    val linkedFormId: String? = null,
     val isReversed: Boolean? = null,
     val prefersSingleRecordLink: Boolean? = null,
     val inverseLinkFieldId: String? = null,
