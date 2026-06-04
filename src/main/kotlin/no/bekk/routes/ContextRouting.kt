@@ -30,19 +30,8 @@ fun Route.contextRouting(
             try {
                 val contextRequestJson = call.receiveText()
                 logger.info("Received POST /context request with body: $contextRequestJson")
-                lateinit var contextRequest: DatabaseContextRequest
-                try {
-                    contextRequest = Json.decodeFromString<DatabaseContextRequest>(contextRequestJson)
-                } catch (e: Exception) { // skal slettes når all bruk av endepunktet har gått over til å bruke formId
-                    val contextRequestOLD = Json.decodeFromString<OldDatabaseContextRequest>(contextRequestJson)
-                    contextRequest = DatabaseContextRequest(
-                        teamId = contextRequestOLD.teamId,
-                        formId = contextRequestOLD.tableId,
-                        name = contextRequestOLD.name,
-                        copyContext = contextRequestOLD.copyContext,
-                        copyComments = contextRequestOLD.copyComments,
-                    )
-                }
+                val contextRequest = Json.decodeFromString<DatabaseContextRequest>(contextRequestJson)
+
                 if (!authService.hasTeamAccess(call, contextRequest.teamId)) {
                     call.respond(HttpStatusCode.Forbidden)
                     return@post
