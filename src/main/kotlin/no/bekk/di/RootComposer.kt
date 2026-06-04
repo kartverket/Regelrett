@@ -9,6 +9,7 @@ import no.bekk.configuration.JDBCDatabase
 import no.bekk.database.AnswerRepositoryImpl
 import no.bekk.database.CommentRepositoryImpl
 import no.bekk.database.ContextRepositoryImpl
+import no.bekk.database.SharesRepositoryImpl
 import no.bekk.services.FormServiceImpl
 import no.bekk.services.MicrosoftServiceImpl
 import no.bekk.services.provisioning.provideProvisioningService
@@ -20,6 +21,7 @@ fun rootComposer(config: Config): Dependencies {
     val answerRepository = AnswerRepositoryImpl(database)
     val commentRepository = CommentRepositoryImpl(database)
     val contextRepository = ContextRepositoryImpl(database)
+    val sharesRepository = SharesRepositoryImpl(database)
     val provisioningService = provideProvisioningService(config, formService)
     val httpClient = HttpClient(CIO) {
         install(ClientContentNegotiation) {
@@ -35,6 +37,7 @@ fun rootComposer(config: Config): Dependencies {
         provisioningService = provisioningService,
         commentRepository = commentRepository,
         contextRepository = contextRepository,
+        sharesRepository = sharesRepository,
         authService = authService,
         httpClient = httpClient,
         redirects = Redirects(mutableMapOf<String, String>()),

@@ -22,6 +22,7 @@ fun Route.contextRouting(
     answerRepository: AnswerRepository,
     contextRepository: ContextRepository,
     commentRepository: CommentRepository,
+    sharesRepository: SharesRepository,
     formService: FormService,
 ) {
     val logger = LoggerFactory.getLogger("no.bekk.routes.ContextRouting")
@@ -276,6 +277,27 @@ fun Route.contextRouting(
                     ErrorHandlers.handleConflictException(call, e)
                 } catch (e: Exception) {
                     logger.error("Unexpected error when processing PATCH /contexts", e)
+                    call.respond(HttpStatusCode.InternalServerError, "An unexpected error occurred.")
+                }
+            }
+
+            post("/share") {
+                try {
+                    val shareRequestJson = call.receiveText()
+                    logger.info("Received POST /context/contextId/share request with body: $shareRequestJson")
+                    val shareRequest = Json.decodeFromString<DatabaseShareRequest>(shareRequestJson)
+
+                    if (!authService.hasContextAccess(call, shareRequest.contextId)) {
+                        call.respond(HttpStatusCode.Forbidden)
+                        return@post
+                    }
+
+                    val sharedContext = sharesRepository.insertShareOnContext(shareRequest)
+
+                    call.respond(HttpStatusCode.Created, Json.encodeToString(sharedContext))
+                    return@post
+                } catch (e: Exception) {
+                    logger.error("Unexpected error when processing post /contexts/contextId/share", e)
                     call.respond(HttpStatusCode.InternalServerError, "An unexpected error occurred.")
                 }
             }
