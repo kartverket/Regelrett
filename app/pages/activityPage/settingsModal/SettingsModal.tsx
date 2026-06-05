@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChangeTeamTab } from "@/pages/activityPage/settingsModal/ChangeTeamTab";
 import { CopyContextTab } from "@/pages/activityPage/settingsModal/CopyContextTab";
 import { ChangeContextNameTab } from "@/pages/activityPage/settingsModal/ChangeContextNameTab";
+import { ShareAccessTab } from "@/pages/activityPage/settingsModal/ShareAccessTab";
 
 type SettingsModalProps = {
   setOpen: Dispatch<SetStateAction<boolean>>;
@@ -25,7 +26,7 @@ export function SettingsModal({ open, setOpen }: SettingsModalProps) {
         </DialogHeader>
 
         <Tabs defaultValue="team" className="w-[400px]">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="team" className="data-[state=active]:bg-card">
               Endre team
             </TabsTrigger>
@@ -34,6 +35,9 @@ export function SettingsModal({ open, setOpen }: SettingsModalProps) {
             </TabsTrigger>
             <TabsTrigger value="name" className="data-[state=active]:bg-card">
               Endre navn
+            </TabsTrigger>
+            <TabsTrigger value="access" className="data-[state=active]:bg-card">
+              Tilganger
             </TabsTrigger>
           </TabsList>
 
@@ -47,6 +51,10 @@ export function SettingsModal({ open, setOpen }: SettingsModalProps) {
 
           <TabsContent value="name">
             <ChangeContextNameTab setOpen={setOpen} />
+          </TabsContent>
+
+          <TabsContent value="access">
+            <ShareAccessTab setOpen={setOpen} />
           </TabsContent>
         </Tabs>
       </DialogContent>
