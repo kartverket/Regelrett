@@ -20,12 +20,12 @@ type SettingsModalProps = {
 export function SettingsModal({ open, setOpen }: SettingsModalProps) {
   return (
     <Dialog open={open} onOpenChange={(open) => !open && setOpen(false)}>
-      <DialogContent className="sm:max-w-[450px]" aria-describedby={undefined}>
+      <DialogContent className="sm:max-w-112.5" aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle className="text-xl">Rediger skjemautfylling</DialogTitle>
         </DialogHeader>
 
-        <Tabs defaultValue="team" className="w-[400px]">
+        <Tabs defaultValue="team" className="w-100">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="team" className="data-[state=active]:bg-card">
               Endre team
@@ -41,19 +41,19 @@ export function SettingsModal({ open, setOpen }: SettingsModalProps) {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="team">
+          <TabsContent value="team" className="min-h-70">
             <ChangeTeamTab setOpen={setOpen} />
           </TabsContent>
 
-          <TabsContent value="copy">
+          <TabsContent value="copy" className="min-h-70">
             <CopyContextTab setOpen={setOpen} />
           </TabsContent>
 
-          <TabsContent value="name">
+          <TabsContent value="name" className="min-h-70">
             <ChangeContextNameTab setOpen={setOpen} />
           </TabsContent>
 
-          <TabsContent value="access">
+          <TabsContent value="access" className="min-h-60">
             <ShareAccessTab setOpen={setOpen} />
           </TabsContent>
         </Tabs>
