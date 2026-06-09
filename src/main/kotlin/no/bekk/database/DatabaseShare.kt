@@ -13,7 +13,6 @@ data class DatabaseShare(
 
 @Serializable
 data class DatabaseShareRequest(
-    val contextId: String,
     val userId: String,
     val accessLevel: String,
 )

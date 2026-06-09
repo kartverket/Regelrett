@@ -305,6 +305,18 @@ fun Route.contextRouting(
                     call.respond(HttpStatusCode.InternalServerError, "An unexpected error occurred.")
                 }
             }
+            get("/shares") {
+                    logger.info("Received GET /context/contextId/contextShares with id: ${call.parameters["contextId"]}")
+                    val contextId = call.parameters["contextId"] ?: throw BadRequestException("Missing contextId")
+
+                    if (!authService.hasContextAccess(call, contextId) && !authService.hasReadContextAccess(call, contextId)) {
+                        call.respond(HttpStatusCode.Forbidden)
+                        return@get
+                    }
+                    val context = sharesRepository.getSharesByContext(contextId)
+                    call.respond(HttpStatusCode.OK, Json.encodeToString(context))
+                    return@get
+            }
         }
     }
 }
