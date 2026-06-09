@@ -283,20 +283,24 @@ fun Route.contextRouting(
 
             post("/share") {
                 try {
+                    val contextId = call.parameters["contextId"] ?: throw BadRequestException("Missing contextId")
+
                     val shareRequestJson = call.receiveText()
                     logger.info("Received POST /context/contextId/share request with body: $shareRequestJson")
                     val shareRequest = Json.decodeFromString<DatabaseShareRequest>(shareRequestJson)
 
-                    if (!authService.hasContextAccess(call, shareRequest.contextId)) {
+                    if (!authService.hasContextAccess(call, contextId)) {
                         call.respond(HttpStatusCode.Forbidden)
                         return@post
                     }
 
-                    val sharedContext = sharesRepository.insertShareOnContext(shareRequest)
+                    val sharedContext = sharesRepository.insertShareOnContext(contextId, shareRequest)
 
                     call.respond(HttpStatusCode.Created, Json.encodeToString(sharedContext))
                     return@post
-                } catch (e: Exception) {
+                } catch (e: ConflictException) {
+                    ErrorHandlers.handleConflictException(call, e)
+                }catch (e: Exception) {
                     logger.error("Unexpected error when processing post /contexts/contextId/share", e)
                     call.respond(HttpStatusCode.InternalServerError, "An unexpected error occurred.")
                 }
