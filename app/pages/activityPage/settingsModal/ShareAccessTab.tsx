@@ -18,20 +18,22 @@ import { ErrorState } from "@/components/ErrorState";
 import { useParams } from "react-router";
 import { isAxiosError } from "axios";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { toast } from "sonner";
-import { useUser } from "@/hooks/useUser";
+import { Separator } from "@/components/ui/separator";
+import { useFetchUsername, useUser } from "@/hooks/useUser";
 import { useShares } from "@/hooks/useShares";
 import { useContext } from "@/hooks/useContext";
+
+const ACCESS_LEVEL_READ = "read" as const;
 
 const shareFormSchema = z.object({
   userId: z.string().min(1, { message: "Du må skrive inn brukerens id." }),
 });
 
-type ShareAccessTab = {
+type ShareAccessTabProps = {
   setOpen: Dispatch<SetStateAction<boolean>>;
 };
 
-export function ShareAccessTab({ setOpen }: ShareAccessTab) {
+export function ShareAccessTab({ setOpen }: ShareAccessTabProps) {
   const { contextId } = useParams<{ contextId: string }>();
   const {
     data: context,
@@ -58,74 +60,77 @@ export function ShareAccessTab({ setOpen }: ShareAccessTab) {
   });
 
   function onSubmit(value: z.infer<typeof shareFormSchema>) {
-    shareContext.mutate({
-      contextId: contextId ?? "",
-      userId: value.userId,
-      accessLevel: "read",
-    }, {
-      onSuccess: () => {
-        setOpen(false);
-        toast.success("Endringen er lagret!", {
-          description: `Bruker har fått tilgang til skjemaet.`,
-          duration: 5000,
-          id: "change-context-name-success",
-        });
+    shareContext.mutate(
+      {
+        userId: value.userId,
+        accessLevel: ACCESS_LEVEL_READ,
       },
-      onError: (error) => {
-        if (isAxiosError(error) && error.response?.status === 409) {
-          shareForm.setError("userId", {
-            type: "manual",
-            message: "Brukeren har allerede tilgang til dette skjemaet.",
-          });
-        } else {
-          shareForm.setError("userId", {
-            type: "manual",
-            message: "Noe gikk galt. Prøv igjen senere.",
-          });
-        }
+      {
+        onSuccess: () => {
+          shareForm.reset();
+        },
+        onError: (error) => {
+          if (isAxiosError(error) && error.response?.status === 409) {
+            shareForm.setError("userId", {
+              type: "manual",
+              message: "Brukeren har allerede tilgang til dette skjemaet.",
+            });
+          } else {
+            shareForm.setError("userId", {
+              type: "manual",
+              message: "Noe gikk galt. Prøv igjen senere.",
+            });
+          }
+        },
       },
-    });
+    );
   }
 
   return (
     <Card>
       <Form {...shareForm}>
-        <form onSubmit={shareForm.handleSubmit(onSubmit)} className="space-y-8">
-          <CardContent className="space-y-2">
-            <h4 className="text-sm font-bold">
-              Hvem har tilgang til dette skjemaet:
-            </h4>
+        <form onSubmit={shareForm.handleSubmit(onSubmit)} className="space-y-4">
+          <CardContent className="space-y-4 pt-4">
+
             <SkeletonLoader loading={contextIsPending || userinfoIsPending}>
               {contextError || userinfoError ? (
-                <ErrorState message={"Klarte ikke hente teamet"} />
+                <ErrorState message="Klarte ikke hente tilganger" />
               ) : (
-                <>
-                  <p className="mb-4">
-                    <strong>Eier:</strong> {ownerTeamName}
-                  </p>
+                <section aria-label="Nåværende tilganger" className="space-y-2">
+                  <h4 className="text-sm font-semibold">Hvem har tilgang</h4>
+
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Eier (skrivetilgang)</span>
+                    <span className="font-medium">{ownerTeamName}</span>
+                  </div>
+
                   {shareList.length > 0 && (
                     <>
-                      <p className="mb-4">Lesetilgang: </p>
-                      {shareList.map((share) => (
-                        <p key={share.id}>{share.userId}</p>
-                      ))}
+                      <Separator />
+                      <p className="text-sm text-muted-foreground">Lesetilgang</p>
+                      <ul className="space-y-1">
+                        {shareList.map((share) => (
+                          <li key={share.userId} className="text-sm">
+                            <UsernameDisplay userId={share.userId} />
+                          </li>
+                        ))}
+                      </ul>
                     </>
                   )}
-                </>
+                </section>
               )}
             </SkeletonLoader>
+
+            <Separator />
 
             <FormField
               control={shareForm.control}
               name="userId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Skriv bruker-iden til brukeren som skal få lesetilgang til
-                    skjemaet:
-                  </FormLabel>
+                  <FormLabel>Gi lesetilgang til bruker</FormLabel>
                   <FormControl>
-                    <Input placeholder="Brukerid" {...field} />
+                    <Input placeholder="Bruker-id" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -141,10 +146,24 @@ export function ShareAccessTab({ setOpen }: ShareAccessTab) {
             >
               Avbryt
             </Button>
-            <Button type="submit">Lagre</Button>
+            <Button type="submit" disabled={shareContext.isPending}>
+              Gi tilgang
+            </Button>
           </CardFooter>
         </form>
       </Form>
     </Card>
   );
+}
+
+function UsernameDisplay({ userId }: { userId: string }) {
+  const {
+    data: username,
+    error: usernameError,
+    isPending: usernameIsLoading,
+  } = useFetchUsername(userId);
+
+  if (usernameIsLoading) return <span className="text-muted-foreground">Laster...</span>;
+  if (usernameError) return <span className="text-destructive">Feil ved henting av bruker</span>;
+  return <span>{username}</span>;
 }

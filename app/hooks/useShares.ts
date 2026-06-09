@@ -16,7 +16,6 @@ export type Share = {
 export type accessLevels = "read" | "write";
 
 type SubmitShareRequest = {
-  contextId: string;
   userId: string;
   accessLevel: accessLevels;
 };
@@ -48,25 +47,8 @@ export function useShares(contextId: string){
         id: toastId,
       });
       await queryClient.invalidateQueries({
-        queryKey: ["contexts"],
+        queryKey: ["Shares", contextId],
       });
-    },
-    onError: (error: AxiosError) => {
-      if (error.response?.status === 409) {
-        const toastId = "submit-context-conflict";
-        toast.warning("Konflikt", {
-          description: "Denne brukeren har allerede denne tilgangen.",
-          duration: 5000,
-          id: toastId,
-        });
-      } else {
-        const toastId = "submit-context-error";
-        toast.error("Å nei!", {
-          description: "Det har skjedd en feil. Prøv på nytt",
-          duration: 5000,
-          id: toastId,
-        });
-      }
     },
   });
 
