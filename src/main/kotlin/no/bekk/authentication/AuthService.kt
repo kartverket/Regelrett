@@ -5,7 +5,6 @@ import no.bekk.database.ContextRepository
 import no.bekk.database.SharesRepository
 import no.bekk.domain.MicrosoftGraphGroup
 import no.bekk.domain.MicrosoftGraphUser
-import no.bekk.services.FormService
 import no.bekk.services.MicrosoftService
 import org.slf4j.LoggerFactory
 
