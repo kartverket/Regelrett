@@ -32,6 +32,8 @@ type Props = {
   filterByAnswer: boolean;
   data: Question[];
   tableData: Form;
+  formName: string;
+  contextName: string;
   user: User;
   contextId: string;
   isLoading: boolean;
@@ -41,6 +43,8 @@ type Props = {
 export function TableComponent({
   data,
   tableData,
+  formName,
+  contextName,
   contextId,
   user,
   columnMetadata,
@@ -302,6 +306,8 @@ export function TableComponent({
           }
           headerArray={headerNames}
           columns={columnMetadata}
+          formName={formName}
+          contextName={contextName}
         />
         }
       </div>

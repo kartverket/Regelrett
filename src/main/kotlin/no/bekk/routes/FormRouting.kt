@@ -5,6 +5,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import no.bekk.exception.NotFoundException
 import no.bekk.exception.ValidationException
+import no.bekk.model.internal.FormResponseDto
 import no.bekk.plugins.ErrorHandlers
 import no.bekk.services.FormService
 import no.bekk.services.FormsMetadataDto
@@ -38,9 +39,19 @@ fun Route.formRouting(formService: FormService) {
                     throw ValidationException("formId parameter is required", field = "formId")
                 }
 
-                val table = formService.getFormProvider(formId).getForm()
+                val formProvider = formService.getFormProvider(formId)
+                val table = formProvider.getForm()
                 logger.info("${call.getRequestInfo()} Form found: $formId")
-                call.respond(HttpStatusCode.OK, table)
+                call.respond(
+                    HttpStatusCode.OK,
+                    FormResponseDto(
+                        id = table.id,
+                        name = table.name,
+                        columns = table.columns,
+                        records = table.records,
+                        exportName = formProvider.name,
+                    ),
+                )
             } catch (e: ValidationException) {
                 ErrorHandlers.handleValidationException(call, e)
             } catch (e: IllegalArgumentException) {

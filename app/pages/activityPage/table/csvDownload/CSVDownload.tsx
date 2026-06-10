@@ -2,14 +2,26 @@ import type { Column, Question } from "../../../../api/types";
 import { OptionalFieldType } from "../../../../api/types";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
+import { buildContextCsvFilename } from "@/utils/csvFilename";
+import { toast } from "sonner";
 
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   rows: Question[];
   headerArray: string[];
   columns: Column[];
+  formName: string;
+  contextName: string;
 }
 
-export function CSVDownload({ rows, headerArray, columns, ...rest }: Props) {
+export function CSVDownload({
+  rows,
+  headerArray,
+  columns,
+  formName,
+  contextName,
+  onClick,
+  ...rest
+}: Props) {
   const answerColumnName = columns.find((c) => c.answerable)?.name ?? "Svar";
   const csvRows = rows
     .map((row) =>
@@ -41,16 +53,40 @@ export function CSVDownload({ rows, headerArray, columns, ...rest }: Props) {
     .join("\n");
 
   const csvData = `${headerArray.join(",")}\n${csvRows}`;
-  const blob = new Blob([csvData], { type: "text/csv" });
-  const url = window.URL.createObjectURL(blob);
+
+  const handleDownload = (event: React.MouseEvent<HTMLButtonElement>) => {
+    onClick?.(event);
+    if (event.defaultPrevented) {
+      return;
+    }
+
+    try {
+      const fileName = buildContextCsvFilename(formName, contextName);
+      const blob = new Blob([csvData], { type: "text/csv" });
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error downloading context CSV:", error);
+      toast.error("Å nei!", {
+        description: "Det har skjedd en feil. Prøv på nytt",
+        duration: 5000,
+        id: "download-context-csv-error",
+      });
+    }
+  };
 
   return (
-    <a href={url} download="table_data.csv">
-      <Button variant="outline" className="w-fit" {...rest}>
-        <Download className="size-5" />
-        Last ned CSV
-      </Button>
-    </a>
+    <Button variant="outline" className="w-fit" onClick={handleDownload} {...rest}>
+      <Download className="size-5" />
+      Last ned CSV
+    </Button>
   );
 }
 
