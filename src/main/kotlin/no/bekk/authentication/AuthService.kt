@@ -2,6 +2,7 @@ package no.bekk.authentication
 import io.ktor.server.application.*
 import no.bekk.configuration.OAuthConfig
 import no.bekk.database.ContextRepository
+import no.bekk.database.SharesRepository
 import no.bekk.domain.MicrosoftGraphGroup
 import no.bekk.domain.MicrosoftGraphUser
 import no.bekk.services.FormService
@@ -19,6 +20,8 @@ interface AuthService {
 
     suspend fun hasContextAccess(call: ApplicationCall, contextId: String): Boolean
 
+    suspend fun hasWriteContextAccess(call: ApplicationCall, contextId: String): Boolean
+
     suspend fun hasReadContextAccess(call: ApplicationCall, contextId: String): Boolean
 
     suspend fun hasSuperUserAccess(call: ApplicationCall): Boolean
@@ -31,8 +34,8 @@ interface AuthService {
 class AuthServiceImpl(
     private val microsoftService: MicrosoftService,
     private val contextRepository: ContextRepository,
+    private val sharesRepository: SharesRepository,
     private val oAuthConfig: OAuthConfig,
-    private val formService: FormService,
 ) : AuthService {
     private val logger = LoggerFactory.getLogger(AuthServiceImpl::class.java)
     override suspend fun getGroupsOrEmptyList(call: ApplicationCall, filter: String?): List<MicrosoftGraphGroup> {
@@ -92,38 +95,36 @@ class AuthServiceImpl(
         call: ApplicationCall,
         contextId: String,
     ): Boolean = try {
-        val context = contextRepository.getContext(contextId)
-        val hasWriteAccess = hasTeamAccess(call, context.teamId)
+            val hasWriteAccess = hasWriteContextAccess(call, contextId)
+            val hasReadAccess = hasReadContextAccess(call, contextId)
 
-        if (hasWriteAccess) {
-            logger.debug("Context access granted for contextId: $contextId (teamId: ${context.teamId})")
-        } else {
-            logger.debug("Context access denied for contextId: $contextId (teamId: ${context.teamId})")
+            if (hasWriteAccess) {
+                logger.debug("Context access granted for contextId: $contextId via write access")
+            } else if (hasReadAccess) {
+                logger.debug("Context access granted for contextId: $contextId via read access")
+            } else {
+                logger.debug("Context access denied for contextId: $contextId - no write or read access")
+            }
+
+            hasWriteAccess || hasReadAccess
+        } catch (e: Exception) {
+            logger.warn("Context access check failed for contextId: $contextId - ${e.message}")
+            false
         }
-        hasWriteAccess
-    } catch (e: Exception) {
-        logger.warn("Context access check failed for contextId: $contextId - ${e.message}")
-        false
+
+
+    override suspend fun hasWriteContextAccess(call: ApplicationCall, contextId: String): Boolean {
+        val context = contextRepository.getContext(contextId)
+        return hasTeamAccess(call, context.teamId)
     }
 
     override suspend fun hasReadContextAccess(
         call: ApplicationCall,
         contextId: String,
-    ): Boolean = try {
-        val context = contextRepository.getContext(contextId)
-        val readAccessGroupId = formService.getFormProvider(context.formId).readAccessGroupId ?: return false
-
-        val hasReadAccess = hasTeamAccess(call, readAccessGroupId)
-
-        if (hasReadAccess) {
-            logger.debug("Read access granted for contextId: $contextId")
-        } else {
-            logger.debug("Read access denied for contextId: $contextId")
-        }
-        hasReadAccess
-    } catch (e: Exception) {
-        logger.warn("Read access check failed for contextId: $contextId - ${e.message}")
-        false
+    ): Boolean {
+        val shares = sharesRepository.getSharesByContext(contextId).map { it.userId }
+        val userId = getCurrentUser(call).id
+        return userId in shares
     }
 
     override suspend fun hasSuperUserAccess(

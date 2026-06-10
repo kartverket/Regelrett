@@ -35,7 +35,7 @@ fun Route.commentRouting(authService: AuthService, commentRepository: CommentRep
                 throw ValidationException("contextId is required", field = "contextId")
             }
 
-            if (!authService.hasContextAccess(call, databaseCommentRequest.contextId)) {
+            if (!authService.hasWriteContextAccess(call, databaseCommentRequest.contextId)) {
                 logger.warn("${call.getRequestInfo()} Access denied to context: ${databaseCommentRequest.contextId}")
                 call.respond(HttpStatusCode.Forbidden)
                 return@post
@@ -63,7 +63,7 @@ fun Route.commentRouting(authService: AuthService, commentRepository: CommentRep
                 throw ValidationException("contextId parameter is required", field = "contextId")
             }
 
-            if (!authService.hasContextAccess(call, contextId) && !authService.hasReadContextAccess(call, contextId)) {
+            if (!authService.hasContextAccess(call, contextId)) {
                 logger.warn("${call.getRequestInfo()} Access denied to context: $contextId")
                 call.respond(HttpStatusCode.Forbidden)
                 return@get
@@ -104,7 +104,7 @@ fun Route.commentRouting(authService: AuthService, commentRepository: CommentRep
                 throw ValidationException("recordId parameter is required", field = "recordId")
             }
 
-            if (!authService.hasContextAccess(call, contextId)) {
+            if (!authService.hasWriteContextAccess(call, contextId)) {
                 logger.warn("${call.getRequestInfo()} Access denied to context: $contextId")
                 call.respond(HttpStatusCode.Forbidden)
                 return@delete

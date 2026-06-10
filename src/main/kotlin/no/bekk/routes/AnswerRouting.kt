@@ -34,7 +34,7 @@ fun Route.answerRouting(authService: AuthService, answerRepository: AnswerReposi
                 throw ValidationException("contextId is required", field = "contextId")
             }
 
-            if (!authService.hasContextAccess(call, answerRequest.contextId)) {
+            if (!authService.hasWriteContextAccess(call, answerRequest.contextId)) {
                 logger.warn("${call.getRequestInfo()} Access denied to context: ${answerRequest.contextId}")
                 call.respond(HttpStatusCode.Forbidden)
                 return@post
@@ -62,7 +62,7 @@ fun Route.answerRouting(authService: AuthService, answerRepository: AnswerReposi
                 throw ValidationException("contextId parameter is required", field = "contextId")
             }
 
-            if (!authService.hasContextAccess(call, contextId) && !authService.hasReadContextAccess(call, contextId)) {
+            if (!authService.hasContextAccess(call, contextId)) {
                 logger.warn("${call.getRequestInfo()} Access denied to context: $contextId")
                 call.respond(HttpStatusCode.Forbidden)
                 return@get
