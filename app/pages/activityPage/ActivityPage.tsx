@@ -150,6 +150,8 @@ export default function ActivityPage() {
                   contextId={context?.id}
                   data={tableData?.records ?? []}
                   tableData={tableData}
+                  formName={tableData.name}
+                  contextName={context.name}
                   user={userinfo.user}
                   isLoading={
                     tableIsPending || answerIsPending || commentIsPending
