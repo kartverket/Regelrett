@@ -17,9 +17,11 @@ import { useAnswers } from "@/hooks/useAnswers";
 export function ContextLink({
   contextId,
   formId,
+  canDelete = true,
 }: {
   contextId: string;
   formId: string;
+  canDelete?: boolean;
 }) {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
@@ -48,6 +50,7 @@ export function ContextLink({
 
   const { data: context, isPending: contextIsPending } = useContext(contextId);
   const { data: answers, isPending: answerIsPending } = useAnswers(contextId);
+  const resolvedFormId = formId ?? context?.formId ?? "";
 
   const latest = answers?.length
     ? answers.reduce((latest, current) =>
@@ -78,18 +81,20 @@ export function ContextLink({
                 <div className="flex flex-col gap-1 items-start">
                   <div className="flex items-center gap-1">
                     <TruncatedText str={context?.name ?? ""} maxLength={22} />
-                    <Button
-                      aria-label="Slett utfylling"
-                      variant="ghost"
-                      size="icon"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setIsDeleteOpen(true);
-                      }}
-                      className="text-destructive hover:text-destructive"
-                    >
-                      <Trash2 />
-                    </Button>
+                    {canDelete && (
+                      <Button
+                        aria-label="Slett utfylling"
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setIsDeleteOpen(true);
+                        }}
+                        className="text-destructive hover:text-destructive"
+                      >
+                        <Trash2 />
+                      </Button>
+                    )}
                   </div>
                   <SkeletonLoader
                     loading={answerIsPending}
@@ -104,19 +109,21 @@ export function ContextLink({
                     </p>
                   </SkeletonLoader>
                 </div>
-                <ProgressCircle contextId={contextId} formId={formId} />
+                <ProgressCircle contextId={contextId} formId={resolvedFormId} />
               </div>
             </CardContent>
           </Card>
         </ReactRouterLink>
       )}
-      <DeleteContextModal
-        onClose={() => setIsDeleteOpen(false)}
-        isOpen={isDeleteOpen}
-        teamId={context?.teamId ?? ""}
-        contextId={contextId}
-        formId={formId}
-      />
+      {canDelete && (
+        <DeleteContextModal
+          onClose={() => setIsDeleteOpen(false)}
+          isOpen={isDeleteOpen}
+          teamId={context?.teamId ?? ""}
+          contextId={contextId}
+          formId={resolvedFormId}
+        />
+      )}
     </SkeletonLoader>
   );
 }

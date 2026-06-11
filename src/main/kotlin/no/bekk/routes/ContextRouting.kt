@@ -130,6 +130,14 @@ fun Route.contextRouting(
             return@get
         }
 
+        get("/sharedWith") {
+            val userId = call.request.queryParameters["userId"] ?: throw BadRequestException("Missing userId parameter")
+
+            val sharedContexts = sharesRepository.getSharedContextsByUserId(userId)
+            call.respond(HttpStatusCode.OK, Json.encodeToString(sharedContexts))
+            return@get
+        }
+
         route("/{contextId}") {
             get {
                 logger.info("Received GET /context with id: ${call.parameters["contextId"]}")
@@ -317,6 +325,7 @@ fun Route.contextRouting(
                     call.respond(HttpStatusCode.OK, Json.encodeToString(context))
                     return@get
             }
+
         }
     }
 }

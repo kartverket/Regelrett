@@ -1,11 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { axiosFetch } from "@/api/Fetch";
 import { toast } from "sonner";
-import type { AxiosError } from "axios";
 
 const API_URL_BASE = "/api";
 
-export type Share = {
+export type SharedContext = {
   id: string;
   contextId: string;
   userId: string;
@@ -26,14 +25,14 @@ export function useShares(contextId: string){
   const shares = useQuery({
     queryKey: ["Shares", contextId],
     queryFn: () =>
-      axiosFetch<Share[]>({
+      axiosFetch<SharedContext[]>({
         url: `${API_URL_BASE}/contexts/${contextId}/shares`,
       }).then((response) => response.data),
   });
 
   const shareContext = useMutation({
     mutationFn: (body: SubmitShareRequest) => {
-      return axiosFetch<Share>({
+      return axiosFetch<SharedContext>({
         url: `${API_URL_BASE}/contexts/${contextId}/share`,
         method: "POST",
         data: body,
@@ -57,4 +56,14 @@ export function useShares(contextId: string){
     shareContext
   }
 
+}
+
+export function useSharedContextsByUser(userId: string){
+  return useQuery({
+    queryKey: ["sharedContexts", userId],
+    queryFn: () =>
+      axiosFetch<SharedContext[]>({
+        url: `${API_URL_BASE}/contexts/sharedWith?userId=${userId}`,
+      }).then((response) => response.data),
+  });
 }

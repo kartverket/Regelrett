@@ -10,6 +10,7 @@ import kotlin.collections.buildList
 
 interface SharesRepository {
     fun getSharesByContext(contextId: String): List<DatabaseShare>
+    fun getSharedContextsByUserId(userId: String): List<DatabaseShare>
     fun insertShareOnContext(contextId: String, share: DatabaseShareRequest): DatabaseShare
 }
 
@@ -88,6 +89,39 @@ class SharesRepositoryImpl(private val database: Database) : SharesRepository {
                 logger.error("Database error when sharing context: ${e.message}", e)
                 throw DatabaseException("Failed to share context with user", "insertContext", e)
             }
+        }
+    }
+
+    override fun getSharedContextsByUserId(userId: String): List<DatabaseShare> {
+        val sqlStatement = """SELECT id, context_id, user_id, access_level, created FROM shares WHERE user_id = ?"""
+
+        return try {
+            database.getConnection().use { conn ->
+                conn.prepareStatement(sqlStatement).use { statement ->
+                    statement.setString(1, userId)
+
+                    val result = statement.executeQuery()
+
+                    buildList {
+                        while (result.next()) {
+                            add(
+                                DatabaseShare(
+                                    id = result.getString("id"),
+                                    contextId = result.getString("context_id"),
+                                    userId = result.getString("user_id"),
+                                    accessLevel = result.getString("access_level"),
+                                    created = result.getString("created"),
+                                )
+                            )
+                        }
+                    }.also {
+                        logger.debug("Successfully fetched shares for user: $userId")
+                    }
+                }
+            }
+        } catch (e: SQLException) {
+            logger.error("Error fetching shared contexts for user: $userId", e)
+            throw RuntimeException("Error fetching shared contexts for user: $userId from database", e)
         }
     }
 }
