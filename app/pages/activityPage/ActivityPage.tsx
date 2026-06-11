@@ -150,7 +150,7 @@ export default function ActivityPage() {
                   contextId={context?.id}
                   data={tableData?.records ?? []}
                   tableData={tableData}
-                  formName={tableData.exportName}
+                  formName={tableData.name}
                   contextName={context.name}
                   user={userinfo.user}
                   isLoading={

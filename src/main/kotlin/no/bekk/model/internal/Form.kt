@@ -40,15 +40,6 @@ data class Form(
 )
 
 @Serializable
-data class FormResponseDto(
-    val id: String,
-    val name: String,
-    val columns: List<Column>,
-    val records: List<Question>,
-    val exportName: String,
-)
-
-@Serializable
 data class Schema(
     val id: String,
     val name: String,

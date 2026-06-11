@@ -82,7 +82,6 @@ export type Form = {
   columns: Column[];
   name: string;
   records: Question[];
-  exportName: string;
 };
 
 export type User = {

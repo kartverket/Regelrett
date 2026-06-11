@@ -1,5 +1,4 @@
-import type { Column, Question } from "../../../../api/types";
-import { OptionalFieldType } from "../../../../api/types";
+import { OptionalFieldType, type Column, type Question } from "@/api/types";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { buildContextCsvFilename } from "@/utils/csvFilename";
@@ -56,9 +55,6 @@ export function CSVDownload({
 
   const handleDownload = (event: React.MouseEvent<HTMLButtonElement>) => {
     onClick?.(event);
-    if (event.defaultPrevented) {
-      return;
-    }
 
     try {
       const fileName = buildContextCsvFilename(formName, contextName);
