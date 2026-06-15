@@ -1,12 +1,15 @@
 import react from "@vitejs/plugin-react";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
 import { existsSync, readFileSync } from "node:fs";
 import { parse } from "yaml";
 
+const currentDir = path.dirname(fileURLToPath(import.meta.url));
+
 export default () => {
-  const regelrettRoot = path.join(__dirname);
+  const regelrettRoot = path.join(currentDir);
   const defaultSettings = readFileSync(`${regelrettRoot}/conf/defaults.yaml`, {
     encoding: "utf-8",
   });
@@ -41,7 +44,7 @@ export default () => {
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
-        "@": path.resolve(__dirname, "./app"),
+        "@": path.resolve(currentDir, "./app"),
       },
     },
     server: {
