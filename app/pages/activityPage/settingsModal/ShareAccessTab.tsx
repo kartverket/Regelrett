@@ -22,11 +22,21 @@ import { Separator } from "@/components/ui/separator";
 import { useFetchUsername, useUser } from "@/hooks/useUser";
 import { useShares } from "@/hooks/useShares";
 import { useContext } from "@/hooks/useContext";
+import { formatDate } from "@/utils/formatTime";
 
-const ACCESS_LEVEL_READ = "read" as const;
 
 const shareFormSchema = z.object({
   userId: z.string().min(1, { message: "Du må skrive inn brukerens id." }),
+  expiresAt: z
+    .string()
+    .optional()
+    .refine(
+      (value) => {
+        if (!value) return true;
+        return new Date(value).getTime() > Date.now();
+      },
+      { message: "Utløpstid må være frem i tid." },
+    ),
 });
 
 type ShareAccessTabProps = {
@@ -56,14 +66,17 @@ export function ShareAccessTab({ setOpen }: ShareAccessTabProps) {
 
   const shareForm = useForm<z.infer<typeof shareFormSchema>>({
     resolver: zodResolver(shareFormSchema),
-    defaultValues: { userId: "" },
+    defaultValues: { userId: "", expiresAt: "" },
   });
+
 
   function onSubmit(value: z.infer<typeof shareFormSchema>) {
     shareContext.mutate(
       {
         userId: value.userId,
-        accessLevel: ACCESS_LEVEL_READ,
+        expiresAt: value.expiresAt
+          ? new Date(`${value.expiresAt}T00:00:00.000Z`).toISOString()
+          : undefined,
       },
       {
         onSuccess: () => {
@@ -91,7 +104,6 @@ export function ShareAccessTab({ setOpen }: ShareAccessTabProps) {
       <Form {...shareForm}>
         <form onSubmit={shareForm.handleSubmit(onSubmit)} className="space-y-4">
           <CardContent className="space-y-4 pt-4">
-
             <SkeletonLoader loading={contextIsPending || userinfoIsPending}>
               {contextError || userinfoError ? (
                 <ErrorState message="Klarte ikke hente tilganger" />
@@ -100,18 +112,29 @@ export function ShareAccessTab({ setOpen }: ShareAccessTabProps) {
                   <h4 className="text-sm font-semibold">Hvem har tilgang</h4>
 
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Eier (skrivetilgang)</span>
+                    <span className="text-muted-foreground">
+                      Eier (skrivetilgang)
+                    </span>
                     <span className="font-medium">{ownerTeamName}</span>
                   </div>
 
                   {shareList.length > 0 && (
                     <>
                       <Separator />
-                      <p className="text-sm text-muted-foreground">Lesetilgang</p>
+                      <p className="text-sm text-muted-foreground">
+                        Lesetilgang
+                      </p>
                       <ul className="space-y-1">
                         {shareList.map((share) => (
                           <li key={share.userId} className="text-sm">
-                            <UsernameDisplay userId={share.userId} />
+                            <div className="flex flex-col">
+                              <UsernameDisplay userId={share.userId} />
+                              {share.expiresAt && (
+                                <span className="text-xs text-muted-foreground">
+                                  Utløper {formatDate(share.expiresAt)}
+                                </span>
+                              )}
+                            </div>
                           </li>
                         ))}
                       </ul>
@@ -131,6 +154,20 @@ export function ShareAccessTab({ setOpen }: ShareAccessTabProps) {
                   <FormLabel>Gi lesetilgang til bruker</FormLabel>
                   <FormControl>
                     <Input placeholder="Bruker-id" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={shareForm.control}
+              name="expiresAt"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tidsbegrenset tilgang (valgfritt)</FormLabel>
+                  <FormControl>
+                    <Input type="date" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

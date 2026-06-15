@@ -7,12 +7,12 @@ data class DatabaseShare(
     val id: String,
     val contextId: String,
     val userId: String,
-    val accessLevel: String,
     val created: String,
+    val expiresAt: String? = null,
 )
 
 @Serializable
 data class DatabaseShareRequest(
     val userId: String,
-    val accessLevel: String,
+    val expiresAt: String? = null,
 )

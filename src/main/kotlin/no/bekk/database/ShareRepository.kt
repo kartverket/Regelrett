@@ -5,6 +5,8 @@ import no.bekk.exception.ConflictException
 import no.bekk.exception.DatabaseException
 import org.slf4j.LoggerFactory
 import java.sql.SQLException
+import java.sql.Timestamp
+import java.time.Instant
 import java.util.UUID
 import kotlin.collections.buildList
 
@@ -20,7 +22,11 @@ class SharesRepositoryImpl(private val database: Database) : SharesRepository {
     override fun getSharesByContext(contextId: String): List<DatabaseShare> {
         logger.debug("Fetching shares from database for contextId: $contextId")
 
-        val sqlStatement = """SELECT id, context_id, user_id, access_level, created FROM shares WHERE context_id = ?"""
+        val sqlStatement = """
+            SELECT id, context_id, user_id, created, expires_at
+            FROM shares
+            WHERE context_id = ? AND (expires_at IS NULL OR expires_at > CURRENT_TIMESTAMP)
+        """.trimIndent()
 
         return try {
             database.getConnection().use { conn ->
@@ -36,8 +42,8 @@ class SharesRepositoryImpl(private val database: Database) : SharesRepository {
                                     id = result.getString("id"),
                                     contextId = result.getString("context_id"),
                                     userId = result.getString("user_id"),
-                                    accessLevel = result.getString("access_level"),
                                     created = result.getString("created"),
+                                    expiresAt = result.getObject("expires_at", java.time.LocalDateTime::class.java)?.toString(),
                                 )
                             )
                         }
@@ -57,14 +63,30 @@ class SharesRepositoryImpl(private val database: Database) : SharesRepository {
     override fun insertShareOnContext(contextId: String, share: DatabaseShareRequest): DatabaseShare {
         logger.debug("Inserting share: {}", share)
         val sqlStatement =
-            "INSERT INTO shares (context_id, user_id, access_level) VALUES(?, ?, ?) returning *"
+            """
+                INSERT INTO shares (context_id, user_id, expires_at)
+                SELECT ?, ?, ?
+                WHERE NOT EXISTS (
+                    SELECT 1
+                    FROM shares
+                    WHERE context_id = ?
+                      AND user_id = ?
+                      AND (
+                          expires_at IS NULL
+                          OR expires_at > CURRENT_TIMESTAMP
+                      )
+                )
+                RETURNING *
+            """.trimIndent()
 
         try {
             database.getConnection().use { conn ->
                 conn.prepareStatement(sqlStatement).use { statement ->
                     statement.setObject(1, UUID.fromString(contextId))
                     statement.setString(2, share.userId)
-                    statement.setString(3, share.accessLevel)
+                    statement.setTimestamp(3, share.expiresAt?.takeIf { it.isNotBlank() }?.let { Timestamp.from(Instant.parse(it)) })
+                    statement.setObject(4, UUID.fromString(contextId))
+                    statement.setString(5, share.userId)
 
                     val result = statement.executeQuery()
                     if (result.next()) {
@@ -73,27 +95,26 @@ class SharesRepositoryImpl(private val database: Database) : SharesRepository {
                             id = result.getString("id"),
                             contextId = result.getString("context_id"),
                             userId = result.getString("user_id"),
-                            accessLevel = result.getString("access_level"),
                             created = result.getObject("created", java.time.LocalDateTime::class.java)?.toString() ?: "",
+                            expiresAt = result.getObject("expires_at", java.time.LocalDateTime::class.java)?.toString(),
                         )
                     } else {
-                        throw RuntimeException("Error inserting share request into database")
+                        throw ConflictException("The user already has valid access to this context")
                     }
                 }
             }
         } catch (e: SQLException) {
-            if (e.sqlState == "23505") { // PostgreSQL unique_violation
-                logger.warn("Unique constraint violation when inserting context: ${e.message}")
-                throw ConflictException("The user already has this access for this context")
-            } else {
-                logger.error("Database error when sharing context: ${e.message}", e)
-                throw DatabaseException("Failed to share context with user", "insertContext", e)
-            }
+            logger.error("Database error when sharing context: ${e.message}", e)
+            throw DatabaseException("Failed to share context with user", "insertContext", e)
         }
     }
 
     override fun getSharedContextsByUserId(userId: String): List<DatabaseShare> {
-        val sqlStatement = """SELECT id, context_id, user_id, access_level, created FROM shares WHERE user_id = ?"""
+        val sqlStatement = """
+            SELECT id, context_id, user_id, created, expires_at
+            FROM shares
+            WHERE user_id = ? AND (expires_at IS NULL OR expires_at > CURRENT_TIMESTAMP)
+        """.trimIndent()
 
         return try {
             database.getConnection().use { conn ->
@@ -109,8 +130,8 @@ class SharesRepositoryImpl(private val database: Database) : SharesRepository {
                                     id = result.getString("id"),
                                     contextId = result.getString("context_id"),
                                     userId = result.getString("user_id"),
-                                    accessLevel = result.getString("access_level"),
                                     created = result.getString("created"),
+                                    expiresAt = result.getObject("expires_at", java.time.LocalDateTime::class.java)?.toString(),
                                 )
                             )
                         }

@@ -8,16 +8,23 @@ export type SharedContext = {
   id: string;
   contextId: string;
   userId: string;
-  accessLevel: accessLevels;
-  created: string;
+  created: Date;
+  expiresAt?: Date | null;
 };
 
-export type accessLevels = "read" | "write";
 
 type SubmitShareRequest = {
   userId: string;
-  accessLevel: accessLevels;
+  expiresAt?: string;
 };
+
+function formatShareData(shares: SharedContext[]) {
+  return shares.map((share) => ({
+    ...share,
+    created: new Date(share.created),
+    expiresAt: share.expiresAt ? new Date(share.expiresAt) : null,
+  }));
+}
 
 export function useShares(contextId: string){
   const queryClient = useQueryClient();
@@ -28,6 +35,7 @@ export function useShares(contextId: string){
       axiosFetch<SharedContext[]>({
         url: `${API_URL_BASE}/contexts/${contextId}/shares`,
       }).then((response) => response.data),
+    select: formatShareData,
   });
 
   const shareContext = useMutation({
@@ -65,5 +73,6 @@ export function useSharedContextsByUser(userId: string){
       axiosFetch<SharedContext[]>({
         url: `${API_URL_BASE}/contexts/sharedWith?userId=${userId}`,
       }).then((response) => response.data),
+    select: formatShareData,
   });
 }
