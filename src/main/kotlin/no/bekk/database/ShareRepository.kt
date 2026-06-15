@@ -64,8 +64,8 @@ class SharesRepositoryImpl(private val database: Database) : SharesRepository {
         logger.debug("Inserting share: {}", share)
         val sqlStatement =
             """
-                INSERT INTO shares (context_id, user_id, expires_at)
-                SELECT ?, ?, ?
+                INSERT INTO shares (context_id, user_id, expires_at, shared_by)
+                SELECT ?, ?, ?, ?
                 WHERE NOT EXISTS (
                     SELECT 1
                     FROM shares
@@ -85,8 +85,9 @@ class SharesRepositoryImpl(private val database: Database) : SharesRepository {
                     statement.setObject(1, UUID.fromString(contextId))
                     statement.setString(2, share.userId)
                     statement.setTimestamp(3, share.expiresAt?.takeIf { it.isNotBlank() }?.let { Timestamp.from(Instant.parse(it)) })
-                    statement.setObject(4, UUID.fromString(contextId))
-                    statement.setString(5, share.userId)
+                    statement.setString(4, share.sharedBy)
+                    statement.setObject(5, UUID.fromString(contextId))
+                    statement.setString(6, share.userId)
 
                     val result = statement.executeQuery()
                     if (result.next()) {

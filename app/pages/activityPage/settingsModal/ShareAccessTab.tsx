@@ -71,12 +71,15 @@ export function ShareAccessTab({ setOpen }: ShareAccessTabProps) {
 
 
   function onSubmit(value: z.infer<typeof shareFormSchema>) {
+    if (!userinfo?.user.id) return;
+
     shareContext.mutate(
       {
         userId: value.userId,
         expiresAt: value.expiresAt
           ? new Date(`${value.expiresAt}T00:00:00.000Z`).toISOString()
           : undefined,
+        sharedBy: userinfo?.user.id,
       },
       {
         onSuccess: () => {
@@ -183,7 +186,7 @@ export function ShareAccessTab({ setOpen }: ShareAccessTabProps) {
             >
               Avbryt
             </Button>
-            <Button type="submit" disabled={shareContext.isPending}>
+            <Button type="submit" disabled={shareContext.isPending || userinfoIsPending}>
               Gi tilgang
             </Button>
           </CardFooter>

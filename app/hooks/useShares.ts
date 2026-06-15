@@ -16,6 +16,7 @@ export type SharedContext = {
 type SubmitShareRequest = {
   userId: string;
   expiresAt?: string;
+  sharedBy: string;
 };
 
 function formatShareData(shares: SharedContext[]) {
