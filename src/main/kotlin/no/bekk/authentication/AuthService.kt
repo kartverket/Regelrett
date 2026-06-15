@@ -94,23 +94,22 @@ class AuthServiceImpl(
         call: ApplicationCall,
         contextId: String,
     ): Boolean = try {
-            val hasWriteAccess = hasWriteContextAccess(call, contextId)
-            val hasReadAccess = hasReadContextAccess(call, contextId)
+        val hasWriteAccess = hasWriteContextAccess(call, contextId)
+        val hasReadAccess = hasReadContextAccess(call, contextId)
 
-            if (hasWriteAccess) {
-                logger.debug("Context access granted for contextId: $contextId via write access")
-            } else if (hasReadAccess) {
-                logger.debug("Context access granted for contextId: $contextId via read access")
-            } else {
-                logger.debug("Context access denied for contextId: $contextId - no write or read access")
-            }
-
-            hasWriteAccess || hasReadAccess
-        } catch (e: Exception) {
-            logger.warn("Context access check failed for contextId: $contextId - ${e.message}")
-            false
+        if (hasWriteAccess) {
+            logger.debug("Context access granted for contextId: $contextId via write access")
+        } else if (hasReadAccess) {
+            logger.debug("Context access granted for contextId: $contextId via read access")
+        } else {
+            logger.debug("Context access denied for contextId: $contextId - no write or read access")
         }
 
+        hasWriteAccess || hasReadAccess
+    } catch (e: Exception) {
+        logger.warn("Context access check failed for contextId: $contextId - ${e.message}")
+        false
+    }
 
     override suspend fun hasWriteContextAccess(call: ApplicationCall, contextId: String): Boolean {
         val context = contextRepository.getContext(contextId)

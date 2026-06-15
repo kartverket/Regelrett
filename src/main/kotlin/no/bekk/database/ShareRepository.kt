@@ -44,7 +44,7 @@ class SharesRepositoryImpl(private val database: Database) : SharesRepository {
                                     userId = result.getString("user_id"),
                                     created = result.getString("created"),
                                     expiresAt = result.getObject("expires_at", java.time.LocalDateTime::class.java)?.toString(),
-                                )
+                                ),
                             )
                         }
                     }.also {
@@ -56,8 +56,6 @@ class SharesRepositoryImpl(private val database: Database) : SharesRepository {
             logger.error("Error fetching shares for context: $contextId", e)
             throw RuntimeException("Error fetching shares for context: $contextId from database", e)
         }
-
-
     }
 
     override fun insertShareOnContext(contextId: String, share: DatabaseShareRequest): DatabaseShare {
@@ -133,7 +131,7 @@ class SharesRepositoryImpl(private val database: Database) : SharesRepository {
                                     userId = result.getString("user_id"),
                                     created = result.getString("created"),
                                     expiresAt = result.getObject("expires_at", java.time.LocalDateTime::class.java)?.toString(),
-                                )
+                                ),
                             )
                         }
                     }.also {
