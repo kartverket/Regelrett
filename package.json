@@ -51,16 +51,16 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.4",
-    "@tailwindcss/vite": "^4.3.0",
+    "@eslint/js": "^10.0.1",
+    "@tailwindcss/vite": "^4.3.1",
     "@types/js-cookie": "^3.0.6",
     "@types/node": "^20.19.37",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "typescript-eslint": "^8.61.0",
-    "@typescript-eslint/eslint-plugin": "^8.61.0",
-    "@typescript-eslint/parser": "^8.61.0",
-    "eslint": "^9.39.4",
+    "@typescript-eslint/eslint-plugin": "^8.61.1",
+    "@typescript-eslint/parser": "^8.61.1",
+    "eslint": "^10.5.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
     "globals": "^16.5.0",
@@ -70,15 +70,18 @@
     "typescript": "^5.9.3",
     "vite": "^8.0.16",
     "vite-tsconfig-paths": "^6.1.1",
-    "vitest": "^4.1.8"
+    "vitest": "^4.1.9"
   },
   "packageManager": "pnpm@10.13.1+sha512.37ebf1a5c7a30d5fabe0c5df44ee8da4c965ca0c5af3dbab28c3a1681b70a256218d05c81c9c0dcf767ef6b8551eb5b960042b9ed4300c59242336377e01cfad",
   "pnpm": {
     "overrides": {
+      "flat-cache>flatted": "3.4.2",
       "rollup@<4.59.0": "4.59.0",
       "minimatch@<3.1.4": "3.1.5",
       "minimatch@>=9.0.0 <9.0.7": "9.0.9",
-      "ajv@<6.14.0": "6.14.0"
+      "ajv@<6.14.0": "6.14.0",
+      "vite>esbuild": "0.28.1",
+      "picomatch": "4.0.4"
     }
   }
 }
