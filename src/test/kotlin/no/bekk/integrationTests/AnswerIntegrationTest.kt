@@ -30,6 +30,8 @@ class AnswerIntegrationTest {
         val authService = object : MockAuthService {
             override suspend fun hasTeamAccess(call: ApplicationCall, teamId: String?): Boolean = true
 
+            override suspend fun hasWriteContextAccess(call: ApplicationCall, contextId: String): Boolean = true
+
             override suspend fun hasContextAccess(call: ApplicationCall, contextId: String): Boolean = true
         }
         application {
