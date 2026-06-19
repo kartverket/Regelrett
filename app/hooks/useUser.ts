@@ -16,6 +16,11 @@ export type UserInfo = {
   reportinguser: boolean;
 };
 
+export type UserSuggestion = {
+  id: string;
+  displayName: string;
+};
+
 export const useUser = () => {
   return useQuery({
     queryKey: ["userinfo"],
@@ -34,5 +39,17 @@ export function useFetchUsername(userId: string) {
         url: `${API_URL_BASE}/userinfo/${userId}/username`,
       }).then((response) => response.data),
     enabled: userId !== undefined,
+  });
+}
+
+export function useSearchUser(userNameQuery: string) {
+  return useQuery({
+    queryKey: ["user-search", userNameQuery],
+    queryFn: () =>
+      axiosFetch<UserSuggestion[]>({
+        url: "/api/userinfo/search",
+        params: { usernameQuery: userNameQuery, limit: 10 },
+      }).then((response) => response.data),
+    enabled: userNameQuery.length >= 1,
   });
 }

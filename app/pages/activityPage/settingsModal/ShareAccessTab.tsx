@@ -19,14 +19,20 @@ import { useParams } from "react-router";
 import { isAxiosError } from "axios";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { useFetchUsername, useUser } from "@/hooks/useUser";
+import {
+  useFetchUsername,
+  useSearchUser,
+  useUser,
+} from "@/hooks/useUser";
 import { useShares } from "@/hooks/useShares";
 import { useContext } from "@/hooks/useContext";
 import { formatDate } from "@/utils/formatTime";
+import { useDebounce } from "@/hooks/useDebounce";
+import { Search } from "lucide-react";
 
 
 const shareFormSchema = z.object({
-  userId: z.string().min(1, { message: "Du må skrive inn brukerens id." }),
+  userId: z.string().min(1, { message: "Du må velge en bruker." }),
   expiresAt: z
     .string()
     .optional()
@@ -69,6 +75,14 @@ export function ShareAccessTab({ setOpen }: ShareAccessTabProps) {
     defaultValues: { userId: "", expiresAt: "" },
   });
 
+  const [usernameInput, setUsernameInput] = React.useState("");
+  const [showSuggestions, setShowSuggestions] = React.useState(false);
+  const hasSelectedUser = shareForm.watch("userId");
+  const debouncedUsernameInput = useDebounce(usernameInput, 500);
+  const isDebouncing = usernameInput !== debouncedUsernameInput;
+  const { data: userSuggestions = [], isFetching: isSearching } = useSearchUser(
+    hasSelectedUser ? "" : debouncedUsernameInput,
+  );
 
   function onSubmit(value: z.infer<typeof shareFormSchema>) {
     if (!userinfo?.user.id) return;
@@ -84,6 +98,8 @@ export function ShareAccessTab({ setOpen }: ShareAccessTabProps) {
       {
         onSuccess: () => {
           shareForm.reset();
+          setUsernameInput("");
+          setShowSuggestions(false);
         },
         onError: (error) => {
           if (isAxiosError(error) && error.response?.status === 409) {
@@ -102,12 +118,20 @@ export function ShareAccessTab({ setOpen }: ShareAccessTabProps) {
     );
   }
 
+  const showUserResults =
+    showSuggestions && !hasSelectedUser && usernameInput.length >= 1;
+
   return (
     <Card>
       <Form {...shareForm}>
         <form onSubmit={shareForm.handleSubmit(onSubmit)} className="space-y-4">
           <CardContent className="space-y-4 pt-4">
-            <SkeletonLoader loading={contextIsPending || userinfoIsPending}>
+            <SkeletonLoader
+              loading={
+                contextIsPending || userinfoIsPending || shares.isLoading
+              }
+              width="w-full"
+            >
               {contextError || userinfoError ? (
                 <ErrorState message="Klarte ikke hente tilganger" />
               ) : (
@@ -156,7 +180,58 @@ export function ShareAccessTab({ setOpen }: ShareAccessTabProps) {
                 <FormItem>
                   <FormLabel>Gi lesetilgang til bruker</FormLabel>
                   <FormControl>
-                    <Input placeholder="Bruker-id" {...field} />
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                      <Input
+                        type={"search"}
+                        placeholder="Søk etter bruker"
+                        value={usernameInput}
+                        onFocus={() => setShowSuggestions(true)}
+                        onBlur={() => setShowSuggestions(false)}
+                        onChange={(event) => {
+                          const value = event.target.value;
+                          setUsernameInput(value);
+                          field.onChange("");
+                          setShowSuggestions(true);
+                        }}
+                        className="pl-10"
+                      />
+
+                      {showUserResults && (
+                        <div className="absolute z-20 mt-1 max-h-60 w-full overflow-y-auto rounded-md border bg-background p-1 shadow-md">
+                          {isDebouncing || isSearching ? (
+                            <div className="px-2 py-1 text-sm text-muted-foreground">
+                              Søker...
+                            </div>
+                          ) : userSuggestions.length === 0 ? (
+                            <div className="px-2 py-1 text-sm text-muted-foreground">
+                              Ingen treff
+                            </div>
+                          ) : (
+                            userSuggestions.map((user) => (
+                              <Button
+                                key={user.id}
+                                type="button"
+                                variant="ghost"
+                                className="w-full justify-start rounded px-2 py-1 text-left text-sm"
+                                onMouseDown={(event) => {
+                                  event.preventDefault();
+                                  shareForm.setValue("userId", user.id, {
+                                    shouldValidate: true,
+                                  });
+                                  setUsernameInput(user.displayName);
+                                  setShowSuggestions(false);
+                                }}
+                              >
+                                <span className="font-medium">
+                                  {user.displayName}
+                                </span>
+                              </Button>
+                            ))
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -186,7 +261,10 @@ export function ShareAccessTab({ setOpen }: ShareAccessTabProps) {
             >
               Avbryt
             </Button>
-            <Button type="submit" disabled={shareContext.isPending || userinfoIsPending}>
+            <Button
+              type="submit"
+              disabled={shareContext.isPending || userinfoIsPending}
+            >
               Gi tilgang
             </Button>
           </CardFooter>

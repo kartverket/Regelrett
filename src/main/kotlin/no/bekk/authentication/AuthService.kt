@@ -15,6 +15,8 @@ interface AuthService {
 
     suspend fun getUserByUserId(call: ApplicationCall, userId: String): MicrosoftGraphUser
 
+    suspend fun searchUsers(call: ApplicationCall, usernameQuery: String, limit: Int = 10): List<MicrosoftGraphUser>
+
     suspend fun hasTeamAccess(call: ApplicationCall, teamId: String?): Boolean
 
     suspend fun hasContextAccess(call: ApplicationCall, contextId: String): Boolean
@@ -64,6 +66,16 @@ class AuthServiceImpl(
         val oboToken = microsoftService.requestTokenOnBehalfOf(jwtToken)
 
         return microsoftService.fetchUserByUserId(oboToken, userId)
+    }
+
+    override suspend fun searchUsers(call: ApplicationCall, usernameQuery: String, limit: Int): List<MicrosoftGraphUser> {
+        val jwtToken =
+            call.request.headers["Authorization"]?.removePrefix("Bearer ")
+                ?: throw IllegalStateException("Authorization header missing")
+
+        val oboToken = microsoftService.requestTokenOnBehalfOf(jwtToken)
+
+        return microsoftService.searchUsersbyName(oboToken, usernameQuery, limit)
     }
 
     override suspend fun hasTeamAccess(call: ApplicationCall, teamId: String?): Boolean {

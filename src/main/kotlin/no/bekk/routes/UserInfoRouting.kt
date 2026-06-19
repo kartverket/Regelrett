@@ -53,5 +53,26 @@ fun Route.userInfoRouting(authService: AuthService) {
                 ErrorHandlers.handleGenericException(call, e)
             }
         }
+
+        get("/search") {
+            try {
+                val usernameQuery = call.request.queryParameters["usernameQuery"]?.trim()
+                val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 10
+
+                if (usernameQuery.isNullOrBlank()) {
+                    logger.warn("${call.getRequestInfo()} Missing or empty usernameQuery parameter for user search")
+                    throw ValidationException("usernameQuery parameter is required", field = "query")
+                }
+
+                logger.info("${call.getRequestInfo()} Received GET /userinfo/search")
+                val users = authService.searchUsers(call, usernameQuery, limit)
+                call.respond(HttpStatusCode.OK, users)
+            } catch (e: ValidationException) {
+                ErrorHandlers.handleValidationException(call, e)
+            } catch (e: Exception) {
+                logger.error("${call.getRequestInfo()} Error searching users", e)
+                ErrorHandlers.handleGenericException(call, e)
+            }
+        }
     }
 }
