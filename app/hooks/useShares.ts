@@ -51,7 +51,7 @@ export function useShares(contextId: string){
     onSuccess: async () => {
       const toastId = "submit-share-success";
       toast.success("Suksess", {
-        description: `Konteksten ble delt`,
+        description: `Skjemautfyllingen ble delt`,
         duration: 5000,
         id: toastId,
       });
