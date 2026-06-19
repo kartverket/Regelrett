@@ -39,11 +39,11 @@ jobs:
     steps:
       - name: Checkout code
         if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.commit_sha == '') }}
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Checkout code
         if: ${{ (github.event_name == 'workflow_dispatch' && inputs.commit_sha == '') }}
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -142,7 +142,7 @@ jobs:
           scope: kartverket/skvis-apps
           identity: regelrett
       - name: Checkout skvis-apps
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: kartverket/skvis-apps
           ref: main
@@ -175,7 +175,7 @@ jobs:
           scope: kartverket/skvis-apps
           identity: regelrett
       - name: Checkout skvis-apps
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: kartverket/skvis-apps
           ref: main
