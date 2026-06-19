@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS shares (
     user_id TEXT NOT NULL,
     created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     expires_at TIMESTAMP NULL,
+    justification TEXT,
     shared_by TEXT NOT NULL,
     CONSTRAINT fk_context_shares_contexts
         FOREIGN KEY (context_id) REFERENCES contexts(id)

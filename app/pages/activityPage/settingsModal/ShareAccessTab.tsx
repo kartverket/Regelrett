@@ -43,6 +43,7 @@ const shareFormSchema = z.object({
       },
       { message: "Utløpstid må være frem i tid." },
     ),
+  justification: z.string().min(1, {message: "Du må beskrive hvorfor denne tilgangen gis"}),
 });
 
 type ShareAccessTabProps = {
@@ -93,6 +94,7 @@ export function ShareAccessTab({ setOpen }: ShareAccessTabProps) {
         expiresAt: value.expiresAt
           ? new Date(`${value.expiresAt}T00:00:00.000Z`).toISOString()
           : undefined,
+        justification: value.justification,
         sharedBy: userinfo?.user.id,
       },
       {
@@ -246,6 +248,20 @@ export function ShareAccessTab({ setOpen }: ShareAccessTabProps) {
                   <FormLabel>Tidsbegrenset tilgang (valgfritt)</FormLabel>
                   <FormControl>
                     <Input type="date" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={shareForm.control}
+              name="justification"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Behov for tilgang</FormLabel>
+                  <FormControl>
+                    <Input type="text" placeholder="Begrunn hvorfor tilgangen gis" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

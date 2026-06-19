@@ -15,5 +15,6 @@ data class DatabaseShare(
 data class DatabaseShareRequest(
     val userId: String,
     val expiresAt: String? = null,
+    val justification: String,
     val sharedBy: String,
 )
