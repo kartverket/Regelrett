@@ -20,19 +20,19 @@ type SubmitReadGrantRequest = {
   sharedBy: string;
 };
 
-function formatReadGrantData(shares: ReadGrant[]) {
-  return shares.map((share) => ({
-    ...share,
-    created: new Date(share.created),
-    expiresAt: share.expiresAt ? new Date(share.expiresAt) : null,
+function formatReadGrantData(readGrants: ReadGrant[]) {
+  return readGrants.map((readGrant) => ({
+    ...readGrant,
+    created: new Date(readGrant.created),
+    expiresAt: readGrant.expiresAt ? new Date(readGrant.expiresAt) : null,
   }));
 }
 
 export function useGrants(contextId: string){
   const queryClient = useQueryClient();
 
-  const shares = useQuery({
-    queryKey: ["Shares", contextId],
+  const readGrants = useQuery({
+    queryKey: ["ReadGrants", contextId],
     queryFn: () =>
       axiosFetch<ReadGrant[]>({
         url: `${API_URL_BASE}/contexts/${contextId}/readGrants`,
@@ -40,7 +40,7 @@ export function useGrants(contextId: string){
     select: formatReadGrantData,
   });
 
-  const shareContext = useMutation({
+  const grantReadAccess = useMutation({
     mutationFn: (body: SubmitReadGrantRequest) => {
       return axiosFetch<ReadGrant>({
         url: `${API_URL_BASE}/contexts/${contextId}/grantReadAccess`,
@@ -49,28 +49,28 @@ export function useGrants(contextId: string){
       });
     },
     onSuccess: async () => {
-      const toastId = "submit-share-success";
+      const toastId = "submit-readGrant-success";
       toast.success("Suksess", {
         description: `Skjemautfyllingen ble delt`,
         duration: 5000,
         id: toastId,
       });
       await queryClient.invalidateQueries({
-        queryKey: ["Shares", contextId],
+        queryKey: ["GrantReadAccess", contextId],
       });
     },
   });
 
   return {
-    readGrants: shares,
-    grantReadAccess: shareContext
+    readGrants,
+    grantReadAccess
   }
 
 }
 
 export function useReadGrantsByUser(userId: string){
   return useQuery({
-    queryKey: ["sharedContexts", userId],
+    queryKey: ["UsersGrantedReadAccesses", userId],
     queryFn: () =>
       axiosFetch<ReadGrant[]>({
         url: `${API_URL_BASE}/contexts/usersReadGrants?userId=${userId}`,

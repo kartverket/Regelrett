@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS read_grants (
     expires_at TIMESTAMP NOT NULL,
     justification TEXT NOT NULL,
     shared_by TEXT NOT NULL,
-    CONSTRAINT fk_context_shares_contexts
+    CONSTRAINT fk_context_read_grants_contexts
         FOREIGN KEY (context_id) REFERENCES contexts(id)
         ON DELETE CASCADE
 );

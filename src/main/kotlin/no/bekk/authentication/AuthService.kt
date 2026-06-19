@@ -132,9 +132,9 @@ class AuthServiceImpl(
         call: ApplicationCall,
         contextId: String,
     ): Boolean {
-        val shares = readGrantRepository.getReadGrantsByContext(contextId).map { it.userId }
+        val readGrants = readGrantRepository.getReadGrantsByContext(contextId).map { it.userId }
         val userId = getCurrentUser(call).id
-        return userId in shares
+        return userId in readGrants
     }
 
     override suspend fun hasSuperUserAccess(

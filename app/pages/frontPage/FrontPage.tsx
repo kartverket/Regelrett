@@ -23,8 +23,8 @@ export default function FrontPage() {
   } = useUser();
 
   const {
-    data: sharedContexts,
-    isPending: isSharedContextsLoading,
+    data: readGrants,
+    isPending: isReadGrantsLoading,
   } = useReadGrantsByUser(userinfo?.user.id || "");
 
   if (isUserinfoError) {
@@ -38,9 +38,9 @@ export default function FrontPage() {
 
   const teams = userinfo ? userinfo.groups : [];
   const hasTeams = teams.length > 0;
-  const hasSharedContexts = sharedContexts && sharedContexts.length > 0;
+  const hasGrantedReadAccess = readGrants && readGrants.length > 0;
 
-  if (!isUserinfoLoading && !isSharedContextsLoading && !hasTeams && !hasSharedContexts) {
+  if (!isUserinfoLoading && !isReadGrantsLoading && !hasTeams && !hasGrantedReadAccess) {
     return (
       <>
         <RedirectBackButton />

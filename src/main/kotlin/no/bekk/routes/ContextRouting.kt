@@ -133,8 +133,8 @@ fun Route.contextRouting(
         get("/usersReadGrants") {
             val userId = call.request.queryParameters["userId"] ?: throw BadRequestException("Missing userId parameter")
 
-            val sharedContexts = readGrantRepository.getReadGrantsByUserId(userId)
-            call.respond(HttpStatusCode.OK, Json.encodeToString(sharedContexts))
+            val usersReadGrants = readGrantRepository.getReadGrantsByUserId(userId)
+            call.respond(HttpStatusCode.OK, Json.encodeToString(usersReadGrants))
             return@get
         }
 
@@ -293,23 +293,23 @@ fun Route.contextRouting(
                 try {
                     val contextId = call.parameters["contextId"] ?: throw BadRequestException("Missing contextId")
 
-                    val shareRequestJson = call.receiveText()
-                    logger.info("Received POST /context/contextId/grantReadAccess request with body: $shareRequestJson")
-                    val shareRequest = Json.decodeFromString<DatabaseReadGrantRequest>(shareRequestJson)
+                    val grantReadAccessRequestJson = call.receiveText()
+                    logger.info("Received POST /context/contextId/grantReadAccess request with body: $grantReadAccessRequestJson")
+                    val grantReadAccessRequest = Json.decodeFromString<DatabaseReadGrantRequest>(grantReadAccessRequestJson)
 
                     if (!authService.hasWriteContextAccess(call, contextId)) {
                         call.respond(HttpStatusCode.Forbidden)
                         return@post
                     }
 
-                    val readGrant = readGrantRepository.insertReadGrantOnContext(contextId, shareRequest)
+                    val readGrant = readGrantRepository.insertReadGrantOnContext(contextId, grantReadAccessRequest)
 
                     call.respond(HttpStatusCode.Created, Json.encodeToString(readGrant))
                     return@post
                 } catch (e: ConflictException) {
                     ErrorHandlers.handleConflictException(call, e)
                 } catch (e: Exception) {
-                    logger.error("Unexpected error when processing post /contexts/contextId/share", e)
+                    logger.error("Unexpected error when processing post /contexts/contextId/grantReadAccess", e)
                     call.respond(HttpStatusCode.InternalServerError, "An unexpected error occurred.")
                 }
             }
