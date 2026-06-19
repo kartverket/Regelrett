@@ -4,23 +4,23 @@ import { toast } from "sonner";
 
 const API_URL_BASE = "/api";
 
-export type SharedContext = {
+export type ReadGrant = {
   id: string;
   contextId: string;
   userId: string;
   created: Date;
-  expiresAt?: Date | null;
+  expiresAt: Date;
 };
 
 
-type SubmitShareRequest = {
+type SubmitReadGrantRequest = {
   userId: string;
-  expiresAt?: string;
+  expiresAt: string;
   justification: string;
   sharedBy: string;
 };
 
-function formatShareData(shares: SharedContext[]) {
+function formatReadGrantData(shares: ReadGrant[]) {
   return shares.map((share) => ({
     ...share,
     created: new Date(share.created),
@@ -28,22 +28,22 @@ function formatShareData(shares: SharedContext[]) {
   }));
 }
 
-export function useShares(contextId: string){
+export function useGrants(contextId: string){
   const queryClient = useQueryClient();
 
   const shares = useQuery({
     queryKey: ["Shares", contextId],
     queryFn: () =>
-      axiosFetch<SharedContext[]>({
-        url: `${API_URL_BASE}/contexts/${contextId}/shares`,
+      axiosFetch<ReadGrant[]>({
+        url: `${API_URL_BASE}/contexts/${contextId}/readGrants`,
       }).then((response) => response.data),
-    select: formatShareData,
+    select: formatReadGrantData,
   });
 
   const shareContext = useMutation({
-    mutationFn: (body: SubmitShareRequest) => {
-      return axiosFetch<SharedContext>({
-        url: `${API_URL_BASE}/contexts/${contextId}/share`,
+    mutationFn: (body: SubmitReadGrantRequest) => {
+      return axiosFetch<ReadGrant>({
+        url: `${API_URL_BASE}/contexts/${contextId}/grantReadAccess`,
         method: "POST",
         data: body,
       });
@@ -62,19 +62,19 @@ export function useShares(contextId: string){
   });
 
   return {
-    shares,
-    shareContext
+    readGrants: shares,
+    grantReadAccess: shareContext
   }
 
 }
 
-export function useSharedContextsByUser(userId: string){
+export function useReadGrantsByUser(userId: string){
   return useQuery({
     queryKey: ["sharedContexts", userId],
     queryFn: () =>
-      axiosFetch<SharedContext[]>({
-        url: `${API_URL_BASE}/contexts/sharedWith?userId=${userId}`,
+      axiosFetch<ReadGrant[]>({
+        url: `${API_URL_BASE}/contexts/usersReadGrants?userId=${userId}`,
       }).then((response) => response.data),
-    select: formatShareData,
+    select: formatReadGrantData,
   });
 }

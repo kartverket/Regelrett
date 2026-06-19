@@ -1,24 +1,24 @@
 import { SkeletonLoader } from "@/components/SkeletonLoader";
 import { Separator } from "@/components/ui/separator";
-import { useSharedContextsByUser } from "@/hooks/useShares";
+import { useReadGrantsByUser } from "@/hooks/useGrants";
 import { ContextLink } from "@/pages/frontPage/ContextLink";
 
-type SharedContextsSectionProps = {
+type ReadGrantedContextsSectionProps = {
   userId: string
 };
 
-export default function SharedContextsSection({
+export default function ReadGrantedContextsSection({
   userId
-}: SharedContextsSectionProps) {
+}: ReadGrantedContextsSectionProps) {
   const {
-    data: sharedContexts,
-    isLoading: sharedContextLoading,
-  } = useSharedContextsByUser(userId);
+    data: readGrants,
+    isLoading: readGrantsLoading,
+  } = useReadGrantsByUser(userId);
 
 
   if (
-    !sharedContextLoading &&
-    (!sharedContexts || sharedContexts.length === 0)
+    !readGrantsLoading &&
+    (!readGrants || readGrants.length === 0)
   ) {
     return null;
   }
@@ -27,12 +27,12 @@ export default function SharedContextsSection({
     <>
       <Separator className="my-5" />
       <h1 className="text-4xl font-bold">Delt med deg</h1>
-      <SkeletonLoader loading={sharedContextLoading}>
+      <SkeletonLoader loading={readGrantsLoading}>
         <div className="flex flex-col gap-4 items-start py-4">
-          {sharedContexts?.map((sharedContext) => (
+          {readGrants?.map((readGrant) => (
             <ContextLink
-              key={sharedContext.id}
-              contextId={sharedContext.contextId}
+              key={readGrant.id}
+              contextId={readGrant.contextId}
               formId=""
             />
           ))}

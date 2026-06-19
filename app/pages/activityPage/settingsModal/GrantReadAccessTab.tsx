@@ -24,33 +24,31 @@ import {
   useSearchUser,
   useUser,
 } from "@/hooks/useUser";
-import { useShares } from "@/hooks/useShares";
+import { useGrants } from "@/hooks/useGrants";
 import { useContext } from "@/hooks/useContext";
 import { formatDate } from "@/utils/formatTime";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Search } from "lucide-react";
 
 
-const shareFormSchema = z.object({
+const grantReadAccessFormSchema = z.object({
   userId: z.string().min(1, { message: "Du må velge en bruker." }),
   expiresAt: z
     .string()
-    .optional()
-    .refine(
-      (value) => {
-        if (!value) return true;
-        return new Date(value).getTime() > Date.now();
-      },
-      { message: "Utløpstid må være frem i tid." },
-    ),
-  justification: z.string().min(1, {message: "Du må beskrive hvorfor denne tilgangen gis"}),
+    .min(1, { message: "Du må sette en utløpsdato." })
+    .refine((value) => new Date(value).getTime() > Date.now(), {
+      message: "Utløpsdato må være frem i tid.",
+    }),
+  justification: z
+    .string()
+    .min(1, { message: "Du må beskrive hvorfor denne tilgangen gis." }),
 });
 
-type ShareAccessTabProps = {
+type GrantReadAccessTabProps = {
   setOpen: Dispatch<SetStateAction<boolean>>;
 };
 
-export function ShareAccessTab({ setOpen }: ShareAccessTabProps) {
+export function GrantReadAccessTab({ setOpen }: GrantReadAccessTabProps) {
   const { contextId } = useParams<{ contextId: string }>();
   const {
     data: context,
@@ -64,53 +62,51 @@ export function ShareAccessTab({ setOpen }: ShareAccessTabProps) {
     isPending: userinfoIsPending,
   } = useUser();
 
-  const { shares, shareContext } = useShares(contextId ?? "");
-  const shareList = shares.data ?? [];
+  const { readGrants, grantReadAccess } = useGrants(contextId ?? "");
+  const readGrantList = readGrants.data ?? [];
 
   const ownerTeamName = userinfo?.groups.find(
     (team) => team.id === context?.teamId,
   )?.displayName;
 
-  const shareForm = useForm<z.infer<typeof shareFormSchema>>({
-    resolver: zodResolver(shareFormSchema),
-    defaultValues: { userId: "", expiresAt: "" },
+  const GrantReadAccessForm = useForm<z.infer<typeof grantReadAccessFormSchema>>({
+    resolver: zodResolver(grantReadAccessFormSchema),
+    defaultValues: { userId: "", expiresAt: "", justification: "" },
   });
 
   const [usernameInput, setUsernameInput] = React.useState("");
   const [showSuggestions, setShowSuggestions] = React.useState(false);
-  const hasSelectedUser = shareForm.watch("userId");
+  const hasSelectedUser = GrantReadAccessForm.watch("userId");
   const debouncedUsernameInput = useDebounce(usernameInput, 500);
   const isDebouncing = usernameInput !== debouncedUsernameInput;
   const { data: userSuggestions = [], isFetching: isSearching } = useSearchUser(
     hasSelectedUser ? "" : debouncedUsernameInput,
   );
 
-  function onSubmit(value: z.infer<typeof shareFormSchema>) {
+  function onSubmit(value: z.infer<typeof grantReadAccessFormSchema>) {
     if (!userinfo?.user.id) return;
 
-    shareContext.mutate(
+    grantReadAccess.mutate(
       {
         userId: value.userId,
-        expiresAt: value.expiresAt
-          ? new Date(`${value.expiresAt}T00:00:00.000Z`).toISOString()
-          : undefined,
+        expiresAt: new Date(`${value.expiresAt}T23:59:59.999`).toISOString(),
         justification: value.justification,
-        sharedBy: userinfo?.user.id,
+        sharedBy: userinfo.user.id,
       },
       {
         onSuccess: () => {
-          shareForm.reset();
+          GrantReadAccessForm.reset();
           setUsernameInput("");
           setShowSuggestions(false);
         },
         onError: (error) => {
           if (isAxiosError(error) && error.response?.status === 409) {
-            shareForm.setError("userId", {
+            GrantReadAccessForm.setError("userId", {
               type: "manual",
               message: "Brukeren har allerede tilgang til dette skjemaet.",
             });
           } else {
-            shareForm.setError("userId", {
+            GrantReadAccessForm.setError("userId", {
               type: "manual",
               message: "Noe gikk galt. Prøv igjen senere.",
             });
@@ -125,12 +121,12 @@ export function ShareAccessTab({ setOpen }: ShareAccessTabProps) {
 
   return (
     <Card>
-      <Form {...shareForm}>
-        <form onSubmit={shareForm.handleSubmit(onSubmit)} className="space-y-4">
+      <Form {...GrantReadAccessForm}>
+        <form onSubmit={GrantReadAccessForm.handleSubmit(onSubmit)} className="space-y-4">
           <CardContent className="space-y-4 pt-4">
             <SkeletonLoader
               loading={
-                contextIsPending || userinfoIsPending || shares.isLoading
+                contextIsPending || userinfoIsPending || readGrants.isLoading
               }
               width="w-full"
             >
@@ -147,20 +143,20 @@ export function ShareAccessTab({ setOpen }: ShareAccessTabProps) {
                     <span className="font-medium">{ownerTeamName}</span>
                   </div>
 
-                  {shareList.length > 0 && (
+                  {readGrantList.length > 0 && (
                     <>
                       <Separator />
                       <p className="text-sm text-muted-foreground">
                         Lesetilgang
                       </p>
                       <ul className="space-y-1">
-                        {shareList.map((share) => (
-                          <li key={share.userId} className="text-sm">
+                        {readGrantList.map((readGrant) => (
+                          <li key={readGrant.userId} className="text-sm">
                             <div className="flex flex-col">
-                              <UsernameDisplay userId={share.userId} />
-                              {share.expiresAt && (
+                              <UsernameDisplay userId={readGrant.userId} />
+                              {readGrant.expiresAt && (
                                 <span className="text-xs text-muted-foreground">
-                                  Utløper {formatDate(share.expiresAt)}
+                                  Utløper {formatDate(readGrant.expiresAt)}
                                 </span>
                               )}
                             </div>
@@ -176,7 +172,7 @@ export function ShareAccessTab({ setOpen }: ShareAccessTabProps) {
             <Separator />
 
             <FormField
-              control={shareForm.control}
+              control={GrantReadAccessForm.control}
               name="userId"
               render={({ field }) => (
                 <FormItem>
@@ -218,7 +214,7 @@ export function ShareAccessTab({ setOpen }: ShareAccessTabProps) {
                                 className="w-full justify-start rounded px-2 py-1 text-left text-sm"
                                 onMouseDown={(event) => {
                                   event.preventDefault();
-                                  shareForm.setValue("userId", user.id, {
+                                  GrantReadAccessForm.setValue("userId", user.id, {
                                     shouldValidate: true,
                                   });
                                   setUsernameInput(user.displayName);
@@ -241,11 +237,11 @@ export function ShareAccessTab({ setOpen }: ShareAccessTabProps) {
             />
 
             <FormField
-              control={shareForm.control}
+              control={GrantReadAccessForm.control}
               name="expiresAt"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tidsbegrenset tilgang (valgfritt)</FormLabel>
+                  <FormLabel>Utløpsdato</FormLabel>
                   <FormControl>
                     <Input type="date" {...field} />
                   </FormControl>
@@ -255,11 +251,11 @@ export function ShareAccessTab({ setOpen }: ShareAccessTabProps) {
             />
 
             <FormField
-              control={shareForm.control}
+              control={GrantReadAccessForm.control}
               name="justification"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Behov for tilgang</FormLabel>
+                  <FormLabel>Begrunnelse</FormLabel>
                   <FormControl>
                     <Input type="text" placeholder="Begrunn hvorfor tilgangen gis" {...field} />
                   </FormControl>
@@ -279,7 +275,7 @@ export function ShareAccessTab({ setOpen }: ShareAccessTabProps) {
             </Button>
             <Button
               type="submit"
-              disabled={shareContext.isPending || userinfoIsPending}
+              disabled={grantReadAccess.isPending || userinfoIsPending}
             >
               Gi tilgang
             </Button>

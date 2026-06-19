@@ -11,7 +11,7 @@ import no.bekk.configuration.*
 import no.bekk.database.AnswerRepositoryImpl
 import no.bekk.database.CommentRepositoryImpl
 import no.bekk.database.ContextRepositoryImpl
-import no.bekk.database.SharesRepositoryImpl
+import no.bekk.database.ReadGrantRepositoryImpl
 import no.bekk.di.Dependencies
 import no.bekk.di.Redirects
 import no.bekk.plugins.configureRouting
@@ -55,7 +55,7 @@ class ApplicationTest {
                     provideProvisioningService(exampleConfig, FormServiceImpl()),
                     CommentRepositoryImpl(mockDatabase),
                     ContextRepositoryImpl(mockDatabase),
-                    SharesRepositoryImpl(mockDatabase),
+                    ReadGrantRepositoryImpl(mockDatabase),
                     object : MockAuthService {},
                     HttpClient(CIO),
                     Redirects(mutableMapOf()),
@@ -71,7 +71,7 @@ class ApplicationTest {
                     provideProvisioningService(exampleConfig, FormServiceImpl()),
                     CommentRepositoryImpl(mockDatabase),
                     ContextRepositoryImpl(mockDatabase),
-                    SharesRepositoryImpl(mockDatabase),
+                    ReadGrantRepositoryImpl(mockDatabase),
                     object : MockAuthService {},
                     HttpClient(CIO),
                     Redirects(mutableMapOf()),
@@ -122,7 +122,7 @@ class ApplicationTest {
                     provideProvisioningService(exampleConfig, formService),
                     CommentRepositoryImpl(mockDatabase),
                     ContextRepositoryImpl(mockDatabase),
-                    SharesRepositoryImpl(mockDatabase),
+                    ReadGrantRepositoryImpl(mockDatabase),
                     object : MockAuthService {},
                     HttpClient(CIO),
                     Redirects(mutableMapOf()),

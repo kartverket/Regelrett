@@ -3,19 +3,15 @@ package no.bekk.plugins
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.html.*
-import io.ktor.server.http.content.*
 import io.ktor.server.response.*
 import io.ktor.server.response.respond
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
-import kotlinx.html.*
 import no.bekk.authentication.UserSession
 import no.bekk.configuration.Config
 import no.bekk.di.Dependencies
 import no.bekk.model.internal.ContextMetrics
 import no.bekk.routes.*
-import java.io.*
 
 fun Application.configureRouting(
     config: Config,
@@ -86,7 +82,7 @@ fun Application.configureRouting(
         route("/api") {
             answerRouting(dependencies.authService, dependencies.answerRepository)
             commentRouting(dependencies.authService, dependencies.commentRepository)
-            contextRouting(dependencies.authService, dependencies.answerRepository, dependencies.contextRepository, dependencies.commentRepository, dependencies.sharesRepository, dependencies.formService)
+            contextRouting(dependencies.authService, dependencies.answerRepository, dependencies.contextRepository, dependencies.commentRepository, dependencies.readGrantRepository, dependencies.formService)
             formRouting(dependencies.formService)
             userInfoRouting(dependencies.authService)
             uploadCSVRouting(dependencies.authService, dependencies.formService, dependencies.database)

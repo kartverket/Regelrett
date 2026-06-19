@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChangeTeamTab } from "@/pages/activityPage/settingsModal/ChangeTeamTab";
 import { CopyContextTab } from "@/pages/activityPage/settingsModal/CopyContextTab";
 import { ChangeContextNameTab } from "@/pages/activityPage/settingsModal/ChangeContextNameTab";
-import { ShareAccessTab } from "@/pages/activityPage/settingsModal/ShareAccessTab";
+import { GrantReadAccessTab } from "@/pages/activityPage/settingsModal/GrantReadAccessTab";
 
 type SettingsModalProps = {
   setOpen: Dispatch<SetStateAction<boolean>>;
@@ -54,7 +54,7 @@ export function SettingsModal({ open, setOpen }: SettingsModalProps) {
           </TabsContent>
 
           <TabsContent value="access" className="min-h-60">
-            <ShareAccessTab setOpen={setOpen} />
+            <GrantReadAccessTab setOpen={setOpen} />
           </TabsContent>
         </Tabs>
       </DialogContent>

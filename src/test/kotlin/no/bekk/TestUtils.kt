@@ -31,7 +31,7 @@ object TestUtils {
         answerRepository: AnswerRepository = AnswerRepositoryImpl(testDatabase),
         commentRepository: CommentRepository = CommentRepositoryImpl(testDatabase),
         contextRepository: ContextRepository = ContextRepositoryImpl(testDatabase),
-        sharesRepository: SharesRepository = SharesRepositoryImpl(testDatabase),
+        readGrantRepository: ReadGrantRepository = ReadGrantRepositoryImpl(testDatabase),
     ) {
         val exampleConfig = Config(
             homePath = "",
@@ -93,7 +93,7 @@ object TestUtils {
                 provisioningService,
                 commentRepository,
                 contextRepository,
-                sharesRepository,
+                readGrantRepository,
                 authService,
                 HttpClient(CIO),
                 Redirects(mutableMapOf()),

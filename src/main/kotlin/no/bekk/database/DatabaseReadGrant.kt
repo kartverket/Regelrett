@@ -3,18 +3,18 @@ package no.bekk.database
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class DatabaseShare(
+data class DatabaseReadGrant(
     val id: String,
     val contextId: String,
     val userId: String,
     val created: String,
-    val expiresAt: String? = null,
+    val expiresAt: String,
 )
 
 @Serializable
-data class DatabaseShareRequest(
+data class DatabaseReadGrantRequest(
     val userId: String,
-    val expiresAt: String? = null,
+    val expiresAt: String,
     val justification: String,
     val sharedBy: String,
 )

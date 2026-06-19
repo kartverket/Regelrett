@@ -12,8 +12,8 @@ import { Separator } from "@/components/ui/separator";
 import { Download } from "lucide-react";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
 import React from "react";
-import SharedContextsSection from "@/pages/frontPage/SharedContextsSection";
-import { useSharedContextsByUser } from "@/hooks/useShares";
+import ReadGrantedContextsSection from "@/pages/frontPage/ReadGrantedContextsSection";
+import { useReadGrantsByUser } from "@/hooks/useGrants";
 
 export default function FrontPage() {
   const {
@@ -25,7 +25,7 @@ export default function FrontPage() {
   const {
     data: sharedContexts,
     isPending: isSharedContextsLoading,
-  } = useSharedContextsByUser(userinfo?.user.id || "");
+  } = useReadGrantsByUser(userinfo?.user.id || "");
 
   if (isUserinfoError) {
     return (
@@ -97,7 +97,7 @@ export default function FrontPage() {
             </>
           )}
           {userinfo?.user.id && (
-            <SharedContextsSection userId={userinfo.user.id} />
+            <ReadGrantedContextsSection userId={userinfo.user.id} />
           )}
         </div>
       </Page>

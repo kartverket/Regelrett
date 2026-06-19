@@ -2,7 +2,7 @@ package no.bekk.authentication
 import io.ktor.server.application.*
 import no.bekk.configuration.OAuthConfig
 import no.bekk.database.ContextRepository
-import no.bekk.database.SharesRepository
+import no.bekk.database.ReadGrantRepository
 import no.bekk.domain.MicrosoftGraphGroup
 import no.bekk.domain.MicrosoftGraphUser
 import no.bekk.services.MicrosoftService
@@ -35,7 +35,7 @@ interface AuthService {
 class AuthServiceImpl(
     private val microsoftService: MicrosoftService,
     private val contextRepository: ContextRepository,
-    private val sharesRepository: SharesRepository,
+    private val readGrantRepository: ReadGrantRepository,
     private val oAuthConfig: OAuthConfig,
 ) : AuthService {
     private val logger = LoggerFactory.getLogger(AuthServiceImpl::class.java)
@@ -132,7 +132,7 @@ class AuthServiceImpl(
         call: ApplicationCall,
         contextId: String,
     ): Boolean {
-        val shares = sharesRepository.getSharesByContext(contextId).map { it.userId }
+        val shares = readGrantRepository.getReadGrantsByContext(contextId).map { it.userId }
         val userId = getCurrentUser(call).id
         return userId in shares
     }

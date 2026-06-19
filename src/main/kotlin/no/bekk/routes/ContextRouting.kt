@@ -22,7 +22,7 @@ fun Route.contextRouting(
     answerRepository: AnswerRepository,
     contextRepository: ContextRepository,
     commentRepository: CommentRepository,
-    sharesRepository: SharesRepository,
+    readGrantRepository: ReadGrantRepository,
     formService: FormService,
 ) {
     val logger = LoggerFactory.getLogger("no.bekk.routes.ContextRouting")
@@ -130,10 +130,10 @@ fun Route.contextRouting(
             return@get
         }
 
-        get("/sharedWith") {
+        get("/usersReadGrants") {
             val userId = call.request.queryParameters["userId"] ?: throw BadRequestException("Missing userId parameter")
 
-            val sharedContexts = sharesRepository.getSharedContextsByUserId(userId)
+            val sharedContexts = readGrantRepository.getReadGrantsByUserId(userId)
             call.respond(HttpStatusCode.OK, Json.encodeToString(sharedContexts))
             return@get
         }
@@ -289,22 +289,22 @@ fun Route.contextRouting(
                 }
             }
 
-            post("/share") {
+            post("/grantReadAccess") {
                 try {
                     val contextId = call.parameters["contextId"] ?: throw BadRequestException("Missing contextId")
 
                     val shareRequestJson = call.receiveText()
-                    logger.info("Received POST /context/contextId/share request with body: $shareRequestJson")
-                    val shareRequest = Json.decodeFromString<DatabaseShareRequest>(shareRequestJson)
+                    logger.info("Received POST /context/contextId/grantReadAccess request with body: $shareRequestJson")
+                    val shareRequest = Json.decodeFromString<DatabaseReadGrantRequest>(shareRequestJson)
 
                     if (!authService.hasWriteContextAccess(call, contextId)) {
                         call.respond(HttpStatusCode.Forbidden)
                         return@post
                     }
 
-                    val sharedContext = sharesRepository.insertShareOnContext(contextId, shareRequest)
+                    val readGrant = readGrantRepository.insertReadGrantOnContext(contextId, shareRequest)
 
-                    call.respond(HttpStatusCode.Created, Json.encodeToString(sharedContext))
+                    call.respond(HttpStatusCode.Created, Json.encodeToString(readGrant))
                     return@post
                 } catch (e: ConflictException) {
                     ErrorHandlers.handleConflictException(call, e)
@@ -313,15 +313,15 @@ fun Route.contextRouting(
                     call.respond(HttpStatusCode.InternalServerError, "An unexpected error occurred.")
                 }
             }
-            get("/shares") {
-                logger.info("Received GET /context/contextId/contextShares with id: ${call.parameters["contextId"]}")
+            get("/readGrants") {
+                logger.info("Received GET /context/contextId/readGrants with id: ${call.parameters["contextId"]}")
                 val contextId = call.parameters["contextId"] ?: throw BadRequestException("Missing contextId")
 
                 if (!authService.hasWriteContextAccess(call, contextId) && !authService.hasReadContextAccess(call, contextId)) {
                     call.respond(HttpStatusCode.Forbidden)
                     return@get
                 }
-                val context = sharesRepository.getSharesByContext(contextId)
+                val context = readGrantRepository.getReadGrantsByContext(contextId)
                 call.respond(HttpStatusCode.OK, Json.encodeToString(context))
                 return@get
             }

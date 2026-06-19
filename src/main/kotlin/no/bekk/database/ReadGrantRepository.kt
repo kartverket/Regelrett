@@ -10,22 +10,22 @@ import java.time.Instant
 import java.util.UUID
 import kotlin.collections.buildList
 
-interface SharesRepository {
-    fun getSharesByContext(contextId: String): List<DatabaseShare>
-    fun getSharedContextsByUserId(userId: String): List<DatabaseShare>
-    fun insertShareOnContext(contextId: String, share: DatabaseShareRequest): DatabaseShare
+interface ReadGrantRepository {
+    fun getReadGrantsByContext(contextId: String): List<DatabaseReadGrant>
+    fun getReadGrantsByUserId(userId: String): List<DatabaseReadGrant>
+    fun insertReadGrantOnContext(contextId: String, readGrant: DatabaseReadGrantRequest): DatabaseReadGrant
 }
 
-class SharesRepositoryImpl(private val database: Database) : SharesRepository {
-    private val logger = LoggerFactory.getLogger(SharesRepositoryImpl::class.java)
+class ReadGrantRepositoryImpl(private val database: Database) : ReadGrantRepository {
+    private val logger = LoggerFactory.getLogger(ReadGrantRepositoryImpl::class.java)
 
-    override fun getSharesByContext(contextId: String): List<DatabaseShare> {
-        logger.debug("Fetching shares from database for contextId: $contextId")
+    override fun getReadGrantsByContext(contextId: String): List<DatabaseReadGrant> {
+        logger.debug("Fetching read grants from database for contextId: $contextId")
 
         val sqlStatement = """
             SELECT id, context_id, user_id, created, expires_at, justification
-            FROM shares
-            WHERE context_id = ? AND (expires_at IS NULL OR expires_at > CURRENT_TIMESTAMP)
+            FROM read_grants
+            WHERE context_id = ? AND expires_at > CURRENT_TIMESTAMP
         """.trimIndent()
 
         return try {
@@ -38,41 +38,38 @@ class SharesRepositoryImpl(private val database: Database) : SharesRepository {
                     buildList {
                         while (result.next()) {
                             add(
-                                DatabaseShare(
+                                DatabaseReadGrant(
                                     id = result.getString("id"),
                                     contextId = result.getString("context_id"),
                                     userId = result.getString("user_id"),
                                     created = result.getString("created"),
-                                    expiresAt = result.getObject("expires_at", java.time.LocalDateTime::class.java)?.toString(),
+                                    expiresAt = result.getObject("expires_at", java.time.LocalDateTime::class.java).toString(),
                                 ),
                             )
                         }
                     }.also {
-                        logger.debug("Successfully fetched shares for context: $contextId")
+                        logger.debug("Successfully fetched granted read accesses for context: $contextId")
                     }
                 }
             }
         } catch (e: SQLException) {
-            logger.error("Error fetching shares for context: $contextId", e)
-            throw RuntimeException("Error fetching shares for context: $contextId from database", e)
+            logger.error("Error fetching granted read accesses for context: $contextId", e)
+            throw RuntimeException("Error fetching granted read accesses for context: $contextId from database", e)
         }
     }
 
-    override fun insertShareOnContext(contextId: String, share: DatabaseShareRequest): DatabaseShare {
-        logger.debug("Inserting share: {}", share)
+    override fun insertReadGrantOnContext(contextId: String, readGrant: DatabaseReadGrantRequest): DatabaseReadGrant {
+        logger.debug("Inserting grant for read access: {}", readGrant)
         val sqlStatement =
             """
-                INSERT INTO shares (context_id, user_id, expires_at, justification, shared_by)
+                INSERT INTO read_grants (context_id, user_id, expires_at, justification, shared_by)
                 SELECT ?, ?, ?, ?, ? 
                 WHERE NOT EXISTS (
                     SELECT 1
-                    FROM shares
+                    FROM read_grants
                     WHERE context_id = ?
                       AND user_id = ?
-                      AND (
-                          expires_at IS NULL
-                          OR expires_at > CURRENT_TIMESTAMP
-                      )
+                      AND expires_at > CURRENT_TIMESTAMP
                 )
                 RETURNING *
             """.trimIndent()
@@ -81,39 +78,39 @@ class SharesRepositoryImpl(private val database: Database) : SharesRepository {
             database.getConnection().use { conn ->
                 conn.prepareStatement(sqlStatement).use { statement ->
                     statement.setObject(1, UUID.fromString(contextId))
-                    statement.setString(2, share.userId)
-                    statement.setTimestamp(3, share.expiresAt?.takeIf { it.isNotBlank() }?.let { Timestamp.from(Instant.parse(it)) })
-                    statement.setString(4, share.justification)
-                    statement.setString(5, share.sharedBy)
+                    statement.setString(2, readGrant.userId)
+                    statement.setTimestamp(3, Timestamp.from(Instant.parse(readGrant.expiresAt)))
+                    statement.setString(4, readGrant.justification)
+                    statement.setString(5, readGrant.sharedBy)
                     statement.setObject(6, UUID.fromString(contextId))
-                    statement.setString(7, share.userId)
+                    statement.setString(7, readGrant.userId)
 
                     val result = statement.executeQuery()
                     if (result.next()) {
-                        logger.debug("Successfully inserted share request into database")
-                        return DatabaseShare(
+                        logger.debug("Successfully inserted read grant request into database")
+                        return DatabaseReadGrant(
                             id = result.getString("id"),
                             contextId = result.getString("context_id"),
                             userId = result.getString("user_id"),
                             created = result.getObject("created", java.time.LocalDateTime::class.java)?.toString() ?: "",
-                            expiresAt = result.getObject("expires_at", java.time.LocalDateTime::class.java)?.toString(),
+                            expiresAt = result.getObject("expires_at", java.time.LocalDateTime::class.java).toString(),
                         )
                     } else {
-                        throw ConflictException("The user already has valid access to this context")
+                        throw ConflictException("The user already has valid read access to this context")
                     }
                 }
             }
         } catch (e: SQLException) {
-            logger.error("Database error when sharing context: ${e.message}", e)
-            throw DatabaseException("Failed to share context with user", "insertContext", e)
+            logger.error("Database error when granting read access for context: ${e.message}", e)
+            throw DatabaseException("Failed to grant read access with user", "insertContext", e)
         }
     }
 
-    override fun getSharedContextsByUserId(userId: String): List<DatabaseShare> {
+    override fun getReadGrantsByUserId(userId: String): List<DatabaseReadGrant> {
         val sqlStatement = """
             SELECT id, context_id, user_id, created, expires_at
-            FROM shares
-            WHERE user_id = ? AND (expires_at IS NULL OR expires_at > CURRENT_TIMESTAMP)
+            FROM read_grants
+            WHERE user_id = ? AND expires_at > CURRENT_TIMESTAMP
         """.trimIndent()
 
         return try {
@@ -126,23 +123,23 @@ class SharesRepositoryImpl(private val database: Database) : SharesRepository {
                     buildList {
                         while (result.next()) {
                             add(
-                                DatabaseShare(
+                                DatabaseReadGrant(
                                     id = result.getString("id"),
                                     contextId = result.getString("context_id"),
                                     userId = result.getString("user_id"),
                                     created = result.getString("created"),
-                                    expiresAt = result.getObject("expires_at", java.time.LocalDateTime::class.java)?.toString(),
+                                    expiresAt = result.getObject("expires_at", java.time.LocalDateTime::class.java).toString(),
                                 ),
                             )
                         }
                     }.also {
-                        logger.debug("Successfully fetched shares for user: $userId")
+                        logger.debug("Successfully fetched granted read accesses for user: $userId")
                     }
                 }
             }
         } catch (e: SQLException) {
-            logger.error("Error fetching shared contexts for user: $userId", e)
-            throw RuntimeException("Error fetching shared contexts for user: $userId from database", e)
+            logger.error("Error fetching granted read accesses for user: $userId", e)
+            throw RuntimeException("Error fetching granted read accesses for user: $userId from database", e)
         }
     }
 }

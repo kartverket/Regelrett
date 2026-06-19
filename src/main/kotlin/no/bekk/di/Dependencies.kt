@@ -6,7 +6,7 @@ import no.bekk.configuration.Database
 import no.bekk.database.AnswerRepository
 import no.bekk.database.CommentRepository
 import no.bekk.database.ContextRepository
-import no.bekk.database.SharesRepository
+import no.bekk.database.ReadGrantRepository
 import no.bekk.services.FormService
 import no.bekk.services.provisioning.ProvisioningService
 
@@ -17,7 +17,7 @@ class Dependencies(
     val provisioningService: ProvisioningService,
     val commentRepository: CommentRepository,
     val contextRepository: ContextRepository,
-    val sharesRepository: SharesRepository,
+    val readGrantRepository: ReadGrantRepository,
     val authService: AuthService,
     val httpClient: HttpClient,
     val redirects: Redirects,
