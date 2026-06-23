@@ -25,7 +25,7 @@ export default function TeamContexts({ teamId }: { teamId: string }) {
       loading={contextsIsPending || formsPending}
       height="min-h-[98px]"
     >
-      <div className="flex flex-col lg:flex-row gap-6">
+      <div className="flex flex-col lg:flex-row gap-6 flex-wrap">
         {contextForms?.map((form) => {
           const contextsForForm = contexts.filter(
             (context) => context.formId === form.id,
