@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { Download } from "lucide-react";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
 import React from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ReadGrantedContextsSection from "@/pages/frontPage/ReadGrantedContextsSection";
 import { useReadGrantsByUser } from "@/hooks/useGrants";
 
@@ -54,8 +55,25 @@ export default function FrontPage() {
       <RedirectBackButton />
       <Page>
         <div className="flex flex-col mx-auto px-8 items-start ">
-          {hasTeams && (
-            <>
+          <Tabs defaultValue="teams">
+            <TabsList className="grid w-[400px] grid-cols-2">
+              <TabsTrigger
+                value="teams"
+                className="data-[state=active]:bg-card"
+              >
+                Dine Team
+              </TabsTrigger>
+              <TabsTrigger
+                value="granted"
+                className="data-[state=active]:bg-card"
+              >
+                Delt med deg
+              </TabsTrigger>
+            </TabsList>
+            {hasTeams && (
+              <>
+            <TabsContent value={"teams"}>
+
               <h1 className="text-4xl font-bold">Dine team</h1>
               <div className="flex flex-col items-start">
                 <div className="flex flex-row gap-8">
@@ -94,8 +112,11 @@ export default function FrontPage() {
                   })}
                 </SkeletonLoader>
               </div>
+            </TabsContent>
+
             </>
           )}
+          </Tabs>
           {userinfo?.user.id && (
             <ReadGrantedContextsSection userId={userinfo.user.id} />
           )}
