@@ -91,7 +91,7 @@ class ContextRoutingTest {
         application {
             testModule(
                 contextRepository = object : MockContextRepository {
-                    override fun insertContext(context: DatabaseContextRequest): DatabaseContext = throw ConflictException("A context with the same team_id, table_id and name already exists.")
+                    override fun insertContext(context: DatabaseContextRequest): DatabaseContext = throw ConflictException("A context with the same team_id, form_id and name already exists.")
                 },
                 authService = object : MockAuthService {
                     override suspend fun hasTeamAccess(call: ApplicationCall, teamId: String?): Boolean = true
@@ -128,7 +128,7 @@ class ContextRoutingTest {
                 authService = object : MockAuthService {
                     override suspend fun hasTeamAccess(call: ApplicationCall, teamId: String?): Boolean = true
 
-                    override suspend fun hasContextAccess(call: ApplicationCall, contextId: String): Boolean = true
+                    override suspend fun hasWriteContextAccess(call: ApplicationCall, contextId: String): Boolean = true
                 },
                 answerRepository = object : MockAnswerRepository {
                     override fun copyAnswersFromOtherContext(newContextId: String, contextToCopy: String) {}
@@ -331,7 +331,7 @@ class ContextRoutingTest {
                     }
                 },
                 authService = object : MockAuthService {
-                    override suspend fun hasContextAccess(call: ApplicationCall, contextId: String): Boolean = true
+                    override suspend fun hasWriteContextAccess(call: ApplicationCall, contextId: String): Boolean = true
                 },
             )
         }
@@ -350,7 +350,7 @@ class ContextRoutingTest {
         application {
             testModule(
                 authService = object : MockAuthService {
-                    override suspend fun hasContextAccess(call: ApplicationCall, contextId: String): Boolean = false
+                    override suspend fun hasWriteContextAccess(call: ApplicationCall, contextId: String): Boolean = false
                 },
             )
         }
@@ -370,7 +370,7 @@ class ContextRoutingTest {
                     override fun changeTeam(contextId: String, newTeamId: String): Boolean = true
                 },
                 authService = object : MockAuthService {
-                    override suspend fun hasContextAccess(call: ApplicationCall, contextId: String): Boolean = true
+                    override suspend fun hasWriteContextAccess(call: ApplicationCall, contextId: String): Boolean = true
 
                     override suspend fun getTeamIdFromName(call: ApplicationCall, teamName: String): String? = newTeamName
                 },
@@ -391,7 +391,7 @@ class ContextRoutingTest {
         application {
             testModule(
                 authService = object : MockAuthService {
-                    override suspend fun hasContextAccess(call: ApplicationCall, contextId: String): Boolean = true
+                    override suspend fun hasWriteContextAccess(call: ApplicationCall, contextId: String): Boolean = true
                 },
             )
         }
@@ -410,7 +410,7 @@ class ContextRoutingTest {
         application {
             testModule(
                 authService = object : MockAuthService {
-                    override suspend fun hasContextAccess(call: ApplicationCall, contextId: String): Boolean = false
+                    override suspend fun hasWriteContextAccess(call: ApplicationCall, contextId: String): Boolean = false
                 },
             )
         }
@@ -428,7 +428,7 @@ class ContextRoutingTest {
         application {
             testModule(
                 authService = object : MockAuthService {
-                    override suspend fun hasContextAccess(call: ApplicationCall, contextId: String): Boolean = true
+                    override suspend fun hasWriteContextAccess(call: ApplicationCall, contextId: String): Boolean = true
 
                     override suspend fun getTeamIdFromName(call: ApplicationCall, teamName: String): String? = null
                 },
@@ -451,7 +451,7 @@ class ContextRoutingTest {
                     override fun copyAnswersFromOtherContext(newContextId: String, contextToCopy: String) {}
                 },
                 authService = object : MockAuthService {
-                    override suspend fun hasContextAccess(call: ApplicationCall, contextId: String): Boolean = true
+                    override suspend fun hasWriteContextAccess(call: ApplicationCall, contextId: String): Boolean = true
                 },
             )
         }
@@ -483,7 +483,7 @@ class ContextRoutingTest {
         application {
             testModule(
                 authService = object : MockAuthService {
-                    override suspend fun hasContextAccess(call: ApplicationCall, contextId: String): Boolean = false
+                    override suspend fun hasWriteContextAccess(call: ApplicationCall, contextId: String): Boolean = false
                 },
             )
         }

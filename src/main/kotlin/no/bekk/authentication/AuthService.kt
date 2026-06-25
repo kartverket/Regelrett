@@ -2,9 +2,9 @@ package no.bekk.authentication
 import io.ktor.server.application.*
 import no.bekk.configuration.OAuthConfig
 import no.bekk.database.ContextRepository
+import no.bekk.database.ReadGrantRepository
 import no.bekk.domain.MicrosoftGraphGroup
 import no.bekk.domain.MicrosoftGraphUser
-import no.bekk.services.FormService
 import no.bekk.services.MicrosoftService
 import org.slf4j.LoggerFactory
 
@@ -15,9 +15,13 @@ interface AuthService {
 
     suspend fun getUserByUserId(call: ApplicationCall, userId: String): MicrosoftGraphUser
 
+    suspend fun searchUsers(call: ApplicationCall, usernameQuery: String, limit: Int = 10): List<MicrosoftGraphUser>
+
     suspend fun hasTeamAccess(call: ApplicationCall, teamId: String?): Boolean
 
     suspend fun hasContextAccess(call: ApplicationCall, contextId: String): Boolean
+
+    suspend fun hasWriteContextAccess(call: ApplicationCall, contextId: String): Boolean
 
     suspend fun hasReadContextAccess(call: ApplicationCall, contextId: String): Boolean
 
@@ -31,8 +35,8 @@ interface AuthService {
 class AuthServiceImpl(
     private val microsoftService: MicrosoftService,
     private val contextRepository: ContextRepository,
+    private val readGrantRepository: ReadGrantRepository,
     private val oAuthConfig: OAuthConfig,
-    private val formService: FormService,
 ) : AuthService {
     private val logger = LoggerFactory.getLogger(AuthServiceImpl::class.java)
     override suspend fun getGroupsOrEmptyList(call: ApplicationCall, filter: String?): List<MicrosoftGraphGroup> {
@@ -64,6 +68,16 @@ class AuthServiceImpl(
         return microsoftService.fetchUserByUserId(oboToken, userId)
     }
 
+    override suspend fun searchUsers(call: ApplicationCall, usernameQuery: String, limit: Int): List<MicrosoftGraphUser> {
+        val jwtToken =
+            call.request.headers["Authorization"]?.removePrefix("Bearer ")
+                ?: throw IllegalStateException("Authorization header missing")
+
+        val oboToken = microsoftService.requestTokenOnBehalfOf(jwtToken)
+
+        return microsoftService.searchUsersbyName(oboToken, usernameQuery, limit)
+    }
+
     override suspend fun hasTeamAccess(call: ApplicationCall, teamId: String?): Boolean {
         if (teamId == null || teamId == "") {
             logger.debug("Team access denied - teamId is null or empty")
@@ -92,38 +106,35 @@ class AuthServiceImpl(
         call: ApplicationCall,
         contextId: String,
     ): Boolean = try {
-        val context = contextRepository.getContext(contextId)
-        val hasWriteAccess = hasTeamAccess(call, context.teamId)
+        val hasWriteAccess = hasWriteContextAccess(call, contextId)
+        val hasReadAccess = hasReadContextAccess(call, contextId)
 
         if (hasWriteAccess) {
-            logger.debug("Context access granted for contextId: $contextId (teamId: ${context.teamId})")
+            logger.debug("Context access granted for contextId: $contextId via write access")
+        } else if (hasReadAccess) {
+            logger.debug("Context access granted for contextId: $contextId via read access")
         } else {
-            logger.debug("Context access denied for contextId: $contextId (teamId: ${context.teamId})")
+            logger.debug("Context access denied for contextId: $contextId - no write or read access")
         }
-        hasWriteAccess
+
+        hasWriteAccess || hasReadAccess
     } catch (e: Exception) {
         logger.warn("Context access check failed for contextId: $contextId - ${e.message}")
         false
     }
 
+    override suspend fun hasWriteContextAccess(call: ApplicationCall, contextId: String): Boolean {
+        val context = contextRepository.getContext(contextId)
+        return hasTeamAccess(call, context.teamId)
+    }
+
     override suspend fun hasReadContextAccess(
         call: ApplicationCall,
         contextId: String,
-    ): Boolean = try {
-        val context = contextRepository.getContext(contextId)
-        val readAccessGroupId = formService.getFormProvider(context.formId).readAccessGroupId ?: return false
-
-        val hasReadAccess = hasTeamAccess(call, readAccessGroupId)
-
-        if (hasReadAccess) {
-            logger.debug("Read access granted for contextId: $contextId")
-        } else {
-            logger.debug("Read access denied for contextId: $contextId")
-        }
-        hasReadAccess
-    } catch (e: Exception) {
-        logger.warn("Read access check failed for contextId: $contextId - ${e.message}")
-        false
+    ): Boolean {
+        val readGrants = readGrantRepository.getReadGrantsByContext(contextId).map { it.userId }
+        val userId = getCurrentUser(call).id
+        return userId in readGrants
     }
 
     override suspend fun hasSuperUserAccess(

@@ -46,6 +46,10 @@ export function formatDateTimeFull(date: Date): string {
   return `${formatTime(date)} ${padZero(date.getDate())}-${padZero(date.getMonth() + 1)}-${date.getFullYear()} `;
 }
 
+export function formatDate(date: Date): string {
+  return `${padZero(date.getDate())}-${padZero(date.getMonth() + 1)}-${date.getFullYear()} `;
+}
+
 export function padZero(num: number): string {
   return num < 10 ? `0${num}` : `${num}`;
 }

@@ -24,6 +24,7 @@ interface MicrosoftService {
     suspend fun fetchGroups(bearerToken: String, filter: String? = null): List<MicrosoftGraphGroup>
     suspend fun fetchCurrentUser(bearerToken: String): MicrosoftGraphUser
     suspend fun fetchUserByUserId(bearerToken: String, userId: String): MicrosoftGraphUser
+    suspend fun searchUsersbyName(bearerToken: String, query: String, limit: Int): List<MicrosoftGraphUser>
 }
 
 class MicrosoftServiceImpl(private val config: Config, private val client: HttpClient = HttpClient(CIO)) : MicrosoftService {
@@ -171,6 +172,42 @@ class MicrosoftServiceImpl(private val config: Config, private val client: HttpC
         } catch (e: Exception) {
             logger.error("Unexpected error fetching user $userId from Microsoft Graph", e)
             throw ExternalServiceException("Microsoft Graph", "Failed to fetch user $userId: ${e.message}", cause = e)
+        }
+    }
+
+    override suspend fun searchUsersbyName(bearerToken: String, query: String, limit: Int): List<MicrosoftGraphUser> {
+        val url = "${config.microsoftGraph.baseUrl}/v1.0/users"
+
+        return try {
+            ExternalServiceTimer.time("Microsoft", "searchUsers") {
+                val response: HttpResponse = client.get(url) {
+                    bearerAuth(bearerToken)
+                    parameter("\$select", "id,displayName")
+                    parameter("\$top", limit.coerceIn(1, 20))
+                    parameter("\$filter", "startswith(displayName,'$query')")
+                }
+
+                if (response.status != HttpStatusCode.OK) {
+                    val responseBody = response.body<String>()
+                    logger.error("Failed to search users - Status: ${response.status}, Body: $responseBody")
+                    throw ExternalServiceException("Microsoft Graph", "Failed to search users", response.status.value)
+                }
+
+                val responseBody = response.body<String>()
+                logger.debug("Successfully searched users in Microsoft Graph")
+                json.decodeFromString<MicrosoftGraphGroupsResponse>(responseBody).value.map {
+                    MicrosoftGraphUser(
+                        id = it.id,
+                        displayName = it.displayName,
+                        mail = null,
+                    )
+                }
+            }
+        } catch (e: ExternalServiceException) {
+            throw e
+        } catch (e: Exception) {
+            logger.error("Unexpected error searching users from Microsoft Graph", e)
+            throw ExternalServiceException("Microsoft Graph", "Failed to search users: ${e.message}", cause = e)
         }
     }
 }

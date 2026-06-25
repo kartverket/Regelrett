@@ -26,7 +26,7 @@ class ContextRepositoryImpl(private val database: Database) : ContextRepository 
     override fun insertContext(context: DatabaseContextRequest): DatabaseContext {
         logger.debug("Inserting context: {}", context)
         val sqlStatement =
-            "INSERT INTO contexts (team_id, table_id, name) VALUES(?, ?, ?) returning *"
+            "INSERT INTO contexts (team_id, form_id, name) VALUES(?, ?, ?) returning *"
 
         try {
             database.getConnection().use { conn ->
@@ -41,7 +41,7 @@ class ContextRepositoryImpl(private val database: Database) : ContextRepository 
                         return DatabaseContext(
                             id = result.getString("id"),
                             teamId = result.getString("team_id"),
-                            formId = result.getString("table_id"),
+                            formId = result.getString("form_id"),
                             name = result.getString("name"),
                         )
                     } else {
@@ -52,7 +52,7 @@ class ContextRepositoryImpl(private val database: Database) : ContextRepository 
         } catch (e: SQLException) {
             if (e.sqlState == "23505") { // PostgreSQL unique_violation
                 logger.warn("Unique constraint violation when inserting context: ${e.message}")
-                throw ConflictException("A context with the same team_id, table_id and name already exists.")
+                throw ConflictException("A context with the same team_id, form_id and name already exists.")
             } else {
                 logger.error("Database error when inserting context: ${e.message}", e)
                 throw DatabaseException("Failed to insert context", "insertContext", e)
@@ -77,7 +77,7 @@ class ContextRepositoryImpl(private val database: Database) : ContextRepository 
                                 DatabaseContext(
                                     id = result.getString("id"),
                                     teamId = result.getString("team_id"),
-                                    formId = result.getString("table_id"),
+                                    formId = result.getString("form_id"),
                                     name = result.getString("name"),
                                 ),
                             )
@@ -110,7 +110,7 @@ class ContextRepositoryImpl(private val database: Database) : ContextRepository 
                                 DatabaseContext(
                                     id = result.getString("id"),
                                     teamId = result.getString("team_id"),
-                                    formId = result.getString("table_id"),
+                                    formId = result.getString("form_id"),
                                     name = result.getString("name"),
                                 ),
                             )
@@ -128,7 +128,7 @@ class ContextRepositoryImpl(private val database: Database) : ContextRepository 
 
     override fun getContextByTeamIdAndFormId(teamId: String, formId: String): List<DatabaseContext> {
         logger.debug("Fetching contexts for team: $teamId and form: $formId")
-        val sqlStatement = "SELECT * FROM contexts WHERE team_id = ? AND table_id = ?"
+        val sqlStatement = "SELECT * FROM contexts WHERE team_id = ? AND form_id = ?"
 
         return try {
             database.getConnection().use { conn ->
@@ -144,7 +144,7 @@ class ContextRepositoryImpl(private val database: Database) : ContextRepository 
                                 DatabaseContext(
                                     id = result.getString("id"),
                                     teamId = result.getString("team_id"),
-                                    formId = result.getString("table_id"),
+                                    formId = result.getString("form_id"),
                                     name = result.getString("name"),
                                 ),
                             )
@@ -173,7 +173,7 @@ class ContextRepositoryImpl(private val database: Database) : ContextRepository 
                         return DatabaseContext(
                             id = result.getString("id"),
                             teamId = result.getString("team_id"),
-                            formId = result.getString("table_id"),
+                            formId = result.getString("form_id"),
                             name = result.getString("name"),
                         )
                     } else {
@@ -253,13 +253,13 @@ class ContextRepositoryImpl(private val database: Database) : ContextRepository 
         val sqlStatement = """
         SELECT c.id,
                c.team_id,
-               c.table_id,
+               c.form_id,
                c.name,
                COUNT(a.id) AS answer_count,
                MIN(a.updated) AS oldest_update
         FROM contexts c
         LEFT JOIN answers a ON a.context_id = c.id
-        GROUP BY c.id, c.team_id, c.table_id, c.name
+        GROUP BY c.id, c.team_id, c.form_id, c.name
     """
         return try {
             database.getConnection().use { conn ->
@@ -272,7 +272,7 @@ class ContextRepositoryImpl(private val database: Database) : ContextRepository 
                                 DatabaseContextMetrics(
                                     id = result.getString("id"),
                                     teamId = result.getString("team_id"),
-                                    formId = result.getString("table_id"),
+                                    formId = result.getString("form_id"),
                                     name = result.getString("name"),
                                     answerCount = result.getInt("answer_count"),
                                     oldestUpdate = result.getString("oldest_update"),

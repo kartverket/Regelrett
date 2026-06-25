@@ -31,7 +31,7 @@ class CommentRoutingTest {
                     )
                 },
                 authService = object : MockAuthService {
-                    override suspend fun hasContextAccess(call: ApplicationCall, contextId: String): Boolean = true
+                    override suspend fun hasWriteContextAccess(call: ApplicationCall, contextId: String): Boolean = true
                 },
             )
         }
@@ -85,7 +85,7 @@ class CommentRoutingTest {
         application {
             testModule(
                 authService = object : MockAuthService {
-                    override suspend fun hasContextAccess(call: ApplicationCall, contextId: String): Boolean = false
+                    override suspend fun hasWriteContextAccess(call: ApplicationCall, contextId: String): Boolean = false
                 },
             )
         }
@@ -217,7 +217,7 @@ class CommentRoutingTest {
                     }
                 },
                 authService = object : MockAuthService {
-                    override suspend fun hasContextAccess(call: ApplicationCall, contextId: String): Boolean = true
+                    override suspend fun hasWriteContextAccess(call: ApplicationCall, contextId: String): Boolean = true
                 },
             )
         }
@@ -260,7 +260,7 @@ class CommentRoutingTest {
         application {
             testModule(
                 authService = object : MockAuthService {
-                    override suspend fun hasContextAccess(call: ApplicationCall, contextId: String): Boolean = false
+                    override suspend fun hasWriteContextAccess(call: ApplicationCall, contextId: String): Boolean = false
                 },
             )
         }

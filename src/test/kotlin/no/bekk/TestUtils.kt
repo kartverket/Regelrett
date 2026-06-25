@@ -31,6 +31,7 @@ object TestUtils {
         answerRepository: AnswerRepository = AnswerRepositoryImpl(testDatabase),
         commentRepository: CommentRepository = CommentRepositoryImpl(testDatabase),
         contextRepository: ContextRepository = ContextRepositoryImpl(testDatabase),
+        readGrantRepository: ReadGrantRepository = ReadGrantRepositoryImpl(testDatabase),
     ) {
         val exampleConfig = Config(
             homePath = "",
@@ -92,6 +93,7 @@ object TestUtils {
                 provisioningService,
                 commentRepository,
                 contextRepository,
+                readGrantRepository,
                 authService,
                 HttpClient(CIO),
                 Redirects(mutableMapOf()),

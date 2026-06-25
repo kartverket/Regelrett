@@ -22,6 +22,7 @@ fun Route.contextRouting(
     answerRepository: AnswerRepository,
     contextRepository: ContextRepository,
     commentRepository: CommentRepository,
+    readGrantRepository: ReadGrantRepository,
     formService: FormService,
 ) {
     val logger = LoggerFactory.getLogger("no.bekk.routes.ContextRouting")
@@ -30,19 +31,8 @@ fun Route.contextRouting(
             try {
                 val contextRequestJson = call.receiveText()
                 logger.info("Received POST /context request with body: $contextRequestJson")
-                lateinit var contextRequest: DatabaseContextRequest
-                try {
-                    contextRequest = Json.decodeFromString<DatabaseContextRequest>(contextRequestJson)
-                } catch (e: Exception) { // skal slettes når all bruk av endepunktet har gått over til å bruke formId
-                    val contextRequestOLD = Json.decodeFromString<OldDatabaseContextRequest>(contextRequestJson)
-                    contextRequest = DatabaseContextRequest(
-                        teamId = contextRequestOLD.teamId,
-                        formId = contextRequestOLD.tableId,
-                        name = contextRequestOLD.name,
-                        copyContext = contextRequestOLD.copyContext,
-                        copyComments = contextRequestOLD.copyComments,
-                    )
-                }
+                val contextRequest = Json.decodeFromString<DatabaseContextRequest>(contextRequestJson)
+
                 if (!authService.hasTeamAccess(call, contextRequest.teamId)) {
                     call.respond(HttpStatusCode.Forbidden)
                     return@post
@@ -52,7 +42,7 @@ fun Route.contextRouting(
 
                 val copyContext = contextRequest.copyContext
                 if (copyContext != null) {
-                    if (!authService.hasContextAccess(call, copyContext)) {
+                    if (!authService.hasWriteContextAccess(call, copyContext)) {
                         call.respond(HttpStatusCode.Forbidden)
                         return@post
                     }
@@ -140,12 +130,20 @@ fun Route.contextRouting(
             return@get
         }
 
+        get("/usersReadGrants") {
+            val userId = call.request.queryParameters["userId"] ?: throw BadRequestException("Missing userId parameter")
+
+            val usersReadGrants = readGrantRepository.getReadGrantsByUserId(userId)
+            call.respond(HttpStatusCode.OK, Json.encodeToString(usersReadGrants))
+            return@get
+        }
+
         route("/{contextId}") {
             get {
                 logger.info("Received GET /context with id: ${call.parameters["contextId"]}")
                 val contextId = call.parameters["contextId"] ?: throw BadRequestException("Missing contextId")
 
-                if (!authService.hasContextAccess(call, contextId) && !authService.hasReadContextAccess(call, contextId)) {
+                if (!authService.hasContextAccess(call, contextId)) {
                     call.respond(HttpStatusCode.Forbidden)
                     return@get
                 }
@@ -157,7 +155,7 @@ fun Route.contextRouting(
             delete {
                 logger.info("Received DELETE /context with id: ${call.parameters["contextId"]}")
                 val contextId = call.parameters["contextId"] ?: throw BadRequestException("Missing contextId")
-                if (!authService.hasContextAccess(call, contextId)) {
+                if (!authService.hasWriteContextAccess(call, contextId)) {
                     call.respond(HttpStatusCode.Forbidden)
                     return@delete
                 }
@@ -170,7 +168,7 @@ fun Route.contextRouting(
                 val contextId = call.parameters["contextId"] ?: throw BadRequestException("Missing contextId")
 
                 val hasReadAccess = authService.hasReadContextAccess(call, contextId)
-                val hasWriteAccess = authService.hasContextAccess(call, contextId)
+                val hasWriteAccess = authService.hasWriteContextAccess(call, contextId)
 
                 call.respond(HttpStatusCode.OK, Json.encodeToString(ContextPremissionResponse(hasReadAccess, hasWriteAccess)))
                 return@get
@@ -181,7 +179,7 @@ fun Route.contextRouting(
                     logger.info("Received PATCH /contexts with id: ${call.parameters["contextId"]}")
                     val contextId = call.parameters["contextId"] ?: throw BadRequestException("Missing contextId")
 
-                    if (!authService.hasContextAccess(call, contextId)) {
+                    if (!authService.hasWriteContextAccess(call, contextId)) {
                         call.respond(HttpStatusCode.Forbidden)
                         return@patch
                     }
@@ -225,7 +223,7 @@ fun Route.contextRouting(
                     val payload = call.receive<CopyContextRequest>()
                     val copyContextId = payload.copyContextId ?: throw BadRequestException("Missing copy contextId in request body")
 
-                    if (!authService.hasContextAccess(call, contextId)) {
+                    if (!authService.hasWriteContextAccess(call, contextId)) {
                         call.respond(HttpStatusCode.Forbidden)
                         return@patch
                     }
@@ -249,7 +247,7 @@ fun Route.contextRouting(
                     val payload = call.receive<CopyContextRequest>()
                     val copyContextId = payload.copyContextId ?: throw BadRequestException("Missing copy contextId in request body")
 
-                    if (!authService.hasContextAccess(call, contextId) || !authService.hasContextAccess(call, copyContextId)) {
+                    if (!authService.hasWriteContextAccess(call, contextId) || !authService.hasWriteContextAccess(call, copyContextId)) {
                         call.respond(HttpStatusCode.Forbidden)
                         return@patch
                     }
@@ -270,7 +268,7 @@ fun Route.contextRouting(
                     logger.info("Received PATCH /{contextId}/name with id: ${call.parameters["contextId"]}")
                     val contextId = call.parameters["contextId"] ?: throw BadRequestException("Missing contextId")
 
-                    if (!authService.hasContextAccess(call, contextId)) {
+                    if (!authService.hasWriteContextAccess(call, contextId)) {
                         call.respond(HttpStatusCode.Forbidden)
                         return@patch
                     }
@@ -289,6 +287,43 @@ fun Route.contextRouting(
                     logger.error("Unexpected error when processing PATCH /contexts", e)
                     call.respond(HttpStatusCode.InternalServerError, "An unexpected error occurred.")
                 }
+            }
+
+            post("/grantReadAccess") {
+                try {
+                    val contextId = call.parameters["contextId"] ?: throw BadRequestException("Missing contextId")
+
+                    val grantReadAccessRequestJson = call.receiveText()
+                    logger.info("Received POST /context/contextId/grantReadAccess request with body: $grantReadAccessRequestJson")
+                    val grantReadAccessRequest = Json.decodeFromString<DatabaseReadGrantRequest>(grantReadAccessRequestJson)
+
+                    if (!authService.hasWriteContextAccess(call, contextId)) {
+                        call.respond(HttpStatusCode.Forbidden)
+                        return@post
+                    }
+
+                    val readGrant = readGrantRepository.insertReadGrantOnContext(contextId, grantReadAccessRequest)
+
+                    call.respond(HttpStatusCode.Created, Json.encodeToString(readGrant))
+                    return@post
+                } catch (e: ConflictException) {
+                    ErrorHandlers.handleConflictException(call, e)
+                } catch (e: Exception) {
+                    logger.error("Unexpected error when processing post /contexts/contextId/grantReadAccess", e)
+                    call.respond(HttpStatusCode.InternalServerError, "An unexpected error occurred.")
+                }
+            }
+            get("/readGrants") {
+                logger.info("Received GET /context/contextId/readGrants with id: ${call.parameters["contextId"]}")
+                val contextId = call.parameters["contextId"] ?: throw BadRequestException("Missing contextId")
+
+                if (!authService.hasWriteContextAccess(call, contextId) && !authService.hasReadContextAccess(call, contextId)) {
+                    call.respond(HttpStatusCode.Forbidden)
+                    return@get
+                }
+                val context = readGrantRepository.getReadGrantsByContext(contextId)
+                call.respond(HttpStatusCode.OK, Json.encodeToString(context))
+                return@get
             }
         }
     }
