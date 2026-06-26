@@ -4,7 +4,7 @@ kotlin-version = "2.3.21"
 kotlinx-html-version = "0.12.0"
 ktor-version = "3.5.0"
 logback-version = "1.5.34"
-flyway-version = "12.7.0"
+flyway-version = "12.9.0"
 ajalt-clikt-version = "5.1.0"
 mamoe-yamlkt-version = "0.13.0"
 zaxxer-hikari-version = "7.0.2"
@@ -50,7 +50,7 @@ junit-platform-launcher = { module = 'org.junit.platform:junit-platform-launcher
 junit-jupiter = { module = 'org.junit.jupiter:junit-jupiter', version = "6.1.0" }
 netty-codec-http2 = { module='io.netty:netty-codec-http2', version.ref = 'netty-version' } #kan fjernes når ktor oppggraderer til å bruke ny versjon netty2
 netty-transport-native-epoll = { module='io.netty:netty-transport-native-epoll', version.ref = 'netty-version' }
-
+jackson-databind = { module='com.fasterxml.jackson.core:jackson-databind', version='3.1.4' }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-version" }
