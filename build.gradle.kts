@@ -50,6 +50,7 @@ dependencies {
     implementation(libs.ben.manes.caffeine)
     implementation(libs.netty.codec.http2)
     implementation(libs.netty.transport.native.epoll)
+    implementation(libs.jackson.databind )
 
     testImplementation(libs.testcontainers.testcontainers)
     testImplementation(libs.testcontainers.postgresql)
