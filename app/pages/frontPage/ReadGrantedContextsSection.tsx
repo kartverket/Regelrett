@@ -1,7 +1,8 @@
 import { SkeletonLoader } from "@/components/SkeletonLoader";
-import { Separator } from "@/components/ui/separator";
 import { useReadGrantsByUser } from "@/hooks/useGrants";
 import { ContextLink } from "@/pages/frontPage/ContextLink";
+import { Share2 } from "lucide-react";
+import React from "react";
 
 type ReadGrantedContextsSectionProps = {
   userId: string
@@ -18,27 +19,41 @@ export default function ReadGrantedContextsSection({
 
   if (
     !readGrantsLoading &&
-    (!readGrants || readGrants.length === 0)
+    !readGrants
   ) {
     return null;
   }
 
+  if(readGrants?.length === 0) {
+    return (
+      <div className="text-center py-12">
+        <Share2 className="size-12 mx-auto mb-4 text-muted-foreground" />
+        <h2 className="text-lg font-semibold">
+          Ingen skjema har blitt delt med deg
+        </h2>
+        <p className="text-muted-foreground mt-1">
+          Du har ikke fått lesetilgang til noen skjema utenfor ditt team.
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <>
-      <Separator className="my-5" />
-      <h1 className="text-4xl font-bold">Delt med deg</h1>
+    <div className="w-full space-y-6">
+      <div>
+        <h1 className="text-4xl font-bold mb-2">Delt med deg</h1>
+        <p className="text-muted-foreground">
+          Skjemaer du har fått midlertidig lesetilgang til
+        </p>
+      </div>
       <SkeletonLoader loading={readGrantsLoading}>
-        <div className="flex flex-col gap-4 items-start py-4">
+        <div className="space-y-3 flex flex-col w-[450px]">
           {readGrants?.map((readGrant) => (
-            <ContextLink
-              key={readGrant.id}
-              contextId={readGrant.contextId}
-              formId=""
-            />
+              <ContextLink key={readGrant.id} contextId={readGrant.contextId} />
           ))}
         </div>
       </SkeletonLoader>
-    </>
+    </div>
   );
 }
 

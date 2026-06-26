@@ -20,7 +20,7 @@ export function ContextLink({
   canDelete = true,
 }: {
   contextId: string;
-  formId: string;
+  formId?: string;
   canDelete?: boolean;
 }) {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -98,8 +98,8 @@ export function ContextLink({
                   </div>
                   <SkeletonLoader
                     loading={answerIsPending}
-                    width="w-[450px]"
-                    height="h-[98px]"
+                    width="w-[200px]"
+                    height="h-[30px]"
                   >
                     <p className="text-xs text-muted-foreground">
                       Sist endret:{" "}

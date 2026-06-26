@@ -41,8 +41,8 @@ export function ProgressCircle({
   return (
     <SkeletonLoader
       loading={formIsPending || answerIsPending}
-      width={`w-[${size}px]`}
-      height={`h-[${size}px]`}
+      width={`w-[70px]`}
+      height={`h-[70px]`}
     >
       <div className="relative" style={{ width: size, height: size }}>
         <svg height={size} width={size} className="transform -rotate-90">

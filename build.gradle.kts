@@ -51,6 +51,12 @@ dependencies {
     implementation(libs.netty.codec.http2)
     implementation(libs.netty.transport.native.epoll)
 
+    constraints {
+        implementation("tools.jackson.core:jackson-databind:3.1.4") {
+            because("Fixes Jackson databind vulnerabilities present in 3.1.1")
+        }
+    }
+
     testImplementation(libs.testcontainers.testcontainers)
     testImplementation(libs.testcontainers.postgresql)
     testImplementation(libs.ktor.server.test.host)
