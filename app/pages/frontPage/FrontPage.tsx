@@ -8,13 +8,12 @@ import {
 } from "@/utils/csvExportUtils";
 import { ErrorState } from "@/components/ErrorState";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Download } from "lucide-react";
+import { Download, FileText } from "lucide-react";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ReadGrantedContextsSection from "@/pages/frontPage/ReadGrantedContextsSection";
-import { useReadGrantsByUser } from "@/hooks/useGrants";
+
 
 export default function FrontPage() {
   const {
@@ -22,11 +21,6 @@ export default function FrontPage() {
     isPending: isUserinfoLoading,
     isError: isUserinfoError,
   } = useUser();
-
-  const {
-    data: readGrants,
-    isPending: isReadGrantsLoading,
-  } = useReadGrantsByUser(userinfo?.user.id || "");
 
   if (isUserinfoError) {
     return (
@@ -38,25 +32,16 @@ export default function FrontPage() {
   }
 
   const teams = userinfo ? userinfo.groups : [];
-  const hasTeams = teams.length > 0;
-  const hasGrantedReadAccess = readGrants && readGrants.length > 0;
 
-  if (!isUserinfoLoading && !isReadGrantsLoading && !hasTeams && !hasGrantedReadAccess) {
-    return (
-      <>
-        <RedirectBackButton />
-        <ErrorState message="Vi fant dessverre ingen grupper som tilhører din bruker, og ingenting er delt med deg." />
-      </>
-    );
-  }
+
 
   return (
     <div>
       <RedirectBackButton />
       <Page>
-        <div className="flex flex-col mx-auto px-8 items-start ">
-          <Tabs defaultValue="teams">
-            <TabsList className="grid w-[400px] grid-cols-2">
+        <div className="w-full max-w-8xl mx-auto px-4 sm:px-8">
+          <Tabs defaultValue="teams" className="w-full">
+            <TabsList className="grid w-full max-w-md grid-cols-2 mb-8">
               <TabsTrigger
                 value="teams"
                 className="data-[state=active]:bg-card"
@@ -70,56 +55,74 @@ export default function FrontPage() {
                 Delt med deg
               </TabsTrigger>
             </TabsList>
-            {hasTeams && (
-              <>
-            <TabsContent value={"teams"}>
 
-              <h1 className="text-4xl font-bold">Dine team</h1>
-              <div className="flex flex-col items-start">
-                <div className="flex flex-row gap-8">
-                  {userinfo?.superuser && (
-                    <Button
-                      variant="link"
-                      className="w-fit font-bold has-[>svg]:px-0 my-2"
-                      onClick={() => handleExportFullCSV()}
-                    >
-                      Eksporter skjemautfyllinger
-                      <Download className="size-5" />
-                    </Button>
-                  )}
-                  {userinfo?.reportinguser && (
-                    <Button
-                      variant="link"
-                      className="w-fit font-bold has-[>svg]:px-0 my-2"
-                      onClick={() => handleExportProgressCSV()}
-                    >
-                      Eksporter utfyllingstilstand
-                      <Download className="size-5" />
-                    </Button>
-                  )}
-                </div>
-                <Separator className="my-5" />
-                <SkeletonLoader loading={isUserinfoLoading}>
-                  {teams.map((team) => {
-                    return (
-                      <div key={team.id}>
-                        <h2 className="text-2xl font-bold py-4 w-fit">
-                          {team.displayName}
-                        </h2>
-                        <TeamContexts teamId={team.id} />
-                      </div>
-                    );
-                  })}
-                </SkeletonLoader>
-              </div>
+            <TabsContent value={"teams"} className="w-full space-y-6">
+              <SkeletonLoader loading={isUserinfoLoading} height={"h-[700px]"}>
+                {teams.length > 0 ? (
+                  <>
+                    <div>
+                      <h1 className="text-4xl font-bold mb-2">Dine team</h1>
+                      <p className="text-muted-foreground">
+                        Administrer og fyll ut skjemaer for dine team
+                      </p>
+                    </div>
+
+                    <div className="flex flex-row gap-4 flex-wrap">
+                      {userinfo?.superuser && (
+                        <Button
+                          variant="outline"
+                          className="gap-2"
+                          onClick={() => handleExportFullCSV()}
+                        >
+                          <Download className="size-4" />
+                          Eksporter skjemautfyllinger
+                        </Button>
+                      )}
+                      {userinfo?.reportinguser && (
+                        <Button
+                          variant="outline"
+                          className="gap-2"
+                          onClick={() => handleExportProgressCSV()}
+                        >
+                          <Download className="size-4" />
+                          Eksporter utfyllingstilstand
+                        </Button>
+                      )}
+                    </div>
+
+                    <div className="space-y-6">
+                      {teams.map((team) => {
+                        return (
+                          <div key={team.id}>
+                            <h2 className="text-2xl font-bold py-4 w-fit">
+                              {team.displayName}
+                            </h2>
+                            <TeamContexts teamId={team.id} />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-center py-12">
+                    <FileText className="size-12 mx-auto mb-4 text-muted-foreground" />
+                    <h2 className="text-lg font-semibold">
+                      Vi fant ingen team
+                    </h2>
+                    <p className="text-muted-foreground mt-1">
+                      Du har ikke tilgang til noen team ennå
+                    </p>
+                  </div>
+                )}
+              </SkeletonLoader>
             </TabsContent>
 
-            </>
-          )}
+            <TabsContent value={"granted"} className="w-full">
+              {userinfo?.user.id && (
+                <ReadGrantedContextsSection userId={userinfo.user.id} />
+              )}
+            </TabsContent>
           </Tabs>
-          {userinfo?.user.id && (
-            <ReadGrantedContextsSection userId={userinfo.user.id} />
-          )}
         </div>
       </Page>
     </div>
