@@ -55,9 +55,6 @@ dependencies {
         implementation("tools.jackson.core:jackson-databind:3.1.4") {
             because("Fixes Jackson databind vulnerabilities present in 3.1.1")
         }
-        implementation("com.fasterxml.jackson.core:jackson-databind:2.21.5") {
-            because("Fixes vulnerabilities present in 2.21.3")
-        }
     }
 
     testImplementation(libs.testcontainers.testcontainers)
