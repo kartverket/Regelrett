@@ -4,6 +4,7 @@ ARG BASE_IMAGE=eclipse-temurin:25.0.2_10-jre-alpine-3.23
 ARG JS_IMAGE=node:22-alpine
 ARG JS_PLATFORM=linux/amd64
 ARG GRADLE_IMAGE=gradle:8.14-jdk21-alpine
+ARG OTEL_JAVA_AGENT_VERSION=2.29.0
 
 ARG KOTLIN_SRC=kt-builder
 ARG JS_SRC=js-builder
@@ -54,6 +55,11 @@ RUN gradle shadowJar --no-daemon
 FROM ${KOTLIN_SRC} AS kt-src
 FROM ${JS_SRC} AS js-src
 
+FROM ${BASE_IMAGE} AS otel-agent
+ARG OTEL_JAVA_AGENT_VERSION
+RUN wget -q -O /opentelemetry-javaagent.jar \
+    "https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v${OTEL_JAVA_AGENT_VERSION}/opentelemetry-javaagent.jar"
+
 FROM ${BASE_IMAGE}
 
 RUN apk update && apk upgrade --no-cache && apk add --no-cache libpng gnutls
@@ -67,12 +73,14 @@ ARG RR_GID="0"
 ENV RR_PATHS_PROVISIONING="/etc/regelrett/provisioning" \
     RR_PATHS_CONFIG="/etc/regelrett/regelrett.yaml" \
     RR_PATHS_HOME="/usr/share/regelrett" \
-    RR_PATHS_JAR="/app/regelrett.jar"
+    RR_PATHS_JAR="/app/regelrett.jar" \
+    OTEL_JAVAAGENT_PATH="/agents/opentelemetry.jar"
 
 WORKDIR $RR_PATHS_HOME
 
 COPY --from=kt-src /tmp/regelrett/conf conf
 COPY --from=kt-src /tmp/regelrett/build/libs/*.jar ${RR_PATHS_JAR}
+COPY --from=otel-agent /opentelemetry-javaagent.jar ${OTEL_JAVAAGENT_PATH}
 
 RUN if [ ! $(getent group "$RR_GID") ]; then \
     if grep -i -q alpine /etc/issue; then \
@@ -93,7 +101,7 @@ RUN if [ ! $(getent group "$RR_GID") ]; then \
     mkdir -p "$RR_PATHS_PROVISIONING/schemasources" && \
     cp conf/provisioning/schemasources/sample.yaml "$RR_PATHS_PROVISIONING/schemasources/" && \
     cp conf/sample.yaml "$RR_PATHS_CONFIG" && \
-    chown -R "regelrett:$RR_GID_NAME" "$RR_PATHS_HOME" "$RR_PATHS_PROVISIONING" "$RR_PATHS_JAR" && \
+    chown -R "regelrett:$RR_GID_NAME" "$RR_PATHS_HOME" "$RR_PATHS_PROVISIONING" "$RR_PATHS_JAR" "$OTEL_JAVAAGENT_PATH" && \
     chmod -R 777 "$RR_PATHS_PROVISIONING"
 
 ENV JAVA_HOME=/opt/java/openjdk
@@ -103,9 +111,10 @@ COPY --from=kt-src /tmp/regelrett/build/libs/*.jar ./app/regelrett.jar
 COPY --from=js-src /tmp/regelrett/dist ./dist
 
 ENV RR_SERVER_HTTP_PORT=8080
-EXPOSE $RR_SERVER_HTTP_PORT
+ENV RR_MANAGEMENT_HTTP_PORT=8081
+EXPOSE $RR_SERVER_HTTP_PORT $RR_MANAGEMENT_HTTP_PORT
 HEALTHCHECK NONE
 
 USER "$RR_UID"
-ENTRYPOINT ["sh", "-c", "java -Duser.timezone=Europe/Oslo -jar /app/regelrett.jar --homepath=$RR_PATHS_HOME --config=$RR_PATHS_CONFIG"]
+ENTRYPOINT ["sh", "-c", "exec java ${JAVA_OPTS:-} -Duser.timezone=Europe/Oslo -jar /app/regelrett.jar --homepath=$RR_PATHS_HOME --config=$RR_PATHS_CONFIG"]
 
