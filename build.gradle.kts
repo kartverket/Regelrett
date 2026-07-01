@@ -52,10 +52,10 @@ dependencies {
     implementation(libs.netty.transport.native.epoll)
 
     constraints {
-        implementation("com.fasterxml.jackson:jackson-bom:2.21.4") {
+        implementation("com.fasterxml.jackson:jackson-bom:2.22.0") {
             because("Fixes CVE-2026-54513 in Jackson databind")
         }
-        implementation("com.fasterxml.jackson.core:jackson-databind:2.21.4") {
+        implementation("com.fasterxml.jackson.core:jackson-databind:2.22.0") {
             because("Fixes CVE-2026-54513")
         }
         implementation("tools.jackson.core:jackson-databind:3.1.4") {
