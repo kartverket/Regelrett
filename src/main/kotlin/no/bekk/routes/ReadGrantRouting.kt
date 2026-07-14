@@ -3,7 +3,6 @@ package no.bekk.routes
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.parameters
 import io.ktor.server.plugins.BadRequestException
-import io.ktor.server.request.receive
 import io.ktor.server.request.receiveText
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
@@ -11,7 +10,6 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.patch
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import no.bekk.authentication.AuthService
 import no.bekk.database.DatabaseReadGrantRequest
@@ -23,9 +21,7 @@ import org.slf4j.LoggerFactory
 fun Route.readGrantRouting(authService: AuthService, readGrantRepository: ReadGrantRepository) {
     val logger = LoggerFactory.getLogger("no.bekk.routes.AnswerRouting")
 
-
     route("/readGrants") {
-
         get {
             logger.info("Received get /readGrants for user with id: ${call.parameters["userId"]}")
             val userId = call.request.queryParameters["userId"] ?: throw BadRequestException("Missing userId parameter")
@@ -88,8 +84,6 @@ fun Route.readGrantRouting(authService: AuthService, readGrantRepository: ReadGr
                 call.respond(HttpStatusCode.OK)
                 return@patch
             }
-
         }
-
     }
 }

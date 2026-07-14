@@ -279,7 +279,6 @@ fun Route.contextRouting(
                     call.respond(HttpStatusCode.InternalServerError, "An unexpected error occurred.")
                 }
             }
-
         }
     }
 }
