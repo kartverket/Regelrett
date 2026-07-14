@@ -70,7 +70,7 @@ fun Route.readGrantRouting(authService: AuthService, readGrantRepository: ReadGr
 
 patch("/{readGrantId}/expiry") {
     try {
-        logger.info("Received PATCH /readGrants/{contextId}/{readGrantId}/expiry with readGrantId: ${call.parameters[\"readGrantId\"]}")
+        logger.info("Received PATCH /readGrants/{contextId}/{readGrantId}/expiry with readGrantId: ${call.parameters["readGrantId"]}")
         val contextId = call.parameters["contextId"] ?: throw BadRequestException("Missing contextId")
         val readGrantId = call.parameters["readGrantId"] ?: throw BadRequestException("Missing readGrantId")
 
