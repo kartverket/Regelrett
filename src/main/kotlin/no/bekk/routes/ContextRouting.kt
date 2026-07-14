@@ -22,7 +22,6 @@ fun Route.contextRouting(
     answerRepository: AnswerRepository,
     contextRepository: ContextRepository,
     commentRepository: CommentRepository,
-    readGrantRepository: ReadGrantRepository,
     formService: FormService,
 ) {
     val logger = LoggerFactory.getLogger("no.bekk.routes.ContextRouting")
@@ -127,14 +126,6 @@ fun Route.contextRouting(
             } else {
                 call.respond(HttpStatusCode.OK, Json.encodeToString(contexts))
             }
-            return@get
-        }
-
-        get("/usersReadGrants") {
-            val userId = call.request.queryParameters["userId"] ?: throw BadRequestException("Missing userId parameter")
-
-            val usersReadGrants = readGrantRepository.getReadGrantsByUserId(userId)
-            call.respond(HttpStatusCode.OK, Json.encodeToString(usersReadGrants))
             return@get
         }
 
@@ -289,42 +280,6 @@ fun Route.contextRouting(
                 }
             }
 
-            post("/grantReadAccess") {
-                try {
-                    val contextId = call.parameters["contextId"] ?: throw BadRequestException("Missing contextId")
-
-                    val grantReadAccessRequestJson = call.receiveText()
-                    logger.info("Received POST /context/contextId/grantReadAccess request with body: $grantReadAccessRequestJson")
-                    val grantReadAccessRequest = Json.decodeFromString<DatabaseReadGrantRequest>(grantReadAccessRequestJson)
-
-                    if (!authService.hasWriteContextAccess(call, contextId)) {
-                        call.respond(HttpStatusCode.Forbidden)
-                        return@post
-                    }
-
-                    val readGrant = readGrantRepository.insertReadGrantOnContext(contextId, grantReadAccessRequest)
-
-                    call.respond(HttpStatusCode.Created, Json.encodeToString(readGrant))
-                    return@post
-                } catch (e: ConflictException) {
-                    ErrorHandlers.handleConflictException(call, e)
-                } catch (e: Exception) {
-                    logger.error("Unexpected error when processing post /contexts/contextId/grantReadAccess", e)
-                    call.respond(HttpStatusCode.InternalServerError, "An unexpected error occurred.")
-                }
-            }
-            get("/readGrants") {
-                logger.info("Received GET /context/contextId/readGrants with id: ${call.parameters["contextId"]}")
-                val contextId = call.parameters["contextId"] ?: throw BadRequestException("Missing contextId")
-
-                if (!authService.hasWriteContextAccess(call, contextId) && !authService.hasReadContextAccess(call, contextId)) {
-                    call.respond(HttpStatusCode.Forbidden)
-                    return@get
-                }
-                val context = readGrantRepository.getReadGrantsByContext(contextId)
-                call.respond(HttpStatusCode.OK, Json.encodeToString(context))
-                return@get
-            }
         }
     }
 }
