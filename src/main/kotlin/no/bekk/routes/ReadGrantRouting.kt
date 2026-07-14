@@ -31,7 +31,6 @@ fun Route.readGrantRouting(authService: AuthService, readGrantRepository: ReadGr
             return@get
         }
 
-
         route("/{contextId}") {
             get {
                 logger.info("Received GET /readGrants/contextId with id: ${call.parameters["contextId"]}")
