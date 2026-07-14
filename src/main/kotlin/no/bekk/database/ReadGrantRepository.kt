@@ -150,8 +150,8 @@ class ReadGrantRepositoryImpl(private val database: Database) : ReadGrantReposit
         try {
             database.getConnection().use { conn ->
                 conn.prepareStatement(sqlStatement).use { statement ->
-                    statement.setObject(1, readGrantId)
-                    statement.setString(2, contextId)
+                    statement.setObject(1, UUID.fromString(readGrantId))
+                    statement.setObject(2, UUID.fromString(contextId))
                     return statement.executeUpdate() > 0
                 }
             }
