@@ -61,9 +61,30 @@ export function useGrants(contextId: string){
     },
   });
 
+  const revokeReadGrant = useMutation({
+    mutationFn: (readGrantId: string) => {
+      return axiosFetch<ReadGrant>({
+        url: `${API_URL_BASE}/readGrants/${contextId}/${readGrantId}/expiry`,
+        method: "PATCH",
+      });
+    },
+    onSuccess: async () => {
+      const toastId = "patch-readGrant-success";
+      toast.success("Suksess", {
+        description: `Lesetilgangen ble slettet`,
+        duration: 5000,
+        id: toastId,
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["ReadGrants", contextId],
+      });
+    },
+  });
+
   return {
     readGrants,
-    grantReadAccess
+    grantReadAccess,
+    revokeReadGrant,
   }
 
 }
