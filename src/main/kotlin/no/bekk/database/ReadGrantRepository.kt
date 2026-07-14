@@ -14,6 +14,7 @@ interface ReadGrantRepository {
     fun getReadGrantsByContext(contextId: String): List<DatabaseReadGrant>
     fun getReadGrantsByUserId(userId: String): List<DatabaseReadGrant>
     fun insertReadGrantOnContext(contextId: String, readGrant: DatabaseReadGrantRequest): DatabaseReadGrant
+    fun revokeReadGrantOnContext(readGrantId: String, contextId: String): Boolean
 }
 
 class ReadGrantRepositoryImpl(private val database: Database) : ReadGrantRepository {
@@ -140,6 +141,23 @@ class ReadGrantRepositoryImpl(private val database: Database) : ReadGrantReposit
         } catch (e: SQLException) {
             logger.error("Error fetching granted read accesses for user: $userId", e)
             throw RuntimeException("Error fetching granted read accesses for user: $userId from database", e)
+        }
+    }
+
+    override fun revokeReadGrantOnContext(readGrantId: String, contextId: String): Boolean {
+        val sqlStatement = "UPDATE read_grants SET expires_at = CURRENT_TIMESTAMP WHERE id = ? AND context_id = ?"
+
+        try {
+            database.getConnection().use { conn ->
+                conn.prepareStatement(sqlStatement).use { statement ->
+                    statement.setObject(1, readGrantId)
+                    statement.setString(2, contextId)
+                    return statement.executeUpdate() > 0
+                }
+            }
+        } catch (e: SQLException) {
+            logger.error("Database error revoking read grant $readGrantId", e)
+            throw DatabaseException("Failed to revoke read grant $readGrantId", "revokeReadGrant", e)
         }
     }
 }
