@@ -35,7 +35,7 @@ export function useGrants(contextId: string){
     queryKey: ["ReadGrants", contextId],
     queryFn: () =>
       axiosFetch<ReadGrant[]>({
-        url: `${API_URL_BASE}/contexts/${contextId}/readGrants`,
+        url: `${API_URL_BASE}/readGrants/${contextId}`,
       }).then((response) => response.data),
     select: formatReadGrantData,
   });
@@ -43,7 +43,7 @@ export function useGrants(contextId: string){
   const grantReadAccess = useMutation({
     mutationFn: (body: SubmitReadGrantRequest) => {
       return axiosFetch<ReadGrant>({
-        url: `${API_URL_BASE}/contexts/${contextId}/grantReadAccess`,
+        url: `${API_URL_BASE}/readGrants/${contextId}`,
         method: "POST",
         data: body,
       });
@@ -56,7 +56,7 @@ export function useGrants(contextId: string){
         id: toastId,
       });
       await queryClient.invalidateQueries({
-        queryKey: ["GrantReadAccess", contextId],
+        queryKey: ["ReadGrants", contextId],
       });
     },
   });
@@ -73,7 +73,7 @@ export function useReadGrantsByUser(userId: string){
     queryKey: ["UsersGrantedReadAccesses", userId],
     queryFn: () =>
       axiosFetch<ReadGrant[]>({
-        url: `${API_URL_BASE}/contexts/usersReadGrants?userId=${userId}`,
+        url: `${API_URL_BASE}/readGrants?userId=${userId}`,
       }).then((response) => response.data),
     select: formatReadGrantData,
   });
