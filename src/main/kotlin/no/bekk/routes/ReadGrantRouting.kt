@@ -64,7 +64,7 @@ fun Route.readGrantRouting(authService: AuthService, readGrantRepository: ReadGr
                 } catch (e: ConflictException) {
                     ErrorHandlers.handleConflictException(call, e)
                 } catch (e: Exception) {
-                    logger.error("Unexpected error when processing post /contexts/contextId/grantReadAccess", e)
+                    logger.error("Unexpected error when processing POST /readGrants/{contextId}", e)
                     call.respond(HttpStatusCode.InternalServerError, "An unexpected error occurred.")
                 }
             }
