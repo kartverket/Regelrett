@@ -1,7 +1,6 @@
 package no.bekk.routes
 
 import io.ktor.http.HttpStatusCode
-import io.ktor.http.parameters
 import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.request.receiveText
 import io.ktor.server.response.respond
