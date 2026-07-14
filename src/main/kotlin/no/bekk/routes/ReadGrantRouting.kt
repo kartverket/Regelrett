@@ -18,7 +18,7 @@ import no.bekk.plugins.ErrorHandlers
 import org.slf4j.LoggerFactory
 
 fun Route.readGrantRouting(authService: AuthService, readGrantRepository: ReadGrantRepository) {
-    val logger = LoggerFactory.getLogger("no.bekk.routes.AnswerRouting")
+    val logger = LoggerFactory.getLogger("no.bekk.routes.ReadGrantRouting")
 
     route("/readGrants") {
         get {
