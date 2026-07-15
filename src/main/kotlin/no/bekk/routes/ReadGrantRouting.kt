@@ -26,8 +26,7 @@ fun Route.readGrantRouting(authService: AuthService, readGrantRepository: ReadGr
             val userId = call.request.queryParameters["userId"] ?: throw BadRequestException("Missing userId parameter")
 
             val currentUserId = authService.getCurrentUser(call).id
-            val isSuperUser = authService.hasSuperUserAccess(call)
-            if (!isSuperUser && userId != currentUserId) {
+            if (userId != currentUserId) {
                 call.respond(HttpStatusCode.Forbidden)
                 return@get
             }
