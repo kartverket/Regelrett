@@ -170,7 +170,7 @@ export function GrantReadAccessTab({ setOpen }: GrantReadAccessTabProps) {
                             </div>
                             <Button
                               type="button"
-                              aria-label="Slett utfylling"
+                              aria-label="Slett lesetilgang"
                               variant="ghost"
                               size="icon"
                               disabled={revokeReadGrant.isPending}
