@@ -97,6 +97,8 @@ patch("/{readGrantId}/expiry") {
     } catch (e: BadRequestException) {
         logger.error("Bad request: ${e.message}", e)
         call.respond(HttpStatusCode.BadRequest, e.message ?: "Bad request")
+    } catch (e: IllegalArgumentException) {
+        call.respond(HttpStatusCode.BadRequest, "Invalid contextId or readGrantId")
     } catch (e: Exception) {
         logger.error("Unexpected error when processing PATCH /readGrants/{contextId}/{readGrantId}/expiry", e)
         call.respond(HttpStatusCode.InternalServerError, "An unexpected error occurred.")
