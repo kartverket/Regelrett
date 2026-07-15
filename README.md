@@ -71,15 +71,13 @@ Nå skal databasen være oppe og kjøre!
 
 ### Info
 
-- Filen curl.txt inneholder curl kommandoer for å utføre spørringer mot
-  Airtable
 - Applikasjonen bruker en PostgresQl Database, og Flyway migration for å gjøre
   endringer på databaseskjemaer.
 - Alle filer i Flyway migration script må ha følgende format:
 
 `<Version>__<Description>.sql` For eksempel: `V1.1__initial.sql`
 
-- Databasen heter "regelrett", og må foreløpig settes opp lokalt på utviklerens
+- Databasen heter "regelrett", og må settes opp lokalt på utviklerens
   maskin utenfor Flyway.
 - Databasemigreringer kjører automatisk ved oppstart av applikasjonen, eller så
   kan de kjøres manuelt med `./gradlew flywayMigrate`
@@ -91,6 +89,12 @@ Regelrett kan konfigurerers opp til å kunne tilpasse seg ulike behov. Med det f
 Les mer:
 [Konfigurasjon](conf/README.md)
 
+## Provisjonering
+Provisjoneringen til regelrett går ut på å fortelle til regelrett hvor og hvordan den finner skjemaene man etterhvert skal kunne fylle ut. 
+Det vil si at hvis du har konfigurert opp regelrett og fått den til å kjøre, vil den bare vise en blank side frem til du provisjonerer opp skjemakildene.
+
+En kort intro til hvordan finner du i stegen under, men for mer utfyllende detlajer og eksempler bør leses her:
+[Provisjonering](conf/provisioning/README.md)
 ## Kjøre regelrett lokalt
 
 Backend er bygget med KTOR og frontend er bygget med React, Vite og TypeScript.
@@ -175,7 +179,13 @@ configurations`.
 - `backend/gradlew run` i ett annet
 
 Backenden fungerer som api og webserver for frontenden, som skal være
-tilgjengelig på `http://localhost:8080`
+tilgjengelig på `http://localhost:8080` 
+
+### Steg 4: Provisjonering
+Nå som regelrett er oppe og kjører må du provisjonere skjemakildene slik som beskrevet i [`conf/provisioning/README.md`](conf/provisioning/README.md).
+I [`conf/provisioning/README.md`](conf/provisioning/sample.yaml) finner du et eksempel på hvordan du provisjonerer opp ett skjema. 
+Kopier eksempelet og endre verdiene til å stemme overens med dine skjemakilder og skjema. 
+Du kan provisjonere opp flere skjema i samme fil. Det finnes to typer skjemakilder: Yaml og Airtable. For Yaml-skjemaer lager du et .yaml fil per skjema i mappen [src/main/resources/questions](src/main/resources/questions)
 
 ### Mer dokumentasjon
 
@@ -231,4 +241,4 @@ pre-commit`. Dette vil kjøre lint-staged for å sjekke de stage’ede filene og
   Query her https://tanstack.com/query/latest
 - For mer dokumentasjon om [Build and
   deployment](./docs/build-and-deployment.md)
-  ´´´´
+
