@@ -63,7 +63,7 @@ export function useGrants(contextId: string){
 
   const revokeReadGrant = useMutation({
     mutationFn: (readGrantId: string) => {
-      return axiosFetch<ReadGrant>({
+      return axiosFetch({
         url: `${API_URL_BASE}/readGrants/${contextId}/${readGrantId}/expiry`,
         method: "PATCH",
       });
