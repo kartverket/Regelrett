@@ -28,7 +28,7 @@ import { useGrants } from "@/hooks/useGrants";
 import { useContext } from "@/hooks/useContext";
 import { formatDate } from "@/utils/formatTime";
 import { useDebounce } from "@/hooks/useDebounce";
-import { Search } from "lucide-react";
+import { Search, Trash2 } from "lucide-react";
 
 
 const grantReadAccessFormSchema = z.object({
@@ -62,7 +62,9 @@ export function GrantReadAccessTab({ setOpen }: GrantReadAccessTabProps) {
     isPending: userinfoIsPending,
   } = useUser();
 
-  const { readGrants, grantReadAccess } = useGrants(contextId ?? "");
+  const { readGrants, grantReadAccess, revokeReadGrant } = useGrants(
+    contextId ?? "",
+  );
   const readGrantList = readGrants.data ?? [];
 
   const ownerTeamName = userinfo?.groups.find(
@@ -122,7 +124,10 @@ export function GrantReadAccessTab({ setOpen }: GrantReadAccessTabProps) {
   return (
     <Card>
       <Form {...GrantReadAccessForm}>
-        <form onSubmit={GrantReadAccessForm.handleSubmit(onSubmit)} className="space-y-4">
+        <form
+          onSubmit={GrantReadAccessForm.handleSubmit(onSubmit)}
+          className="space-y-4"
+        >
           <CardContent className="space-y-4 pt-4">
             <SkeletonLoader
               loading={
@@ -151,7 +156,10 @@ export function GrantReadAccessTab({ setOpen }: GrantReadAccessTabProps) {
                       </p>
                       <ul className="space-y-1">
                         {readGrantList.map((readGrant) => (
-                          <li key={readGrant.userId} className="text-sm">
+                          <li
+                            key={readGrant.userId}
+                            className="flex items-center justify-between gap-2 text-sm"
+                          >
                             <div className="flex flex-col">
                               <UsernameDisplay userId={readGrant.userId} />
                               {readGrant.expiresAt && (
@@ -160,6 +168,19 @@ export function GrantReadAccessTab({ setOpen }: GrantReadAccessTabProps) {
                                 </span>
                               )}
                             </div>
+                            <Button
+                              type="button"
+                              aria-label="Slett lesetilgang"
+                              variant="ghost"
+                              size="icon"
+                              disabled={revokeReadGrant.isPending}
+                              onClick={() => {
+                                revokeReadGrant.mutate(readGrant.id);
+                              }}
+                              className="text-destructive hover:text-destructive"
+                            >
+                              <Trash2 />
+                            </Button>
                           </li>
                         ))}
                       </ul>
@@ -214,9 +235,13 @@ export function GrantReadAccessTab({ setOpen }: GrantReadAccessTabProps) {
                                 className="w-full justify-start rounded px-2 py-1 text-left text-sm"
                                 onMouseDown={(event) => {
                                   event.preventDefault();
-                                  GrantReadAccessForm.setValue("userId", user.id, {
-                                    shouldValidate: true,
-                                  });
+                                  GrantReadAccessForm.setValue(
+                                    "userId",
+                                    user.id,
+                                    {
+                                      shouldValidate: true,
+                                    },
+                                  );
                                   setUsernameInput(user.displayName);
                                   setShowSuggestions(false);
                                 }}
@@ -257,7 +282,11 @@ export function GrantReadAccessTab({ setOpen }: GrantReadAccessTabProps) {
                 <FormItem>
                   <FormLabel>Begrunnelse</FormLabel>
                   <FormControl>
-                    <Input type="text" placeholder="Begrunn hvorfor tilgangen gis" {...field} />
+                    <Input
+                      type="text"
+                      placeholder="Begrunn hvorfor tilgangen gis"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
