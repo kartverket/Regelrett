@@ -14,11 +14,12 @@ You can customize your Regelrett instance by modifying the custom configuration 
 The default settings for a Regelrett instance are stored in the `<WORKING DIRECTORY>/conf/defaults.yaml` file.
 _Don't_ change this file.
 
-Your custom configuration file is the `<WORKING DIRECTORY>/conf/custom.yaml` file.
-~~You can use a custom configuration path with the `--config` option.~~
-
 The sample.yaml file is located in the same directory as defaults.yaml file.
 It contains all the settings commented out. Copy sample.yaml and name it custom.yaml.
+
+Your custom configuration file should now be `<WORKING DIRECTORY>/conf/custom.yaml`.
+
+
 
 ### ~~Docker~~
 
