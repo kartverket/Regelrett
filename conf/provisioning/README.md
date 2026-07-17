@@ -34,13 +34,12 @@ schema_sources:
       password: $PASSWORD
 ```
 
-~~To escape a literal `$` in your provisioning file values, use `$$`.~~
 
 ## Schema sources
 
 You can manage schema sources in Regelrett by adding YAML configuration files in the [`provisioning/schemasources`](../README.md#provisioning) directory.
-Each configuration file contains a list of schema sources, under the `schemasources` key, to add ~~or update~~ during startup.
-~~If the schema source already exists, Regelrett reconfigures it to match the provisioned configuration file.~~
+Each configuration file contains a list of schema sources, under the `schemasources` key, to add during startup.
+
 
 <!-- Dette blir relevant om kildene lagres i en database -->
 <!-- ~~You can also list schema sources to automatically delete, using the key `deleteschemasources`. -->
