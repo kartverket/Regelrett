@@ -93,12 +93,14 @@ export default function ActivityPage() {
     <>
       <RedirectBackButton />
       <Page>
-        <div className="flex flex-col max-w-full self-center gap-2">
+        <div className="flex flex-col w-full self-center gap-2">
           <div className="flex flex-col gap-2 px-10">
             <SkeletonLoader
-              loading={contextIsPending || tableIsPending || permissionsIsPending}
+              loading={
+                contextIsPending || tableIsPending || permissionsIsPending
+              }
               width="w-full"
-              height="h-8"
+              height="h-16"
             >
               <div className="flex justify-between">
                 <div className="flex flex-col">
@@ -116,8 +118,8 @@ export default function ActivityPage() {
                         className="text-primary hover:text-primary"
                       >
                         <Settings className="size-5" />
-                      </Button>)
-                    }
+                      </Button>
+                    )}
                   </div>
                 </div>
                 <div className="flex-col items-start bg-color-badge-grey text-secondary-foreground">
@@ -135,7 +137,7 @@ export default function ActivityPage() {
               answerIsPending ||
               commentIsPending
             }
-            width="w-full"
+            width="w-auto mx-10"
             height="min-h-[100vh]"
           >
             {!!tableData &&
