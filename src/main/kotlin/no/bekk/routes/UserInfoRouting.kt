@@ -1,6 +1,7 @@
 package no.bekk.routes
 
 import io.ktor.http.*
+import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.Dispatchers

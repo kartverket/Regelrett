@@ -149,7 +149,17 @@ class AuthServiceImpl(
     ): Boolean = hasTeamAccess(call, oAuthConfig.reportingUserGroup)
 
     override suspend fun getTeamIdFromName(call: ApplicationCall, teamName: String): String? {
-        val microsoftGroups = getGroupsOrEmptyList(call)
+        val jwtToken = call.request.headers["Authorization"]?.removePrefix("Bearer ")
+            ?: throw IllegalStateException("Authorization header missing")
+
+        val oboToken = microsoftService.requestTokenOnBehalfOf(jwtToken)
+
+        return microsoftService.fetchGroupByDisplayName(oboToken, teamName)?.id
+    }
+
+    override suspend fun getTeamNameFromId(call: ApplicationCall, teamId: String): String? {
+        val jwtToken = call.request.headers["Authorization"]?.removePrefix("Bearer ")
+            ?: throw IllegalStateException("Authorization header missing")
 
         val oboToken = microsoftService.requestTokenOnBehalfOf(jwtToken)
 
