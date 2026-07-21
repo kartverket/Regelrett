@@ -182,10 +182,10 @@ Backenden fungerer som api og webserver for frontenden, som skal være
 tilgjengelig på `http://localhost:8080` 
 
 ### Steg 4: Provisjonering
-Nå som regelrett er oppe og kjører må du provisjonere skjemakildene slik som beskrevet i [`conf/provisioning/README.md`](conf/provisioning/README.md).
-I [`conf/provisioning/README.md`](conf/provisioning/sample.yaml) finner du et eksempel på hvordan du provisjonerer opp ett skjema. 
-Kopier eksempelet og endre verdiene til å stemme overens med dine skjemakilder og skjema. 
-Du kan provisjonere opp flere skjema i samme fil. Det finnes to typer skjemakilder: Yaml og Airtable. For Yaml-skjemaer lager du et .yaml fil per skjema i mappen [src/main/resources/questions](src/main/resources/questions)
+Nå som Regelrett er oppe og kjører, må du provisjonere skjemakildene slik som beskrevet i [`conf/provisioning/README.md`](conf/provisioning/README.md).
+I [`conf/provisioning/schemasources/sample.yaml`](conf/provisioning/schemasources/sample.yaml) finner du et eksempel på hvordan du provisjonerer opp ett skjema.
+Kopier eksempelet og endre verdiene til å stemme overens med dine skjemakilder og skjema.
+Du kan provisjonere opp flere skjemaer i samme fil. Det finnes to typer skjemakilder: YAML og Airtable. For YAML-skjemaer lager du én `.yaml`-fil per skjema i mappen [src/main/resources/questions](src/main/resources/questions)
 
 ### Mer dokumentasjon
 
