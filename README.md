@@ -93,7 +93,7 @@ Les mer:
 Provisjoneringen til regelrett går ut på å fortelle til regelrett hvor og hvordan den finner skjemaene man etterhvert skal kunne fylle ut. 
 Det vil si at hvis du har konfigurert opp regelrett og fått den til å kjøre, vil den bare vise en blank side frem til du provisjonerer opp skjemakildene.
 
-En kort intro til hvordan finner du i stegen under, men for mer utfyllende detlajer og eksempler bør leses her:
+En kort intro til hvordan du gjør dette finner du i stegene under, men for mer utfyllende detaljer og eksempler bør du lese her:
 [Provisjonering](conf/provisioning/README.md)
 ## Kjøre regelrett lokalt
 
