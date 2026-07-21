@@ -23,12 +23,11 @@ The syntax for an environment variable is `$ENV_VAR_NAME`.
 
 You can use environment variables in schema provisioning configuration but not the schema definition files themselves.
 
-The following example looks up the data source URL port, user, and password using environment variables:
+The following example looks up the user and password using environment variables:
 
 ```yaml
 schema_sources:
   - name: Skjemanavn
-    url: http://localhost:$PORT
     user: $USER
     secureJsonData:
       password: $PASSWORD
