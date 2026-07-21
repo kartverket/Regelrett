@@ -50,10 +50,6 @@
 #     # <string, optional, for Airtable schema sources> The name of the
 #     # AirTable field that holds the answer units (e.g. ms, sek).
 #     # Defaults to "Svarenhet".
-#     # <string, optional, for Airtable schema sources> The name of the
-#     # AirTable field that holds the answer units (e.g. ms, sek).
-#     # Defaults to "Svarenhet".
-#     answer_unit_column: Svarenhet
 #     answer_unit_column: Svarenhet
 #     # <string, optional, for Airtable schema sources> The name of the
 #     # AirTable field that holds the answer expiry in weeks.
