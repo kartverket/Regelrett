@@ -53,3 +53,15 @@ export function useSearchUser(userNameQuery: string) {
     enabled: userNameQuery.length >= 1,
   });
 }
+
+export function useFetchTeamName(teamId?: string) {
+  return useQuery({
+    queryKey: ["team-name", teamId],
+    queryFn: () =>
+      axiosFetch<string>({
+        url: `${API_URL_BASE}/teams/${teamId}/name`,
+      }).then((response) => response.data),
+    enabled: !!teamId,
+  });
+
+}

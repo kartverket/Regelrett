@@ -30,6 +30,9 @@ interface AuthService {
     suspend fun hasReportingUserAccess(call: ApplicationCall): Boolean
 
     suspend fun getTeamIdFromName(call: ApplicationCall, teamName: String): String?
+
+    suspend fun getTeamNameFromId(call: ApplicationCall, teamId: String): String?
+
 }
 
 class AuthServiceImpl(
@@ -148,6 +151,8 @@ class AuthServiceImpl(
     override suspend fun getTeamIdFromName(call: ApplicationCall, teamName: String): String? {
         val microsoftGroups = getGroupsOrEmptyList(call)
 
-        return microsoftGroups.find { it.displayName == teamName }?.id
+        val oboToken = microsoftService.requestTokenOnBehalfOf(jwtToken)
+
+        return microsoftService.fetchGroupById(oboToken, teamId)?.displayName
     }
 }

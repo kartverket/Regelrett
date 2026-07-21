@@ -75,4 +75,31 @@ fun Route.userInfoRouting(authService: AuthService) {
             }
         }
     }
+    route("/teams") {
+        get("/{teamId}/name"){
+            try {
+                val teamId = call.parameters["teamId"]
+                logger.info("${call.getRequestInfo()} Received GET /teams/{teamId}/name with id $teamId")
+
+                if (teamId == null) {
+                    logger.warn("${call.getRequestInfo()} Missing teamId parameter")
+                    throw ValidationException("teamId parameter is required", field = "teamId")
+                }
+
+                val teamName = authService.getTeamNameFromId(call, teamId) ?: throw BadRequestException("TeamId: ${teamId} not valid")
+                logger.info("${call.getRequestInfo()} Successfully retrieved display name for teamId: $teamId")
+                call.respond(HttpStatusCode.OK, teamName)
+            } catch (e: ValidationException) {
+                ErrorHandlers.handleValidationException(call, e)
+
+            } catch (e: BadRequestException) {
+                logger.error("Bad request: ${e.message}", e)
+                call.respond(HttpStatusCode.BadRequest, e.message ?: "Bad request")
+            }
+            catch (e: Exception) {
+                logger.error("${call.getRequestInfo()} Error retrieving display name for teamId: ${call.parameters["teamId"]}", e)
+                ErrorHandlers.handleGenericException(call, e)
+            }
+        }
+    }
 }

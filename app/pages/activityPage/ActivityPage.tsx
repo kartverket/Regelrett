@@ -8,8 +8,8 @@ import { mapTableDataRecords } from "@/utils/mapperUtil";
 import { AnswerType } from "@/api/types";
 import { ErrorState } from "@/components/ErrorState";
 import { useContext, useContextPermissions } from "@/hooks/useContext";
-import { useUser } from "@/hooks/useUser";
-import { useState } from "react";
+import { useFetchTeamName, useUser } from "@/hooks/useUser";
+import React, { useState } from "react";
 import { SettingsModal } from "./settingsModal/SettingsModal";
 import RedirectBackButton from "../../components/buttons/RedirectBackButton";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
@@ -31,6 +31,12 @@ export default function ActivityPage() {
     error: userinfoError,
     isPending: userinfoIsPending,
   } = useUser();
+
+  const {
+    data: teamName,
+    error: teamNameError,
+    isPending: teamNameIsPending,
+  } = useFetchTeamName(context?.teamId);
 
   const {
     data: tableData,
@@ -85,9 +91,6 @@ export default function ActivityPage() {
       record.metadata?.answerMetadata?.type === AnswerType.SELECT_SINGLE,
   );
 
-  const teamName = userinfo?.groups.find(
-    (team) => team.id === context?.teamId,
-  )?.displayName;
 
   return (
     <>
@@ -97,7 +100,10 @@ export default function ActivityPage() {
           <div className="flex flex-col gap-2 px-10">
             <SkeletonLoader
               loading={
-                contextIsPending || tableIsPending || permissionsIsPending
+                contextIsPending ||
+                tableIsPending ||
+                permissionsIsPending ||
+                teamNameIsPending
               }
               width="w-full"
               height="h-16"
@@ -124,7 +130,11 @@ export default function ActivityPage() {
                 </div>
                 <div className="flex-col items-start bg-color-badge-grey text-secondary-foreground">
                   <p className="text-xs">Team - skjemaeier</p>
-                  <p className="text-sm font-semibold">{teamName}</p>
+                  <p className="text-sm font-semibold">
+                    {teamNameError
+                      ? "Feil ved henting av bruker"
+                      : teamName}
+                  </p>
                 </div>
               </div>
             </SkeletonLoader>
