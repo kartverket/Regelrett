@@ -2,7 +2,7 @@
 
 Regelrett has an active provisioning system that uses configuration files.
 This makes GitOps more natural since data sources and dashboards can be defined using files that can be version controlled.
-
+Provisioning in this app is used for regelrett to know where to find the schemas, which is used to create contexts the user will fill out.   
 ## Configuration file
 
 Refer to [Configuration](../README.md) for more information on what you can configure in `conf/custom.yaml`.
@@ -11,7 +11,7 @@ Refer to [Configuration](../README.md) for more information on what you can conf
 
 Regelrett reads its default configuration from `<WORKING DIRECTORY>/conf/defaults.yaml`.
 By default, Regelrett reads custom configuration from `<WORKING DIRECTORY>/conf/custom.yaml`.
-~~You can override the custom configuration path with the `--config` option.~~
+
 
 ### Use environment variables
 
@@ -23,24 +23,22 @@ The syntax for an environment variable is `$ENV_VAR_NAME`.
 
 You can use environment variables in schema provisioning configuration but not the schema definition files themselves.
 
-The following example looks up the data source URL port, user, and password using environment variables:
+The following example looks up the user and password using environment variables:
 
 ```yaml
 schema_sources:
   - name: Skjemanavn
-    url: http://localhost:$PORT
     user: $USER
     secureJsonData:
       password: $PASSWORD
 ```
 
-~~To escape a literal `$` in your provisioning file values, use `$$`.~~
 
 ## Schema sources
 
 You can manage schema sources in Regelrett by adding YAML configuration files in the [`provisioning/schemasources`](../README.md#provisioning) directory.
-Each configuration file contains a list of schema sources, under the `schemasources` key, to add ~~or update~~ during startup.
-~~If the schema source already exists, Regelrett reconfigures it to match the provisioned configuration file.~~
+Each configuration file contains a list of schema sources, under the `schemasources` key, to add during startup.
+
 
 <!-- Dette blir relevant om kildene lagres i en database -->
 <!-- ~~You can also list schema sources to automatically delete, using the key `deleteschemasources`. -->

@@ -1,7 +1,5 @@
 # Configure Regelrett
 
-Features that are planned but not implemented are indicated by ~~strikethroughs~~.
-
 Regelrett has default and custom configuration files.
 You can customize your Regelrett instance by modifying the custom configuration file or by using environment variables.
 
@@ -14,15 +12,12 @@ You can customize your Regelrett instance by modifying the custom configuration 
 The default settings for a Regelrett instance are stored in the `<WORKING DIRECTORY>/conf/defaults.yaml` file.
 _Don't_ change this file.
 
-Your custom configuration file is the `<WORKING DIRECTORY>/conf/custom.yaml` file.
-~~You can use a custom configuration path with the `--config` option.~~
-
 The sample.yaml file is located in the same directory as defaults.yaml file.
 It contains all the settings commented out. Copy sample.yaml and name it custom.yaml.
 
-### ~~Docker~~
+Your custom configuration file should now be `<WORKING DIRECTORY>/conf/custom.yaml`.
 
-~~Refer to [Configure a Regelrett Docker image]() for information about environmental variables, persistent storage, and building custom Docker images.~~
+
 
 ## Remove comments in the .yaml files
 
@@ -75,37 +70,6 @@ export RR_SCHEMA_SIKKERHETSKONTROLLER_WEBHOOK_ID=newid
 export RR_OAUTH_CLIENT_SECRET=newS3cretKey
 ```
 
-## ~~Variable expansion~~
-
-~~If any of your options contains the expression `$__<PROVIDER>{<ARGUMENT>}`or `${<ENVIRONMENT VARIABLE>}`, then Regelrett evaluates them.
-The evaluation runs the provider with the provided argument to get the final value of the option.~~
-
-~~There are two providers: `env` and `file`.~~
-
-### ~~`env` provider~~
-
-~~The `env` provider expands environment variables.
-If you set an option to `$__env{PORT}` the value of the `PORT` environment variable replaces it.
-For environment variables you can also use the short-hand syntax `${PORT}`.~~
-
-~~The following example sets the log directory to the path in the `LOGDIR` environment variable:~~
-
-```yaml
-paths:
-  logs: $__env{LOGDIR}/regelrett
-```
-
-### ~~`file` provider~~
-
-~~The `file` provider reads a file from the filesystem.
-It trims whitespace from the beginning and the end of files.~~
-
-~~The following example sets the database password to the contents of the `/etc/secrets/gf_sql_password` file:~~
-
-```yaml
-database:
-  password: $__file{/etc/secrets/gf_sql_password}
-```
 
 ## Configuration options
 
@@ -156,7 +120,7 @@ The `allowed_origins` option is a comma-separated list of additional origins tha
 
 #### `provisioning`
 
-Directory that contains [provisioning](provisioning/README.md) configuration files that Regelrett applies on startup. ~~Schemas are reloaded when the JSON files change.~~
+Directory that contains [provisioning](provisioning/README.md) configuration files that Regelrett applies on startup.
 
 ### schema_sources
 

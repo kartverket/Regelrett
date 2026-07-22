@@ -47,6 +47,14 @@
 #     # is displayed in the question detail page. If not set, no description
 #     # will be shown.
 #     description_column: Sikkerhetskontroller
+#     # <string, optional, for Airtable schema sources> The name of the
+#     # AirTable field that holds the answer units (e.g. ms, sek).
+#     # Defaults to "Svarenhet".
+#     answer_unit_column: Svarenhet
+#     # <string, optional, for Airtable schema sources> The name of the
+#     # AirTable field that holds the answer expiry in weeks.
+#     # Defaults to "Svarvarighet".
+#     answer_expiry_column: Svarvarighet
 #     # <string, optional, for Airtable and YAML scheams sources>
 #     # entra id group id which is given read access to specefied schema
 #     read_access_group_id:

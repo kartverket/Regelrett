@@ -71,26 +71,32 @@ Nå skal databasen være oppe og kjøre!
 
 ### Info
 
-- Filen curl.txt inneholder curl kommandoer for å utføre spørringer mot
-  Airtable
+- Du kan stoppe containeren ved å kjøre `docker stop regelrett-db` og starte den igjen med
+  `docker start regelrett-db`.
 - Applikasjonen bruker en PostgresQl Database, og Flyway migration for å gjøre
   endringer på databaseskjemaer.
 - Alle filer i Flyway migration script må ha følgende format:
 
 `<Version>__<Description>.sql` For eksempel: `V1.1__initial.sql`
 
-- Databasen heter "regelrett", og må foreløpig settes opp lokalt på utviklerens
+- Databasen heter "regelrett", og må settes opp lokalt på utviklerens
   maskin utenfor Flyway.
 - Databasemigreringer kjører automatisk ved oppstart av applikasjonen, eller så
   kan de kjøres manuelt med `./gradlew flywayMigrate`
 
 ## Konfigurasjon
 
-Regelrett kan konfigurerers opp til å kunne tilpasse seg ulike behov. Med det følger en drøss av verdier; de som MÅ bli satt for at regelrett skal fungere er nevnt under i [Steg 1](#steg-1-konfigurasjon), andre er nevnt i [Konfigurasjons docen](conf/README.md)
+Regelrett kan konfigurerers opp til å kunne tilpasse seg ulike behov. Med det følger en drøss av verdier; de som MÅ bli satt for at regelrett skal fungere er nevnt under i [Steg 1](#steg-1-konfigurasjon), andre er nevnt i [konfigurasjons docen](conf/README.md)
 
 Les mer:
 [Konfigurasjon](conf/README.md)
 
+## Provisjonering
+Provisjoneringen til regelrett går ut på å fortelle til regelrett hvor og hvordan den finner skjemaene man etterhvert skal kunne fylle ut. 
+Det vil si at hvis du har konfigurert opp regelrett og fått den til å kjøre, vil den bare vise en blank side frem til du provisjonerer opp skjemakildene.
+
+En kort intro til hvordan du gjør dette finner du i stegene under, men for mer utfyllende detaljer og eksempler bør du lese her:
+[Provisjonering](conf/provisioning/README.md)
 ## Kjøre regelrett lokalt
 
 Backend er bygget med KTOR og frontend er bygget med React, Vite og TypeScript.
@@ -108,7 +114,7 @@ Du må konfigurere applikasjonen slik det beskrives i
 [`conf/README.md`](conf/README.md). Du kan enten opprette en `conf/custom.yaml`
 fil, eller bruke miljøvariabler der du kjører backenden.
 
-Verdiene som _må_ overskrives, enten i fil:
+Verdiene som _må_ overskrives, enten i fil - i conf/custom.yaml:
 
 ```yaml
 oauth:
@@ -125,16 +131,10 @@ RR_OAUTH_CLIENT_ID=<CLIENT_ID>
 RR_OAUTH_CLIENT_SECRET=<CLIENT_SECRET>
 ```
 
-I tillegg må du sette miljøvariabelen. Denne brukes i
-conf/provisioning/defaults.yaml og kan derfor ikke settes i conf/custom.yaml
-
-```env
-RR_AIRTABLE_ACCESS_TOKEN=<PAT>
-```
-
 Om du setter base.mode til development skal KTOR appen kunne reloades
 automatisk.
-Fil:
+
+conf/custom.yaml:
 
 ```yaml
 base:
@@ -147,11 +147,9 @@ Miljøvariabel:
 RR_BASE_MODE=development
 ```
 
-For å få tilgang til hemmelighetene, spør noen på teamet om å gi deg tilgang
-til 1Password vaulten.
+Se confluense for nøyere beskrivelse og info om hvor du finner hemlighetene
 
-`AIRTABLE_ACCESS_TOKEN` er lagret under `AirTable` i vaulten, og `CLIENT_ID`,
-`CLIENT_SECRET` og `TENANT_ID` er lagret under `EntraId`.
+
 
 Du kan sette miljøvariablene i IntelliJ ved å gå inn på `Run -> Edit
 configurations`.
@@ -175,14 +173,25 @@ configurations`.
 - `backend/gradlew run` i ett annet
 
 Backenden fungerer som api og webserver for frontenden, som skal være
-tilgjengelig på `http://localhost:8080`
+tilgjengelig på `http://localhost:8080` 
 
-### Mer dokumentasjon
+### Steg 4: Provisjonering
+Nå som Regelrett er oppe og kjører, må du provisjonere skjemakildene slik som beskrevet i [`conf/provisioning/README.md`](conf/provisioning/README.md).
+I praksis betyr provisjonering at du forteller Regelrett hvor skjemaene ligger (Airtable eller Yaml) og hvordan man får tak i dem, slik at applikasjonen kan laste dem inn.  
+I [`conf/provisioning/schemasources/sample.yaml`](conf/provisioning/schemasources/sample.yaml) finner du et eksempel på hvordan du provisjonerer opp et skjema.
+Kopier eksempelet og endre verdiene til å stemme overens med dine skjemakilder og skjema. Du kan provisjonere opp flere skjemaer i samme fil.
 
-For mer dokumentasjon om [build and
-deployment](./docs/build-and-deployment.md),
-[kodestruktur](./docs/code-structure.md) og [datamodell](./docs/data-model.md)
-se /docs mappen.
+Det finnes to typer skjemakilder: YAML og Airtable. For YAML-skjemaer lager du én `.yaml`-fil per skjema i mappen [src/main/resources/questions](src/main/resources/questions)
+
+Hvis du provisjonerer opp en skjemakilde fra airtable og velger å beholde [airtable_accesstoken som miljøvaraibel](conf/provisioning/README.md#use-environment-variables) slik som i sample.yaml, må du sette denne som en miljøvariabel. Denne brukes i
+conf/provisioning/<yourProvisioningFileName>.yaml og kan derfor ikke settes i conf/custom.yaml:
+
+```env
+RR_AIRTABLE_ACCESS_TOKEN=<PAT>
+```
+
+Les mer om [provisjonering](conf/provisioning/README.md).
+
 
 ## Kjøre testene
 
@@ -229,6 +238,5 @@ pre-commit`. Dette vil kjøre lint-staged for å sjekke de stage’ede filene og
   nettverksforespørsler, og gir en optimal brukeropplevelse med automatiske
   bakgrunnsoppdateringer og feilhåndtering. Se dokumentasjonen for Tanstack
   Query her https://tanstack.com/query/latest
-- For mer dokumentasjon om [Build and
-  deployment](./docs/build-and-deployment.md)
-  ´´´´
+
+
