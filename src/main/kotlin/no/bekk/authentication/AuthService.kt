@@ -32,7 +32,6 @@ interface AuthService {
     suspend fun getTeamIdFromName(call: ApplicationCall, teamName: String): String?
 
     suspend fun getTeamNameFromId(call: ApplicationCall, teamId: String): String?
-
 }
 
 class AuthServiceImpl(
