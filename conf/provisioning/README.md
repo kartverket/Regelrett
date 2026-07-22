@@ -2,7 +2,7 @@
 
 Regelrett has an active provisioning system that uses configuration files.
 This makes GitOps more natural since data sources and dashboards can be defined using files that can be version controlled.
-
+Provisioning in this app is used for regelrett to know where to find the schemas, which is used to create contexts the user will fill out.   
 ## Configuration file
 
 Refer to [Configuration](../README.md) for more information on what you can configure in `conf/custom.yaml`.
@@ -11,7 +11,7 @@ Refer to [Configuration](../README.md) for more information on what you can conf
 
 Regelrett reads its default configuration from `<WORKING DIRECTORY>/conf/defaults.yaml`.
 By default, Regelrett reads custom configuration from `<WORKING DIRECTORY>/conf/custom.yaml`.
-~~You can override the custom configuration path with the `--config` option.~~
+
 
 ### Use environment variables
 
