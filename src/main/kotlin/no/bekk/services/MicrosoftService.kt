@@ -157,6 +157,7 @@ class MicrosoftServiceImpl(private val config: Config, private val client: HttpC
                     bearerAuth(bearerToken)
                     header("ConsistencyLevel", "eventual")
                     parameter("\$filter", "displayName eq '${displayName.replace("'", "''")}'")
+                }
 
                 if (response.status != HttpStatusCode.OK) {
                     val responseBody = response.body<String>()
