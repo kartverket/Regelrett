@@ -46,8 +46,6 @@ dependencies {
     implementation(libs.flyway.database.core)
     implementation(libs.flyway.database.postgresql)
     implementation(libs.ben.manes.caffeine)
-    implementation(libs.netty.codec.http2)
-    implementation(libs.netty.transport.native.epoll)
 
     constraints {
         implementation("com.fasterxml.jackson:jackson-bom:2.21.4") {
