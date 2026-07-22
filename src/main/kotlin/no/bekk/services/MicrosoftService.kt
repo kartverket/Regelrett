@@ -22,6 +22,8 @@ import org.slf4j.LoggerFactory
 interface MicrosoftService {
     suspend fun requestTokenOnBehalfOf(jwtToken: String?): String
     suspend fun fetchGroups(bearerToken: String, filter: String? = null): List<MicrosoftGraphGroup>
+    suspend fun fetchGroupById(bearerToken: String, groupId: String): MicrosoftGraphGroup?
+    suspend fun fetchGroupByDisplayName(bearerToken: String, displayName: String): MicrosoftGraphGroup?
     suspend fun fetchCurrentUser(bearerToken: String): MicrosoftGraphUser
     suspend fun fetchUserByUserId(bearerToken: String, userId: String): MicrosoftGraphUser
     suspend fun searchUsersbyName(bearerToken: String, query: String, limit: Int): List<MicrosoftGraphUser>
@@ -116,6 +118,63 @@ class MicrosoftServiceImpl(private val config: Config, private val client: HttpC
         } catch (e: Exception) {
             logger.error("Unexpected error fetching groups from Microsoft Graph", e)
             throw ExternalServiceException("Microsoft Graph", "Failed to fetch groups: ${e.message}", cause = e)
+        }
+    }
+
+    override suspend fun fetchGroupById(bearerToken: String, groupId: String): MicrosoftGraphGroup? {
+        val url = "${config.microsoftGraph.baseUrl}/v1.0/groups/$groupId" + $$"?$select=id,displayName"
+
+        return try {
+            ExternalServiceTimer.time("Microsoft", "fetchGroupById") {
+                val response: HttpResponse = client.get(url) {
+                    bearerAuth(bearerToken)
+                }
+
+                when (response.status) {
+                    HttpStatusCode.OK -> json.decodeFromString<MicrosoftGraphGroup>(response.body<String>())
+                    HttpStatusCode.NotFound -> null
+                    else -> {
+                        val responseBody = response.body<String>()
+                        logger.warn("Failed to fetch group $groupId - Status: ${response.status}, Body: $responseBody")
+                        throw ExternalServiceException("Microsoft Graph", "Failed to fetch group $groupId", response.status.value)
+                    }
+                }
+            }
+        } catch (e: ExternalServiceException) {
+            throw e
+        } catch (e: Exception) {
+            logger.error("Unexpected error fetching group $groupId from Microsoft Graph", e)
+            throw ExternalServiceException("Microsoft Graph", "Failed to fetch group $groupId: ${e.message}", cause = e)
+        }
+    }
+
+    override suspend fun fetchGroupByDisplayName(bearerToken: String, displayName: String): MicrosoftGraphGroup? {
+        val url = "${config.microsoftGraph.baseUrl}/v1.0/groups" + $$"?$select=id,displayName&$top=1"
+
+        return try {
+            ExternalServiceTimer.time("Microsoft", "fetchGroupByDisplayName") {
+                val response: HttpResponse = client.get(url) {
+                    bearerAuth(bearerToken)
+                    header("ConsistencyLevel", "eventual")
+                    parameter("\$filter", "displayName eq '${displayName.replace("'", "''")}'")
+                }
+
+                if (response.status != HttpStatusCode.OK) {
+                    val responseBody = response.body<String>()
+                    logger.warn("Failed to lookup group by name '$displayName' - Status: ${response.status}, Body: $responseBody")
+                    throw ExternalServiceException("Microsoft Graph", "Failed to lookup group by name", response.status.value)
+                }
+
+                json.decodeFromString<MicrosoftGraphGroupsResponse>(response.body<String>())
+                    .value
+                    .firstOrNull()
+                    ?.let { MicrosoftGraphGroup(id = it.id, displayName = it.displayName) }
+            }
+        } catch (e: ExternalServiceException) {
+            throw e
+        } catch (e: Exception) {
+            logger.error("Unexpected error looking up group by name '$displayName' from Microsoft Graph", e)
+            throw ExternalServiceException("Microsoft Graph", "Failed to lookup group by name: ${e.message}", cause = e)
         }
     }
 

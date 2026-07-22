@@ -1,6 +1,7 @@
 package no.bekk.routes
 
 import io.ktor.http.*
+import io.ktor.server.plugins.NotFoundException
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.Dispatchers
@@ -71,6 +72,31 @@ fun Route.userInfoRouting(authService: AuthService) {
                 ErrorHandlers.handleValidationException(call, e)
             } catch (e: Exception) {
                 logger.error("${call.getRequestInfo()} Error searching users", e)
+                ErrorHandlers.handleGenericException(call, e)
+            }
+        }
+    }
+    route("/teams") {
+        get("/{teamId}/name") {
+            try {
+                val teamId = call.parameters["teamId"]
+                logger.info("${call.getRequestInfo()} Received GET /teams/{teamId}/name with id $teamId")
+
+                if (teamId == null) {
+                    logger.warn("${call.getRequestInfo()} Missing teamId parameter")
+                    throw ValidationException("teamId parameter is required", field = "teamId")
+                }
+
+                val teamName = authService.getTeamNameFromId(call, teamId) ?: throw NotFoundException("TeamId $teamId not valid")
+                logger.info("${call.getRequestInfo()} Successfully retrieved display name for teamId: $teamId")
+                call.respond(HttpStatusCode.OK, teamName)
+            } catch (e: ValidationException) {
+                ErrorHandlers.handleValidationException(call, e)
+            } catch (e: NotFoundException) {
+                logger.error("Not found exception: ${e.message}", e)
+                call.respond(HttpStatusCode.BadRequest, e.message ?: "Bad request")
+            } catch (e: Exception) {
+                logger.error("${call.getRequestInfo()} Error retrieving display name for teamId: ${call.parameters["teamId"]}", e)
                 ErrorHandlers.handleGenericException(call, e)
             }
         }

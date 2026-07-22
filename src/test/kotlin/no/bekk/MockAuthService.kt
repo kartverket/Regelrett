@@ -17,4 +17,5 @@ interface MockAuthService : AuthService {
     override suspend fun hasSuperUserAccess(call: ApplicationCall): Boolean = TODO("Not yet implemented")
     override suspend fun hasReportingUserAccess(call: ApplicationCall): Boolean = TODO("Not yet implemented")
     override suspend fun getTeamIdFromName(call: ApplicationCall, teamName: String): String? = TODO("Not yet implemented")
+    override suspend fun getTeamNameFromId(call: ApplicationCall, teamId: String): String? = TODO("Not yet implemented")
 }

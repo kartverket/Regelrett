@@ -123,6 +123,7 @@ export default function CreateContextPage() {
                     { replace: true },
                   )
                 }
+                disabled={isUserLoading}
               >
                 <SelectTrigger className="w-90 bg-card">
                   <SelectValue placeholder="Velg team" />
@@ -154,6 +155,7 @@ export default function CreateContextPage() {
                     { replace: true },
                   )
                 }
+                disabled={formIsPending}
               >
                 <SelectTrigger className="w-90 bg-card">
                   <SelectValue placeholder="Velg skjema" />

@@ -74,35 +74,35 @@ fun Route.readGrantRouting(authService: AuthService, readGrantRepository: ReadGr
                 }
             }
 
-patch("/{readGrantId}/expiry") {
-    try {
-        logger.info("Received PATCH /readGrants/{contextId}/{readGrantId}/expiry with readGrantId: ${call.parameters["readGrantId"]}")
-        val contextId = call.parameters["contextId"] ?: throw BadRequestException("Missing contextId")
-        val readGrantId = call.parameters["readGrantId"] ?: throw BadRequestException("Missing readGrantId")
+            patch("/{readGrantId}/expiry") {
+                try {
+                    logger.info("Received PATCH /readGrants/{contextId}/{readGrantId}/expiry with readGrantId: ${call.parameters["readGrantId"]}")
+                    val contextId = call.parameters["contextId"] ?: throw BadRequestException("Missing contextId")
+                    val readGrantId = call.parameters["readGrantId"] ?: throw BadRequestException("Missing readGrantId")
 
-        if (!authService.hasWriteContextAccess(call, contextId)) {
-            call.respond(HttpStatusCode.Forbidden)
-            return@patch
-        }
+                    if (!authService.hasWriteContextAccess(call, contextId)) {
+                        call.respond(HttpStatusCode.Forbidden)
+                        return@patch
+                    }
 
-        val revoked = readGrantRepository.revokeReadGrantOnContext(readGrantId, contextId)
-        if (!revoked) {
-            call.respond(HttpStatusCode.NotFound)
-            return@patch
-        }
+                    val revoked = readGrantRepository.revokeReadGrantOnContext(readGrantId, contextId)
+                    if (!revoked) {
+                        call.respond(HttpStatusCode.NotFound)
+                        return@patch
+                    }
 
-        call.respond(HttpStatusCode.NoContent)
-        return@patch
-    } catch (e: BadRequestException) {
-        logger.error("Bad request: ${e.message}", e)
-        call.respond(HttpStatusCode.BadRequest, e.message ?: "Bad request")
-    } catch (e: IllegalArgumentException) {
-        call.respond(HttpStatusCode.BadRequest, "Invalid contextId or readGrantId")
-    } catch (e: Exception) {
-        logger.error("Unexpected error when processing PATCH /readGrants/{contextId}/{readGrantId}/expiry", e)
-        call.respond(HttpStatusCode.InternalServerError, "An unexpected error occurred.")
-    }
-}
+                    call.respond(HttpStatusCode.NoContent)
+                    return@patch
+                } catch (e: BadRequestException) {
+                    logger.error("Bad request: ${e.message}", e)
+                    call.respond(HttpStatusCode.BadRequest, e.message ?: "Bad request")
+                } catch (e: IllegalArgumentException) {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid contextId or readGrantId")
+                } catch (e: Exception) {
+                    logger.error("Unexpected error when processing PATCH /readGrants/{contextId}/{readGrantId}/expiry", e)
+                    call.respond(HttpStatusCode.InternalServerError, "An unexpected error occurred.")
+                }
+            }
         }
     }
 }

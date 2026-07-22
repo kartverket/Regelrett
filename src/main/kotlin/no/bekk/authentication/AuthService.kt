@@ -30,6 +30,8 @@ interface AuthService {
     suspend fun hasReportingUserAccess(call: ApplicationCall): Boolean
 
     suspend fun getTeamIdFromName(call: ApplicationCall, teamName: String): String?
+
+    suspend fun getTeamNameFromId(call: ApplicationCall, teamId: String): String?
 }
 
 class AuthServiceImpl(
@@ -146,8 +148,20 @@ class AuthServiceImpl(
     ): Boolean = hasTeamAccess(call, oAuthConfig.reportingUserGroup)
 
     override suspend fun getTeamIdFromName(call: ApplicationCall, teamName: String): String? {
-        val microsoftGroups = getGroupsOrEmptyList(call)
+        val jwtToken = call.request.headers["Authorization"]?.removePrefix("Bearer ")
+            ?: throw IllegalStateException("Authorization header missing")
 
-        return microsoftGroups.find { it.displayName == teamName }?.id
+        val oboToken = microsoftService.requestTokenOnBehalfOf(jwtToken)
+
+        return microsoftService.fetchGroupByDisplayName(oboToken, teamName)?.id
+    }
+
+    override suspend fun getTeamNameFromId(call: ApplicationCall, teamId: String): String? {
+        val jwtToken = call.request.headers["Authorization"]?.removePrefix("Bearer ")
+            ?: throw IllegalStateException("Authorization header missing")
+
+        val oboToken = microsoftService.requestTokenOnBehalfOf(jwtToken)
+
+        return microsoftService.fetchGroupById(oboToken, teamId)?.displayName
     }
 }
