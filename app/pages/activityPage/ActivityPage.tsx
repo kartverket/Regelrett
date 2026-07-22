@@ -131,9 +131,7 @@ export default function ActivityPage() {
                 <div className="flex-col items-start bg-color-badge-grey text-secondary-foreground">
                   <p className="text-xs">Team - skjemaeier</p>
                   <p className="text-sm font-semibold">
-                    {teamNameError
-                      ? "Feil ved henting av bruker"
-                      : teamName}
+                    {teamNameError ? "Feil ved henting av teamnavn" : teamName}
                   </p>
                 </div>
               </div>
