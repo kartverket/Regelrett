@@ -119,11 +119,9 @@ class FormServiceImpl : FormService {
         for (i in 0..3) {
             val uuid = generateNewUid()
 
-            if (providers.firstNotNullOfOrNull { it.value.id == uuid } != null) {
-                continue
+            if (providers.values.none {it.id == uuid }) {
+                return uuid
             }
-
-            return uuid
         }
         throw IllegalStateException("Failed to generate UID for provider")
     }
