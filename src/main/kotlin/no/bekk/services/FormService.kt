@@ -122,8 +122,6 @@ class FormServiceImpl : FormService {
             if (providers.values.none {it.id == uuid }) {
                 return uuid
             }
-
-            return uuid
         }
         throw IllegalStateException("Failed to generate UID for provider")
     }
