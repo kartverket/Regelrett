@@ -21,26 +21,6 @@ data class CommandLineArgs(
     val args: Array<String>,
 )
 
-interface FormInstances {
-    val id: String
-}
-
-data class AirTableInstanceConfig(
-    override val id: String,
-    val accessToken: String,
-    val baseId: String,
-    val tableId: String,
-    var viewId: String? = null,
-    var webhookId: String? = null,
-    var webhookSecret: String? = null,
-) : FormInstances
-
-data class YAMLInstanceConfig(
-    override val id: String,
-    val endpoint: String? = null,
-    val resourcePath: String? = null,
-) : FormInstances
-
 data class PathsConfig(
     val provisioning: String,
 )
