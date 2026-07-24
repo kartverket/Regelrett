@@ -37,18 +37,6 @@ fun Application.configureErrorHandling() {
 object ErrorHandlers {
     private val logger = LoggerFactory.getLogger("no.bekk.plugins.ErrorHandlers")
 
-    suspend fun handleAuthenticationException(call: ApplicationCall, cause: AuthenticationException) {
-        logger.warn("${call.getRequestInfo()} Authentication failed: ${cause.message}", cause)
-        call.respond(
-            HttpStatusCode.Unauthorized,
-            ErrorResponse(
-                error = "authentication_failed",
-                message = cause.message ?: "Authentication failed",
-                correlationId = call.request.headers["X-Correlation-ID"],
-            ),
-        )
-    }
-
     suspend fun handleAuthorizationException(call: ApplicationCall, cause: AuthorizationException) {
         logger.warn("${call.getRequestInfo()} Authorization failed: ${cause.message}")
         call.respond(
@@ -93,18 +81,6 @@ object ErrorHandlers {
             ErrorResponse(
                 error = "conflict",
                 message = cause.message ?: "Resource conflict",
-                correlationId = call.request.headers["X-Correlation-ID"],
-            ),
-        )
-    }
-
-    suspend fun handleDatabaseException(call: ApplicationCall, cause: DatabaseException) {
-        logger.error("${call.getRequestInfo()} Database error: ${cause.message} (operation: ${cause.operation})", cause)
-        call.respond(
-            HttpStatusCode.InternalServerError,
-            ErrorResponse(
-                error = "database_error",
-                message = "Internal server error",
                 correlationId = call.request.headers["X-Correlation-ID"],
             ),
         )
