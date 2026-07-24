@@ -65,7 +65,7 @@ export const TableStateProvider = ({ children }: PropsWithChildren) => {
   );
 };
 
-export const useTableState = () => {
+const useTableState = () => {
   return useContext<TableStateContextType>(TableStateContext);
 };
 

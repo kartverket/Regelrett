@@ -18,7 +18,7 @@ export type Answer = {
   updated: Date;
 };
 
-export type AnswerMetadata = {
+type AnswerMetadata = {
   type: AnswerType;
   units: string[] | null;
   options: string[] | null;
@@ -54,7 +54,7 @@ export enum OptionalFieldType {
   DATE = "DATE",
 }
 
-export type OptionalField = {
+type OptionalField = {
   key: string;
   options: string[] | null;
   type: OptionalFieldType;
@@ -72,7 +72,7 @@ export type Question = {
   updated: Date | undefined;
 };
 
-export type QuestionMetadata = {
+type QuestionMetadata = {
   answerMetadata: AnswerMetadata;
   optionalFields: OptionalField[] | null;
 };
