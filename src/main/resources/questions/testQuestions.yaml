@@ -76,7 +76,7 @@ records:
           value:
             - "MÅ"
   - id: "Z-421"
-    question: "What is the capital of France? \n\n  tetststetetet"
+    question: "What is the capital of France? \n Tekst som bare vises på detalj-siden for spørsmålet, men samme linje \n\n- Lengre \n- forklaring \n- i liste \n"
     metadata:
       answerMetadata:
         type: "TEXT_SINGLE_LINE"
