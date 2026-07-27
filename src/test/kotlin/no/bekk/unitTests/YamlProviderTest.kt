@@ -12,7 +12,7 @@ class YamlProviderTest {
         val yamlProvider = YamlProvider(id = "1", name = "YamlTest", resourcePath = "questions/testQuestions.yaml")
         val form = yamlProvider.getForm()
 
-        assertEquals(form.records.size, 7)
+        assertEquals(form.records.size, 8)
 
         val question = yamlProvider.getQuestion("Z-424")
 
