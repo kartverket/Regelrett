@@ -4,7 +4,7 @@ export type ObjectValues<T extends object> = T[keyof T];
 
 export type ObjectMap<K extends keyof any, V> = { [P in K]: V };
 
-export function keys<Obj extends object>(obj: Obj): Array<keyof Obj> {
+function keys<Obj extends object>(obj: Obj): Array<keyof Obj> {
   return Object.keys(obj) as any;
 }
 
