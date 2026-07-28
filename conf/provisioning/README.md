@@ -177,12 +177,12 @@ Each value represents the data for that column in the given record
 ```yaml
 name: "YAML-data" 
 columns: 
-  - type: "OPTION_SINGLE"  #Choose between OPTION_MULTIPLE, OPTION_SINGLE or TEXT
+  - type: "TEXT"  #Choose between OPTION_MULTIPLE, OPTION_SINGLE or TEXT
     name: "Kortnavn" #Column name
     isName: true  # This column will be the name/title and clickable link in the table
-  - type: "OPTION_SINGLE"
+  - type: "TEXT"
     name: "ID" #ID columns should always be included in every Schema. 
-  - type: "OPTION_SINGLE"
+  - type: "TEXT"
     name: "Kontroller"
   - type: "OPTION_SINGLE"
     name: "Svar"
@@ -205,6 +205,7 @@ records:
           - "190"
           - "195"
           - "205"
+        expiry: 12 # An answer to this question expires in 12 weeks and user will see notification for this
       optionalFields:
         - key: "ID"
           value:
