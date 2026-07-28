@@ -31,11 +31,10 @@ For å sette opp databasen må man ha installert Docker. Dette kan du gjøre ved
 kjøre denne kommandoen:
 
 ```
-brew cask install docker
+brew install --cask docker
 ```
 
-Alternativt kan du bruke Postgres desktop til å kjøre en database lokalt. Hvis
-du har gjort dette kan du hoppe til Steg 6. Som standard antar Regelrett at du
+Alternativt kan du bruke Postgres desktop til å kjøre en database lokalt. Som standard antar Regelrett at du
 har en bruker `postgres` uten passord. Dette er
 [konfigurerbart](conf/README.md).
 
