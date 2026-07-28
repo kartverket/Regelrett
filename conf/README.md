@@ -13,7 +13,7 @@ The default settings for a Regelrett instance are stored in the `<WORKING DIRECT
 _Don't_ change this file.
 
 The sample.yaml file is located in the same directory as defaults.yaml file.
-It contains all the settings commented out. Copy sample.yaml and name it custom.yaml.
+It contains all the settings commented out. Copy `sample.yaml` and name it custom.yaml.
 
 Your custom configuration file should now be `<WORKING DIRECTORY>/conf/custom.yaml`.
 
@@ -65,7 +65,7 @@ You can override variables on Linux machines with:
 
 ```bash
 export RR_BASE_MODE=development
-export RR_SERVER_HTTP_PORT=owner
+export RR_SERVER_HTTP_PORT=8083
 export RR_SCHEMA_SIKKERHETSKONTROLLER_WEBHOOK_ID=newid
 export RR_OAUTH_CLIENT_SECRET=newS3cretKey
 ```
@@ -92,7 +92,7 @@ The port the api server binds to, defaults to `8080`.
 
 The host for the server to listen on.
 If your machine has more than one network interface, you can use this setting to expose the Regelrett service on only one network interface and not have it available on others, such as the loopback interface.
-An the default value is `0.0.0.0`, which means the Regelrett service binds to all interfaces.
+The default value is `0.0.0.0`, which means the Regelrett service binds to all interfaces.
 
 In environments where network address translation (NAT) is used, ensure you use the network interface address and not a final public address; otherwise, you might see errors such as `bind: cannot assign requested address` in the logs.
 
@@ -206,7 +206,7 @@ The base url for the oauth provider. Default is `https://login.microsoftonline.c
 
 #### `tenant_id`
 
-An Azure tenant identifier. The user should be a member of at the tenant to log in.
+An Azure tenant identifier. The user should be a member of the tenant to log in.
 
 #### `issuer_path`
 
@@ -290,4 +290,4 @@ Set to true to log the SQL calls and execution times.
 
 #### `cleanup_interval_weeks`
 
-The duration after which older answers will be purged from the database. Only the 3 most recent answers will remain for each question in each instance of each form.
+The age (in weeks) after which older answers are purged from the database. Only the 3 most recent answers will remain for each question in each instance of each form. 
