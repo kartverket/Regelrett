@@ -105,7 +105,7 @@ Backend er bygget med KTOR og frontend er bygget med React, Vite og TypeScript.
 
 Før du begynner, sørg for at du har følgende installert:
 
-- **[Node.js](https://nodejs.org)** (versjon 14.x eller nyere)
+- **[Node.js](https://nodejs.org)** (versjon 20.x eller nyere)
 - **[npm](https://www.npmjs.com/get-npm)**
 
 ### Steg 1: Konfigurasjon
