@@ -49,7 +49,7 @@ For example, if you have these configuration settings:
 
 ```yaml
 base:
-  environment: production
+  mode: production
 
 server:
   http_port: 8080
@@ -64,7 +64,7 @@ oauth:
 You can override variables on Linux machines with:
 
 ```bash
-export RR_BASE_ENVIRONMENT=development
+export RR_BASE_MODE=development
 export RR_SERVER_HTTP_PORT=owner
 export RR_SCHEMA_SIKKERHETSKONTROLLER_WEBHOOK_ID=newid
 export RR_OAUTH_CLIENT_SECRET=newS3cretKey
@@ -77,7 +77,7 @@ The following headings describe the sections and configuration options of the Re
 
 ### `base`
 
-#### `environment`
+#### `mode`
 
 Options are `production` and `development`. Default is `production`.
 _Don't_ change this option unless you are working on Regelrett development.
