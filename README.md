@@ -146,8 +146,6 @@ Miljøvariabel:
 RR_BASE_MODE=development
 ```
 
-Se confluense for nøyere beskrivelse og info om hvor du finner hemlighetene
-
 
 
 Du kan sette miljøvariablene i IntelliJ ved å gå inn på `Run -> Edit
@@ -168,8 +166,8 @@ configurations`.
 
 #### Terminal
 
-- `backend/gradlew -t build -x test` i ett shell
-- `backend/gradlew run` i ett annet
+- `./gradlew -t build -x test` i ett shell
+- `./gradlew run` i ett annet
 
 Backenden fungerer som api og webserver for frontenden, som skal være
 tilgjengelig på `http://localhost:8080` 
