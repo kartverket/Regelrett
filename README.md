@@ -17,7 +17,7 @@ for å administrere prosjektet effektivt.
 
 ## Konfigurasjon
 
-Regelrett kan konfigurerers opp til å kunne tilpasse seg ulike behov. Med det følger en drøss av verdier; de som MÅ bli satt for at regelrett skal fungere er nevnt under i [Steg 1](#steg-1-konfigurasjon), andre er nevnt i [konfigurasjons docen](conf/README.md)
+Regelrett kan konfigureres for å tilpasse seg ulike behov. Med det følger en drøss av verdier; de som MÅ bli satt for at Regelrett skal fungere er nevnt under i [Steg 1](#steg-1-konfigurasjon), andre er nevnt i [konfigurasjonsdokumentasjonen](conf/README.md).
 
 Les mer:
 [Konfigurasjon](conf/README.md)
