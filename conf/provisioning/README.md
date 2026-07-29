@@ -190,7 +190,7 @@ This value is not visible to the user, but the same value should also be repeate
 
 - `options`: Required for `SELECT_SINGLE`/`SELECT_MULTIPLE`. A list of allowed answer values for this specific record.
 
-- `unit`: Optional. A list of strings — specifies the units the answer can be given in (e.g. `["ms", "sek"]`).
+- `units`: Optional. A list of strings — specifies the units the answer can be given in (e.g. `["ms", "sek"]`).
 
 - `expiry`: Optional. Integer — number of weeks an answer is valid before it is flagged as expired in Regelrett.
 
