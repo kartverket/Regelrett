@@ -193,7 +193,7 @@ The database user's password. If the password contains `#`, `:` or `-` you have 
 
 The database migration username. Usefull when you want to differentiate between privileges for the migration-user and application-user. If not set then migration-username will match the database user.
 
-#### `migration-password`
+#### `migration_password`
 
 The database migration user's password. Usefull when you want to differentiate between privileges for the migration-user and application-user. If not set then migration-password will match the database user.
 
