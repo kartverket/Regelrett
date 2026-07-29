@@ -138,9 +138,9 @@ This example provisions a YAML schema source:
     resource_path: /schemas/schema1
 ```
 
-## Yaml schema structure
-While the schema structure is flexible, regelrett enforces certain requirements regarding format and required fields when creating you YAML schema.
-The YAML schema should be placed in /resources/questions. [TestQuestions.yaml](../../src/main/resources/questions/testQuestions.yaml) provides a full example of a yaml schema.
+## YAML schema structure
+While the schema structure is flexible, Regelrett enforces certain requirements regarding format and required fields when creating your YAML schema.
+The YAML schema should be placed in `src/main/resources/questions`. [TestQuestions.yaml](../../src/main/resources/questions/testQuestions.yaml) provides a full example of a YAML schema.
 
 A schema of type YAML should follow the structure outlined below.
 
