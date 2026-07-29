@@ -1,8 +1,8 @@
 # Provision Regelrett
 
-Regelrett has an active provisioning system that uses configuration files.
+Regelrett has an active provisioning system that uses yaml files.
 This makes GitOps more natural since schema sources can be defined using files that can be version controlled.
-Provisioning in this app is used to tell Regelrett where to find the schemas, which are used to create the contexts (forms) the user will fill out.
+Provisioning in this app is used to tell Regelrett where to find the schemas, which are used to create the contexts the user will fill out.
 ## Configuration file
 
 Refer to [Configuration](../README.md) for more information on what you can configure in `conf/custom.yaml`.
@@ -51,7 +51,7 @@ Each configuration file contains a list of schema sources, under the `schemasour
 
 ### Example schema source configuration file
 
-This example provisions a Airtable schema source:
+This example provisions an Airtable schema source:
 
 ```yaml
 schemasources:
@@ -119,7 +119,21 @@ schemasources:
     # AirTable field to use as the description column. The description
     # is displayed in the question detail page. If not set, no description
     # will be shown.
-    # description_column: Sikkerhetskontroller
+    description_column: Sikkerhetskontroller
+```
+
+This example provisions a YAML schema source:
+
+```yaml
+# <string, required> Sets the name you use to refer to
+  # the schema source in panels and queries.
+  - name: KI-pilot
+    # <AIRTABLE | YAML, required> Sets the schema source type.
+    type: YAML
+    # <string> Sets a custom UID to reference this
+    # schema source in other parts of the configuration.
+    # If not specified, Regelrett generates one.
+    uid: my_unique_uid2
     ##### Additional parameters for specifying Yaml schema     #####
     ##### sources.                                             #####
     # Either resourcePath or url (not yet working) must be set
@@ -127,8 +141,10 @@ schemasources:
     # schema source relative to project resources.
     resource_path: /schemas/schema1
 ```
-### Schema structure
-While the schema structure is flexible, regelrett enforces certain requirements regarding format and required fields.
+
+## Yaml schema structure
+While the schema structure is flexible, regelrett enforces certain requirements regarding format and required fields when creating you YAML schema.
+The YAML schema should be placed in /resources/questions. [TestQuestions.yaml](../../src/main/resources/questions/testQuestions.yaml) provides a full example of a yaml schema.
 
 A schema of type YAML should follow the structure outlined below.
 
@@ -186,6 +202,7 @@ This value is not visible to the user, but the same value should also be repeate
 Each key must correspond to a column name.
 Each value represents the data for that column in the given record.
 
+Example of a complete YAML schema:
 
 ```yaml
 name: "YAML-data" 
