@@ -90,10 +90,6 @@ schemasources:
     webhook_id: exampleid
     # <string, optional, for Airtable schema sources>
     webhook_secret: S3cr3t!
-    # <string, optional, for Airtable and YAML schema sources>
-    # Entra ID group id which is given read access to this schema.
-    # If unset, the schema is available to all authenticated users.
-    read_access_group_id: some-entra-group-id
     # <string, optional, for Airtable schema sources> The name of the
     # AirTable field that holds the answer options for each record.
     # Defaults to "Svar".
