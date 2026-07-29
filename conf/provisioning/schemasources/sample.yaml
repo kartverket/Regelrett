@@ -67,4 +67,4 @@
 #     endpoint: http://example.org/schema1
 #     # <string, optional, for Yaml schema sources> Path to a Yaml
 #     # schema source relative to project resources.
-#     resource_path: /schemas/schema1
+#     resource_path: questions/testQuestions.yaml

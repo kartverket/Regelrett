@@ -51,7 +51,7 @@ Each configuration file contains a list of schema sources, under the `schemasour
 
 ### Example schema source configuration file
 
-This example provisions an Airtable schema source:
+This example provisions two schemascources in one file: an Airtable schema source and a YAML schema source.
 
 ```yaml
 schemasources:
@@ -116,13 +116,7 @@ schemasources:
     # is displayed in the question detail page. If not set, no description
     # will be shown.
     description_column: Sikkerhetskontroller
-```
-
-This example provisions a YAML schema source:
-
-```yaml
-# <string, required> Sets the name you use to refer to
-  # the schema source in panels and queries.
+  # New schema source:
   - name: KI-pilot
     # <AIRTABLE | YAML, required> Sets the schema source type.
     type: YAML
@@ -135,8 +129,9 @@ This example provisions a YAML schema source:
     # Either resourcePath or url (not yet working) must be set
     # <string, optional, for Yaml schema sources> Path to a Yaml
     # schema source relative to project resources.
-    resource_path: /schemas/schema1
+    resource_path: questions/testQuestions.yaml
 ```
+
 
 ## YAML schema structure
 While the schema structure is flexible, Regelrett enforces certain requirements regarding format and required fields when creating your YAML schema.
