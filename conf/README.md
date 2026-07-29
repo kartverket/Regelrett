@@ -13,7 +13,7 @@ The default settings for a Regelrett instance are stored in the `<WORKING DIRECT
 _Don't_ change this file.
 
 The sample.yaml file is located in the same directory as defaults.yaml file.
-It contains all the settings commented out. Copy `sample.yaml` and name it custom.yaml.
+It contains all the settings commented out. Copy `sample.yaml` and name it `custom.yaml`.
 
 Your custom configuration file should now be `<WORKING DIRECTORY>/conf/custom.yaml`.
 
