@@ -4,6 +4,7 @@ import { AnswerType } from "@/api/types";
 import { PercentAnswer } from "@/components/answers/PercentAnswer";
 import { RadioAnswer } from "./RadioAnswer";
 import { TextAreaAnswer } from "./TextAreaAnswer";
+import { TextAnswer } from "@/components/answers/TextAnswer";
 import { Button } from "@/components/ui/button";
 import { TimeAnswer } from "@/components/answers/TimeAnswer";
 import { CheckboxAnswer } from "@/components/answers/CheckboxAnswer";
@@ -81,7 +82,17 @@ export function QuestionAnswer({
                 answerExpiry={answerExpiry}
               />
             );
-
+          case AnswerType.TEXT_SINGLE_LINE:
+            return (
+              <TextAnswer
+                value={answerInput}
+                updated={answers.at(-1)?.updated}
+                setAnswerInput={setAnswerInput}
+                submitAnswer={submitAnswer}
+                answerExpiry={answerExpiry}
+                disabled={isDisabled}
+              />
+            );
           case AnswerType.TEXT_MULTI_LINE:
             return (
               <TextAreaAnswer

@@ -1,23 +1,57 @@
 name: "YAML-data"
 columns:
-  - type: "OPTION_SINGLE"
+  - type: "TEXT"
     name: "Kortnavn"
     isName: true
-  - type: "OPTION_SINGLE"
+  - type: "TEXT"
     name: "ID"
-  - type: "OPTION_SINGLE"
+  - type: "TEXT"
     name: "Kontroller"
   - type: "OPTION_SINGLE"
     name: "Priority"
+    options:
+      - name: "MÅ"
+        color: "tealLight1"
+      - name: "KAN"
+        color: "yellowLight1"
   - type: "OPTION_SINGLE"
     name: "Answer"
     answerable: true
     options:
-      - name: "MÅ"
+      - name: "180"
         color: "orangeDark1"
-      - name: "KAN"
+      - name: "190"
         color: "greenBright"
+      - name: "195"
+        color: "greenDark1"
+      - name: "205"
+        color: "redDark1"
+      - name: "Ja"
+        color: "greenLight1"
+      - name: "Nei"
+        color: "redLight1"
 records:
+  - id: "Z-419"
+    question: "How many countries are there in the world?"
+    metadata:
+      answerMetadata:
+        type: "SELECT_SINGLE"
+        options:
+          - "Ja"
+          - "Nei"
+      optionalFields:
+        - key: "ID"
+          value:
+            - "Z-419"
+        - key: "Kontroller"
+          value:
+            - "How many countries are there in the world?"
+        - key: "Kortnavn"
+          value:
+            - "Antall land"
+        - key: "Priority"
+          value:
+            - "MÅ"
   - id: "Z-420"
     question: "How many countries are there in the world?"
     metadata:
@@ -42,12 +76,8 @@ records:
         - key: "Priority"
           value:
             - "MÅ"
-          type: "OPTION_SINGLE"
-          options:
-            - "MÅ"
-            - "KAN"
   - id: "Z-421"
-    question: "What is the capital of France?"
+    question: "What is the capital of France? \n Tekst som bare vises på detalj-siden for spørsmålet, men samme linje \n\n- Lengre \n- forklaring \n- i liste \n"
     metadata:
       answerMetadata:
         type: "TEXT_SINGLE_LINE"
@@ -56,6 +86,9 @@ records:
         - key: "ID"
           value:
             - "Z-421"
+        - key: "Kortnavn"
+          value:
+            - "Hovedstad france"
         - key: "Kontroller"
           value:
             - "What is the capital of France?"
@@ -71,12 +104,8 @@ records:
         - key: "Priority"
           value:
             - "KAN"
-          type: "OPTION_SINGLE"
-          options:
-            - "MÅ"
-            - "KAN"
   - id: "Z-422"
-    question: "What is the capital of Spain?"
+    question: "What is the capital of Spain? \n\n  Mer tekst som bare vises på detalj-siden for spørsmålet."
     metadata:
       answerMetadata:
         type: "TEXT_SINGLE_LINE"
@@ -90,14 +119,10 @@ records:
             - "What is the capital of Spain?"
         - key: "Kortnavn"
           value:
-            - "Antall land"
+            - "Hovedstad spania"
         - key: "Priority"
           value:
-            - "BURDE"
-          type: "OPTION_SINGLE"
-          options:
             - "MÅ"
-            - "KAN"
   - id: "Z-423"
     question: "Andel av requestene som gir tjenestefeil"
     metadata:
@@ -117,10 +142,6 @@ records:
         - key: "Priority"
           value:
             - "MÅ"
-          type: "OPTION_SINGLE"
-          options:
-            - "MÅ"
-            - "KAN"
   - id: "Z-424"
     question: "Hvor lang er gjennomsnittlig responstid?"
     metadata:
@@ -143,10 +164,6 @@ records:
         - key: "Priority"
           value:
             - "MÅ"
-          type: "OPTION_SINGLE"
-          options:
-            - "MÅ"
-            - "KAN"
   - id: "Z-425"
     question: "Fullført sikkerhetssjekk"
     metadata:
@@ -166,10 +183,6 @@ records:
         - key: "Priority"
           value:
             - "MÅ"
-          type: "OPTION_SINGLE"
-          options:
-            - "MÅ"
-            - "KAN"
   - id: "Z-426"
     question: "Skriv noe fint om deg selv"
     metadata:
@@ -189,7 +202,4 @@ records:
         - key: "Priority"
           value:
             - "MÅ"
-          type: "OPTION_SINGLE"
-          options:
-            - "MÅ"
-            - "KAN"
+
