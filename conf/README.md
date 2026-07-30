@@ -13,7 +13,7 @@ The default settings for a Regelrett instance are stored in the `<WORKING DIRECT
 _Don't_ change this file.
 
 The sample.yaml file is located in the same directory as defaults.yaml file.
-It contains all the settings commented out. Copy sample.yaml and name it custom.yaml.
+It contains all the settings commented out. Copy `sample.yaml` and name it `custom.yaml`.
 
 Your custom configuration file should now be `<WORKING DIRECTORY>/conf/custom.yaml`.
 
@@ -49,7 +49,7 @@ For example, if you have these configuration settings:
 
 ```yaml
 base:
-  environment: production
+  mode: production
 
 server:
   http_port: 8080
@@ -61,11 +61,11 @@ oauth:
   client_secret: s3cret
 ```
 
-You can override variables on Linux machines with:
+You can override variables on Linux/MacOS machines with:
 
 ```bash
-export RR_BASE_ENVIRONMENT=development
-export RR_SERVER_HTTP_PORT=owner
+export RR_BASE_MODE=development
+export RR_SERVER_HTTP_PORT=8083
 export RR_SCHEMA_SIKKERHETSKONTROLLER_WEBHOOK_ID=newid
 export RR_OAUTH_CLIENT_SECRET=newS3cretKey
 ```
@@ -77,7 +77,7 @@ The following headings describe the sections and configuration options of the Re
 
 ### `base`
 
-#### `environment`
+#### `mode`
 
 Options are `production` and `development`. Default is `production`.
 _Don't_ change this option unless you are working on Regelrett development.
@@ -92,7 +92,7 @@ The port the api server binds to, defaults to `8080`.
 
 The host for the server to listen on.
 If your machine has more than one network interface, you can use this setting to expose the Regelrett service on only one network interface and not have it available on others, such as the loopback interface.
-An the default value is `0.0.0.0`, which means the Regelrett service binds to all interfaces.
+The default value is `0.0.0.0`, which means the Regelrett service binds to all interfaces.
 
 In environments where network address translation (NAT) is used, ensure you use the network interface address and not a final public address; otherwise, you might see errors such as `bind: cannot assign requested address` in the logs.
 
@@ -122,71 +122,6 @@ The `allowed_origins` option is a comma-separated list of additional origins tha
 
 Directory that contains [provisioning](provisioning/README.md) configuration files that Regelrett applies on startup.
 
-### schema_sources
-
-### `airtable`
-
-#### `base_url`
-
-The base url of the airtable instance to use as a schema source. Default is `https://api.airtable.com`
-
-### `schema_<schema_name>`
-
-Hard coded source specifications, indicating the individual schemas that should be loaded.
-
-Every schema source specification includes the following fields:
-
-#### `id`
-
-A unique identifier used to locate the source.
-
-#### `type`
-
-Either `AIRTABLE` or `YAML`
-
-In addition airtable schema source specifications include the following fields:
-
-#### `airtable_access_token`
-
-#### `base_id`
-
-#### `table_id`
-
-#### `view_id`
-
-#### `webhook_id`
-
-#### `webhook_secret`
-
-#### `answer_column`
-
-The name of the AirTable field that holds the answer options for each record. Defaults to `"Svar"`. This column is marked as the answer column in the UI (equivalent to `answerable: true` in YAML schemas).
-
-#### `answer_type_column`
-
-The name of the AirTable field that holds the answer type (e.g. `SELECT_SINGLE`, `TEXT_MULTI_LINE`). Defaults to `"Svartype"`.
-
-#### `answer_unit_column`
-
-The name of the AirTable field that holds the answer units (e.g. `ms`, `sek`). Defaults to `"Svarenhet"`.
-
-#### `answer_expiry_column`
-
-The name of the AirTable field that holds the answer expiry in weeks. Defaults to `"Svarvarighet"`.
-
-#### `name_column`
-
-The name of the AirTable field to use as the name/title column. Defaults to `"Navn"`. The name/title column is the one rendered as a clickable link in the table (equivalent to setting `isName: true` on a column in YAML schemas).
-
-#### `description_column`
-
-The name of the AirTable field to use as the description column. The description is displayed on the question detail page. If not set, no description will be shown.
-
-Yaml schema source specifications include the following fields:
-
-#### `endpoint`
-
-#### `resource_path`
 
 ### `microsoft_graph`
 
@@ -206,7 +141,7 @@ The base url for the oauth provider. Default is `https://login.microsoftonline.c
 
 #### `tenant_id`
 
-An Azure tenant identifier. The user should be a member of at the tenant to log in.
+An Azure tenant identifier. The user should be a member of the tenant to log in.
 
 #### `issuer_path`
 
@@ -258,7 +193,7 @@ The database user's password. If the password contains `#`, `:` or `-` you have 
 
 The database migration username. Usefull when you want to differentiate between privileges for the migration-user and application-user. If not set then migration-username will match the database user.
 
-#### `migration-password`
+#### `migration_password`
 
 The database migration user's password. Usefull when you want to differentiate between privileges for the migration-user and application-user. If not set then migration-password will match the database user.
 
@@ -290,4 +225,4 @@ Set to true to log the SQL calls and execution times.
 
 #### `cleanup_interval_weeks`
 
-The duration after which older answers will be purged from the database. Only the 3 most recent answers will remain for each question in each instance of each form.
+The age (in weeks) after which older answers are purged from the database. Only the 3 most recent answers will remain for each question in each instance of each form. 

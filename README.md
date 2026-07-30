@@ -1,6 +1,6 @@
 # Regelrett
 
-Et open-source vertkøy for administrasjon av sikkerhets-compliance i komplekse
+Et open-source verktøy for administrasjon av sikkerhets-compliance i komplekse
 organisasjoner.
 
 Denne applikasjonen er bygget for visning av data i tabellformat på en
@@ -14,6 +14,20 @@ utvidelser etter behov.
 
 Følg stegene nedenfor for å komme i gang, og bruk de tilgjengelige skriptene
 for å administrere prosjektet effektivt.
+
+## Konfigurasjon
+
+Regelrett kan konfigureres for å tilpasse seg ulike behov. Med det følger en drøss av verdier man kan endre på. Nesten alt har en [default verdi](conf/defaults.yaml); de som MÅ bli satt (ikke har default verdi) for at Regelrett skal fungere er nevnt under i [Steg 1](#steg-1-konfigurasjon), andre er nevnt i [konfigurasjonsdokumentasjonen](conf/README.md).
+
+Les mer:
+[Konfigurasjon](conf/README.md)
+
+## Provisjonering
+Provisjoneringen til regelrett går ut på å fortelle til regelrett hvor og hvordan den finner skjemaene man etterhvert skal kunne fylle ut.
+Det vil si at hvis du har konfigurert opp regelrett og fått den til å kjøre, vil den bare vise en blank side frem til du provisjonerer opp skjemakildene.
+
+En kort intro til hvordan du gjør dette finner du i stegene under, men for mer utfyllende detaljer og eksempler bør du lese her:
+[Provisjonering](conf/provisioning/README.md)
 
 ## Sette opp database lokalt
 
@@ -31,11 +45,10 @@ For å sette opp databasen må man ha installert Docker. Dette kan du gjøre ved
 kjøre denne kommandoen:
 
 ```
-brew cask install docker
+brew install --cask docker
 ```
 
-Alternativt kan du bruke Postgres desktop til å kjøre en database lokalt. Hvis
-du har gjort dette kan du hoppe til Steg 6. Som standard antar Regelrett at du
+Alternativt kan du bruke Postgres desktop til å kjøre en database lokalt. Som standard antar Regelrett at du
 har en bruker `postgres` uten passord. Dette er
 [konfigurerbart](conf/README.md).
 
@@ -43,7 +56,7 @@ har en bruker `postgres` uten passord. Dette er
 
 Du trenger også et verktøy for håndtering av containere eller et
 container-runtime miljø som lar deg kjøre containere på din lokale maskin. Du
-kan bruker docker desktop dersom du har det. Hvis ikke kan du bruke Colima.
+kan bruke Docker Desktop dersom du har det. Hvis ikke kan du bruke Colima.
 Last ned Colima ved å kjøre denne kommandoen:
 
 ```
@@ -67,37 +80,25 @@ Når du har Colima eller Docker Desktop kjørende, kjør denne kommandoen:
 docker run --name regelrett-db -it -e POSTGRES_HOST_AUTH_METHOD=trust -e POSTGRES_USER=postgres -e POSTGRES_DB=regelrett -p 5432:5432 -d postgres:15.4
 ```
 
-Nå skal databasen være oppe og kjøre!
+Nå skal databasen være oppe og kjøre! Hvis du ønsker å kjøre opp databasen på en egen port må du huske å bytte ut porten i configen og i kommandoen over.
 
 ### Info
 
 - Du kan stoppe containeren ved å kjøre `docker stop regelrett-db` og starte den igjen med
   `docker start regelrett-db`.
-- Applikasjonen bruker en PostgresQl Database, og Flyway migration for å gjøre
+- Applikasjonen bruker en PostgreSQL-database, og Flyway migration for å gjøre
   endringer på databaseskjemaer.
 - Alle filer i Flyway migration script må ha følgende format:
 
-`<Version>__<Description>.sql` For eksempel: `V1.1__initial.sql`
+`V<Version>__<Description>.sql` For eksempel: `V1.1__initial.sql`
 
+- Migreringsfilene ligger i `src/main/resources/db/migration`.
 - Databasen heter "regelrett", og må settes opp lokalt på utviklerens
   maskin utenfor Flyway.
 - Databasemigreringer kjører automatisk ved oppstart av applikasjonen, eller så
   kan de kjøres manuelt med `./gradlew flywayMigrate`
 
-## Konfigurasjon
-
-Regelrett kan konfigurerers opp til å kunne tilpasse seg ulike behov. Med det følger en drøss av verdier; de som MÅ bli satt for at regelrett skal fungere er nevnt under i [Steg 1](#steg-1-konfigurasjon), andre er nevnt i [konfigurasjons docen](conf/README.md)
-
-Les mer:
-[Konfigurasjon](conf/README.md)
-
-## Provisjonering
-Provisjoneringen til regelrett går ut på å fortelle til regelrett hvor og hvordan den finner skjemaene man etterhvert skal kunne fylle ut. 
-Det vil si at hvis du har konfigurert opp regelrett og fått den til å kjøre, vil den bare vise en blank side frem til du provisjonerer opp skjemakildene.
-
-En kort intro til hvordan du gjør dette finner du i stegene under, men for mer utfyllende detaljer og eksempler bør du lese her:
-[Provisjonering](conf/provisioning/README.md)
-## Kjøre regelrett lokalt
+## Kjøre frontend og backend lokalt
 
 Backend er bygget med KTOR og frontend er bygget med React, Vite og TypeScript.
 
@@ -105,8 +106,9 @@ Backend er bygget med KTOR og frontend er bygget med React, Vite og TypeScript.
 
 Før du begynner, sørg for at du har følgende installert:
 
-- **[Node.js](https://nodejs.org)** (versjon 14.x eller nyere)
-- **[npm](https://www.npmjs.com/get-npm)**
+- **[Node.js](https://nodejs.org)** (versjon 20.x eller nyere)
+- **[pnpm](https://pnpm.io/)**
+- **JDK 21** (eller nyere) for backend
 
 ### Steg 1: Konfigurasjon
 
@@ -147,8 +149,6 @@ Miljøvariabel:
 RR_BASE_MODE=development
 ```
 
-Se confluense for nøyere beskrivelse og info om hvor du finner hemlighetene
-
 
 
 Du kan sette miljøvariablene i IntelliJ ved å gå inn på `Run -> Edit
@@ -161,7 +161,7 @@ configurations`.
 
 ### Steg 3: Web server
 
-#### Intellij
+#### IntelliJ
 
 - Gå inn på `Run -> Edit configurations`
 - Trykk på + for å legge til ny konfigurasjon og velg KTOR
@@ -169,8 +169,8 @@ configurations`.
 
 #### Terminal
 
-- `backend/gradlew -t build -x test` i ett shell
-- `backend/gradlew run` i ett annet
+- `./gradlew -t build -x test` i ett shell
+- `./gradlew run` i ett annet
 
 Backenden fungerer som api og webserver for frontenden, som skal være
 tilgjengelig på `http://localhost:8080` 
@@ -183,7 +183,7 @@ Kopier eksempelet og endre verdiene til å stemme overens med dine skjemakilder 
 
 Det finnes to typer skjemakilder: YAML og Airtable. For YAML-skjemaer lager du én `.yaml`-fil per skjema i mappen [src/main/resources/questions](src/main/resources/questions)
 
-Hvis du provisjonerer opp en skjemakilde fra airtable og velger å beholde [airtable_accesstoken som miljøvaraibel](conf/provisioning/README.md#use-environment-variables) slik som i sample.yaml, må du sette denne som en miljøvariabel. Denne brukes i
+Hvis du provisjonerer opp en skjemakilde fra airtable og velger å beholde [airtable access_token som miljøvariabel](conf/provisioning/README.md#use-environment-variables) slik som i sample.yaml, må du sette denne som en miljøvariabel. Denne brukes i
 conf/provisioning/<yourProvisioningFileName>.yaml og kan derfor ikke settes i conf/custom.yaml:
 
 ```env
@@ -215,28 +215,28 @@ https://java.testcontainers.org/supported_docker_environment/
 
 ## Mer informasjon om frontenden
 
-- For å sikre kodekvalitet, kjør lint-verktøyet: `npm run lint`
-- For å automatisk fikse lintingproblemer: `npm run lint-fix`
-- For å formatere kodebasen med Prettier: `npm run format`. Dette vil formatere
-  alle filer i src-mappen
-- For å lage en produksjonsklar versjon av prosjektet: `npm run build`. Dette
+- For å sikre kodekvalitet, kjør lint-verktøyet: `pnpm run lint`
+- For å automatisk fikse lintingproblemer: `pnpm run lint-fix`
+- For å formatere kodebasen med Prettier: `pnpm run format`. Dette vil formatere
+  alle filer i `app`-mappen.
+- For å kjøre typesjekk (inkludert `react-router` typegen): `pnpm run typecheck`.
+- For å kjøre frontendtestene (Vitest): `pnpm test`.
+- For å lage en produksjonsklar versjon av prosjektet: `pnpm run build`. Dette
   vil kompilere TypeScript-filene og pakke applikasjonen ved hjelp av Vite.
-  Output vil bli plassert i dist-mappen, klar for utrulling.
-- Før du ruller ut, kan du forhåndsvise produksjonsbygget lokalt: `npm run
-preview`. Denne kommandoen vil servere produksjonsbygget på en lokal server,
-  slik at du kan verifisere at alt fungerer som forventet.
+  Output vil bli plassert i `dist`-mappen, klar for utrulling.
+- Før du ruller ut, kan du forhåndsvise produksjonsbygget lokalt:
+  `pnpm run preview`. Denne kommandoen vil servere produksjonsbygget på en
+  lokal server, slik at du kan verifisere at alt fungerer som forventet.
 - Husky er konfigurert til å kjøre visse skript før commits blir fullført.
   Dette inkluderer linting og TypeScript-sjekker for å sikre kodekvalitet og
-  konsistens. For å manuelt utløse disse sjekkene, kan du kjøre: `npm run
-pre-commit`. Dette vil kjøre lint-staged for å sjekke de stage’ede filene og
-  sikre at TypeScript-filene er feilfrie før de blir committet.
+  konsistens. Disse kjøres via `lint-staged` på stage'ede filer.
 - Dette prosjektet bruker TanStack Query (tidligere kjent som React Query) for
   å håndtere nettverksforespørsler og servertilstand. TanStack Query forenkler
   datainnhenting, caching, synkronisering og oppdatering av servertilstand i
   React-applikasjoner. Ved å bruke dette kraftige biblioteket sikrer prosjektet
   effektiv og pålitelig datahåndtering, minimerer unødvendige
   nettverksforespørsler, og gir en optimal brukeropplevelse med automatiske
-  bakgrunnsoppdateringer og feilhåndtering. Se dokumentasjonen for Tanstack
-  Query her https://tanstack.com/query/latest
+  bakgrunnsoppdateringer og feilhåndtering. Se dokumentasjonen for TanStack
+  Query her: https://tanstack.com/query/latest
 
 

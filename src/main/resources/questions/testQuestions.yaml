@@ -28,6 +28,7 @@ records:
           - "190"
           - "195"
           - "205"
+        expiry: 12
       optionalFields:
         - key: "ID"
           value:
@@ -50,6 +51,7 @@ records:
     metadata:
       answerMetadata:
         type: "TEXT_SINGLE_LINE"
+        expiry: 24
       optionalFields:
         - key: "ID"
           value:
@@ -78,6 +80,7 @@ records:
     metadata:
       answerMetadata:
         type: "TEXT_SINGLE_LINE"
+        expiry: 52
       optionalFields:
         - key: "ID"
           value:
@@ -100,6 +103,7 @@ records:
     metadata:
       answerMetadata:
         type: "PERCENT"
+        expiry: 24
       optionalFields:
         - key: "ID"
           value:
@@ -125,6 +129,7 @@ records:
         units:
           - "ms"
           - "sek"
+        expiry: 14
       optionalFields:
         - key: "ID"
           value:
@@ -147,6 +152,7 @@ records:
     metadata:
       answerMetadata:
         type: "CHECKBOX"
+        expiry: 12
       optionalFields:
         - key: "ID"
           value:
@@ -169,6 +175,7 @@ records:
     metadata:
       answerMetadata:
         type: "TEXT_MULTI_LINE"
+        expiry: 12
       optionalFields:
         - key: "ID"
           value:

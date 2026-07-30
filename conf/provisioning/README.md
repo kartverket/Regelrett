@@ -1,8 +1,8 @@
 # Provision Regelrett
 
-Regelrett has an active provisioning system that uses configuration files.
-This makes GitOps more natural since data sources and dashboards can be defined using files that can be version controlled.
-Provisioning in this app is used for regelrett to know where to find the schemas, which is used to create contexts the user will fill out.   
+Regelrett has an active provisioning system that uses yaml files.
+This makes GitOps more natural since schema sources can be defined using files that can be version controlled.
+Provisioning in this app is used to tell Regelrett where to find the schemas, which are used to create the contexts the user will fill out.
 ## Configuration file
 
 Refer to [Configuration](../README.md) for more information on what you can configure in `conf/custom.yaml`.
@@ -23,14 +23,15 @@ The syntax for an environment variable is `$ENV_VAR_NAME`.
 
 You can use environment variables in schema provisioning configuration but not the schema definition files themselves.
 
-The following example looks up the user and password using environment variables:
+The following example looks up the Airtable access token using an environment variable:
 
 ```yaml
-schema_sources:
-  - name: Skjemanavn
-    user: $USER
-    secureJsonData:
-      password: $PASSWORD
+schemasources:
+  - name: Sikkerhetskontrollere
+    type: AIRTABLE
+    access_token: $RR_AIRTABLE_ACCESS_TOKEN
+    base_id: unique_base_id
+    table_id: unique_table_id
 ```
 
 
@@ -50,7 +51,7 @@ Each configuration file contains a list of schema sources, under the `schemasour
 
 ### Example schema source configuration file
 
-This example provisions a Airtable schema source:
+This example provisions two schemascources in one file: an Airtable schema source and a YAML schema source.
 
 ```yaml
 schemasources:
@@ -63,14 +64,15 @@ schemasources:
     # schema source in other parts of the configuration.
     # If not specified, Regelrett generates one.
     uid: my_unique_uid
-    # <int> Sets the version. Used to compare versions when
-    # updating. Ignored when creating a new schema source.
-    version: 1
-    # <string> Sets the data source's URL, including th
+    # <string> Sets the data source's URL, including the
     # port.
     url: "https://api.airtable.com"
     ##### Additional parameters for specifying Airtable schema #####
     ##### sources.                                             #####
+    # <string, required, for Airtable schema sources> Personal
+    # access token (PAT) used to authenticate against the
+    # Airtable API. Typically injected as an environment variable.
+    access_token: $RR_AIRTABLE_ACCESS_TOKEN
     # <string, required, for Airtable schema sources> Specifies
     # the base to which the specified table belongs.
     base_id: unique_base_id
@@ -81,7 +83,7 @@ schemasources:
     # <string, optional, for Airtable schema sources> The name
     # or ID of a view in the table. If set, only the records
     # in that view will be returned.
-    view_id: unique_table_id
+    view_id: unique_view_id
     # <string, optional, for Airtable schema sources> Specify
     # a webhook id and secret to allow Airtable to notify
     # Regelrett of changes to the data.
@@ -113,16 +115,27 @@ schemasources:
     # AirTable field to use as the description column. The description
     # is displayed in the question detail page. If not set, no description
     # will be shown.
-    # description_column: Sikkerhetskontroller
+    description_column: Sikkerhetskontroller
+  # New schema source:
+  - name: KI-pilot
+    # <AIRTABLE | YAML, required> Sets the schema source type.
+    type: YAML
+    # <string> Sets a custom UID to reference this
+    # schema source in other parts of the configuration.
+    # If not specified, Regelrett generates one.
+    uid: my_unique_uid2
     ##### Additional parameters for specifying Yaml schema     #####
     ##### sources.                                             #####
-    # Either url or resourcePath must be set
+    # Either resourcePath or url (not yet working) must be set
     # <string, optional, for Yaml schema sources> Path to a Yaml
     # schema source relative to project resources.
-    resource_path: /schemas/schema1
+    resource_path: questions/testQuestions.yaml
 ```
-### Schema structure
-While the schema structure is flexible, regelrett enforces certain requirements regarding format and required fields.
+
+
+## YAML schema structure
+While the schema structure is flexible, Regelrett enforces certain requirements regarding format and required fields when creating your YAML schema.
+The YAML schema should be placed in `src/main/resources/questions`. [TestQuestions.yaml](../../src/main/resources/questions/testQuestions.yaml) provides a full example of a YAML schema.
 
 A schema of type YAML should follow the structure outlined below.
 
@@ -137,7 +150,7 @@ Each column must include:
 
 `name`: The name of the column
 
-`type`: The column type. Supported values: OPTION_MULTIPLE, OPTION_SINGLE and TEXT
+`type`: The column type. Supported values: `OPTION_MULTIPLE`, `OPTION_SINGLE` and `TEXT`. Note that the column type describes the *shape* of the column; the actual input widget for answering a question is controlled by `answerMetadata.type` on each record (see below).
 
 Each column may also include:
 
@@ -147,42 +160,50 @@ Each column may also include:
 
 > **Note for AirTable schemas:** `answerable` and `isName` are set automatically based on `answer_column` and `name_column` in the provisioning config — you do not set them in AirTable data.
 
-For columns of type OPTION_MULTIPLE and OPTION_SINGLE, you may also define:
+For columns of type `OPTION_MULTIPLE` and `OPTION_SINGLE`, you may also define:
 - `options`: A list of allowed values
-- `color`: A color associated with each option
+- `color`: A color associated with each option (see [`app/utils/colors.ts`](../../app/utils/colors.ts) for the full list of valid color names, e.g. `orangeDark1`, `greenBright`)
+
 This restricts the possible inputs for all records in that column.
 
 
 #### Records
 Represents the rows of the schema. Each record contains data corresponding to all defined columns. Each record must include:
 
-`id` : A unique identifier for the record.
-This value is not visible to the user, but the same value should also be inserted into a corresponding ID column.
+`id`: A unique identifier for the record.
+This value is not visible to the user, but the same value should also be repeated as the value of the record's `"ID"` column (see the example below) so that it is available in the rendered table.
 
-`metadata`: Contains metadata related to the record’s answer, as well as optional configuration.
+`question`: The question text shown to the user on the question detail page. This supports Markdown formatting.
+
+`metadata`: Contains metadata related to the record's answer, as well as optional configuration.
 
 `answerMetadata`: Defines how the answer for the record should be handled. Contains the following fields:
 
-- `Type`: Required, select the type of this records answer, select between: `SELECT_MULTIPLE`,`SELECT_SINGLE`, `TEXT_MULTI_LINE`, `TEXT_SINGLE_LINE`, `PERCENT`, `CHECKBOX`, `TIME`
+- `type`: Required. The input widget used for this record's answer. One of: `SELECT_MULTIPLE`, `SELECT_SINGLE`, `TEXT_MULTI_LINE`, `TEXT_SINGLE_LINE`, `PERCENT`, `CHECKBOX`, `TIME`.
 
-- `Unit`: Optional, List of strings - specefy units of the answers.
+  > **Note:** column `type` (`OPTION_SINGLE`, `OPTION_MULTIPLE`, `TEXT`) describes the answerColumn's shape, while `answerMetadata.type` (`SELECT_SINGLE`, `TEXT_SINGLE_LINE`, …) picks which input component is rendered per record.
 
-- `expiry`: Optional, int - set number of weeks an answer is valid, until it is flagged as expired in Regelrett
+- `options`: Required for `SELECT_SINGLE`/`SELECT_MULTIPLE`. A list of allowed answer values for this specific record.
+
+- `units`: Optional. A list of strings — specifies the units the answer can be given in (e.g. `["ms", "sek"]`).
+
+- `expiry`: Optional. Integer — number of weeks an answer is valid before it is flagged as expired in Regelrett.
 
 `optionalFields`: Defines values for each column in the record.
-Each key must correspond to a column name
-Each value represents the data for that column in the given record
+Each key must correspond to a column name.
+Each value represents the data for that column in the given record.
 
+Example of a complete YAML schema:
 
 ```yaml
 name: "YAML-data" 
 columns: 
-  - type: "OPTION_SINGLE"  #Choose between OPTION_MULTIPLE, OPTION_SINGLE or TEXT
+  - type: "TEXT"  #Choose between OPTION_MULTIPLE, OPTION_SINGLE or TEXT
     name: "Kortnavn" #Column name
     isName: true  # This column will be the name/title and clickable link in the table
-  - type: "OPTION_SINGLE"
+  - type: "TEXT"
     name: "ID" #ID columns should always be included in every Schema. 
-  - type: "OPTION_SINGLE"
+  - type: "TEXT"
     name: "Kontroller"
   - type: "OPTION_SINGLE"
     name: "Svar"
@@ -205,6 +226,7 @@ records:
           - "190"
           - "195"
           - "205"
+        expiry: 12 # An answer to this question expires in 12 weeks and user will see notification for this
       optionalFields:
         - key: "ID"
           value:
