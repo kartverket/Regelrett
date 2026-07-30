@@ -86,7 +86,7 @@ records:
             - "Z-421"
         - key: "Kortnavn"
           value:
-           - "Hovedstad france"
+            - "Hovedstad france"
         - key: "Kontroller"
           value:
             - "What is the capital of France?"
