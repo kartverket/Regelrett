@@ -83,7 +83,7 @@ class YamlProvider(
     private fun parseAndConvertToForm(yamlString: String): Form {
         val form = Yaml.decodeFromString<FormWithoutId>(serializer(), yamlString)
 
-         val columnTypeMap = form.columns.associate { it.name to it.type }
+        val columnTypeMap = form.columns.associate { it.name to it.type }
         val nameColumnName = form.columns.find { it.isName }?.name
         return Form(
             id = id,
