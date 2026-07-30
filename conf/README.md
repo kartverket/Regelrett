@@ -61,7 +61,7 @@ oauth:
   client_secret: s3cret
 ```
 
-You can override variables on Linux machines with:
+You can override variables on Linux/MacOS machines with:
 
 ```bash
 export RR_BASE_MODE=development
