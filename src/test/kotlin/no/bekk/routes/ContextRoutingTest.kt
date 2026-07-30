@@ -542,7 +542,6 @@ class ContextRoutingTest {
                     override fun getFormProvider(formId: String): FormProvider = object : FormProvider {
                         override val name = "formName"
                         override val id = "formId"
-                        override val readAccessGroupId: String? = null
                         override suspend fun getForm(): Form = mockedForm
                         override suspend fun getQuestion(recordId: String) = TODO()
                         override suspend fun getColumns() = emptyList<no.bekk.model.internal.Column>()

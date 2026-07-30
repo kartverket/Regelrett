@@ -19,7 +19,6 @@ data class UpsertDataFromConfig(
     val view_id: String? = null,
     val webhook_id: String? = null,
     val webhook_secret: String? = null,
-    val read_access_group_id: String? = null,
     val resource_path: String? = null,
     val answer_column: String = "Svar",
     val answer_type_column: String = "Svartype",

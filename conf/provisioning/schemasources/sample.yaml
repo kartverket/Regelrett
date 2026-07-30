@@ -55,9 +55,6 @@
 #     # AirTable field that holds the answer expiry in weeks.
 #     # Defaults to "Svarvarighet".
 #     answer_expiry_column: Svarvarighet
-#     # <string, optional, for Airtable and YAML scheams sources>
-#     # entra id group id which is given read access to specefied schema
-#     read_access_group_id:
 #     ##### Additional parameters for specifying Yaml schema     #####
 #     ##### sources.                                             #####
 #     # Either endpoint or resourcePath must be set
