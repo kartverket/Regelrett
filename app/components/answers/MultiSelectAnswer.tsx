@@ -33,7 +33,7 @@ export default function MultiDropdownMenuAnswer({
   const [debounceTimeout, setDebounceTimeout] = useState<number>();
   const [updatedAt, setUpdatedAt] = useState(updated);
   const [selected, setSelected] = useState<string[]>(
-    value?.split(";").map((val) => val.trim()) ?? [],
+    value?.split(";").map((val) => val.trim()).filter(Boolean) ?? [],
   );
 
   function submitIfModified(newAnswer: string) {
