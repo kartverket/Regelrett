@@ -9,6 +9,10 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    groups:
+      github-actions-dependencies:
+        patterns:
+          - "*"
   - package-ecosystem: "gradle"
     directory: "/"
     schedule:
@@ -16,6 +20,10 @@ updates:
       time: "02:00"
       timezone: "Europe/Oslo"
     open-pull-requests-limit: 10
+    groups:
+      gradle-dependencies:
+        patterns:
+          - "*"
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
@@ -23,3 +31,7 @@ updates:
       time: "02:00"
       timezone: "Europe/Oslo"
     open-pull-requests-limit: 10
+    groups:
+      docker-dependencies:
+        patterns:
+          - "*"
