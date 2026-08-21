@@ -117,7 +117,7 @@ class FormServiceImpl : FormService {
         for (i in 0..3) {
             val uuid = generateNewUid()
 
-            if (providers.values.none {it.id == uuid }) {
+            if (providers.values.none { it.id == uuid }) {
                 return uuid
             }
         }
