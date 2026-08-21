@@ -99,7 +99,7 @@ class YamlProvider(
                     metadata = it.metadata.copy(
                         optionalFields = it.metadata.optionalFields?.map { field ->
                             field.copy(type = columnTypeMap[field.key] ?: field.type)
-                        }
+                        },
                     ),
                 )
             },
