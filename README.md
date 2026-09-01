@@ -57,7 +57,7 @@ har en bruker `postgres` uten passord. Dette er
 Når du har Colima eller Docker Desktop kjørende, kjør denne kommandoen:
 
 ```
-docker run --name regelrett-db -it -e POSTGRES_HOST_AUTH_METHOD=trust -e POSTGRES_USER=postgres -e POSTGRES_DB=regelrett -p 5432:5432 -d postgres:15.4
+docker compose up regelrett-db -d
 ```
 
 Nå skal databasen være oppe og kjøre! Hvis du ønsker å kjøre opp databasen på en egen port må du huske å bytte ut porten i configen og i kommandoen over.
