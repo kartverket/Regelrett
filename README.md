@@ -23,56 +23,36 @@ Les mer:
 [Konfigurasjon](conf/README.md)
 
 ## Provisjonering
+
 Provisjoneringen til regelrett går ut på å fortelle til regelrett hvor og hvordan den finner skjemaene man etterhvert skal kunne fylle ut.
 Det vil si at hvis du har konfigurert opp regelrett og fått den til å kjøre, vil den bare vise en blank side frem til du provisjonerer opp skjemakildene.
 
 En kort intro til hvordan du gjør dette finner du i stegene under, men for mer utfyllende detaljer og eksempler bør du lese her:
 [Provisjonering](conf/provisioning/README.md)
 
-## Sette opp database lokalt
+### Kjøre lokal PostgreSQL database
 
 ### Steg 1
 
-Start med å klone repoet fra GitHub:
+Du trenger `docker-compose` og en docker-daemon installert, der **Colima** er et greit valg. Følgende kommandoer tar deg langt på vei hvis du har Homebrew installert:
 
 ```
-git clone <repository-url>
+brew install docker
+brew install docker-compose
+brew install colima
 ```
 
-### Steg 2
-
-For å sette opp databasen må man ha installert Docker. Dette kan du gjøre ved å
-kjøre denne kommandoen:
+Deretter kan du starte Colima med:
 
 ```
-brew install --cask docker
+colima start --network-address
 ```
 
 Alternativt kan du bruke Postgres desktop til å kjøre en database lokalt. Som standard antar Regelrett at du
 har en bruker `postgres` uten passord. Dette er
 [konfigurerbart](conf/README.md).
 
-### Steg 3
-
-Du trenger også et verktøy for håndtering av containere eller et
-container-runtime miljø som lar deg kjøre containere på din lokale maskin. Du
-kan bruke Docker Desktop dersom du har det. Hvis ikke kan du bruke Colima.
-Last ned Colima ved å kjøre denne kommandoen:
-
-```
-brew install colima
-```
-
-### Steg 4
-
-Etter å ha installert Colima, kan du starte det opp ved å kjøre denne
-kommandoen:
-
-```
-colima start --network-address
-```
-
-### Steg 5
+### Steg 2
 
 Når du har Colima eller Docker Desktop kjørende, kjør denne kommandoen:
 
@@ -149,8 +129,6 @@ Miljøvariabel:
 RR_BASE_MODE=development
 ```
 
-
-
 Du kan sette miljøvariablene i IntelliJ ved å gå inn på `Run -> Edit
 configurations`.
 
@@ -173,9 +151,10 @@ configurations`.
 - `./gradlew run` i ett annet
 
 Backenden fungerer som api og webserver for frontenden, som skal være
-tilgjengelig på `http://localhost:8080` 
+tilgjengelig på `http://localhost:8080`
 
 ### Steg 4: Provisjonering
+
 Nå som Regelrett er oppe og kjører, må du provisjonere skjemakildene slik som beskrevet i [`conf/provisioning/README.md`](conf/provisioning/README.md).
 I praksis betyr provisjonering at du forteller Regelrett hvor skjemaene ligger (Airtable eller Yaml) og hvordan man får tak i dem, slik at applikasjonen kan laste dem inn.  
 I [`conf/provisioning/schemasources/sample.yaml`](conf/provisioning/schemasources/sample.yaml) finner du et eksempel på hvordan du provisjonerer opp et skjema.
@@ -191,7 +170,6 @@ RR_AIRTABLE_ACCESS_TOKEN=<PAT>
 ```
 
 Les mer om [provisjonering](conf/provisioning/README.md).
-
 
 ## Kjøre testene
 
@@ -238,5 +216,3 @@ https://java.testcontainers.org/supported_docker_environment/
   nettverksforespørsler, og gir en optimal brukeropplevelse med automatiske
   bakgrunnsoppdateringer og feilhåndtering. Se dokumentasjonen for TanStack
   Query her: https://tanstack.com/query/latest
-
-
