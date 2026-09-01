@@ -32,8 +32,6 @@ En kort intro til hvordan du gjør dette finner du i stegene under, men for mer 
 
 ### Kjøre lokal PostgreSQL database
 
-### Steg 1
-
 Du trenger `docker-compose` og en docker-daemon installert, der **Colima** er et greit valg. Følgende kommandoer tar deg langt på vei hvis du har Homebrew installert:
 
 ```
@@ -52,9 +50,7 @@ Alternativt kan du bruke Postgres desktop til å kjøre en database lokalt. Som 
 har en bruker `postgres` uten passord. Dette er
 [konfigurerbart](conf/README.md).
 
-### Steg 2
-
-Når du har Colima eller Docker Desktop kjørende, kjør denne kommandoen:
+Start så databasen (i detached mode) med
 
 ```
 docker compose up regelrett-db -d
@@ -64,8 +60,8 @@ Nå skal databasen være oppe og kjøre! Hvis du ønsker å kjøre opp databasen
 
 ### Info
 
-- Du kan stoppe containeren ved å kjøre `docker stop regelrett-db` og starte den igjen med
-  `docker start regelrett-db`.
+- Du kan stoppe containeren ved å kjøre `docker compose stop regelrett-db` og starte den igjen med
+  `docker compose start regelrett-db`.
 - Applikasjonen bruker en PostgreSQL-database, og Flyway migration for å gjøre
   endringer på databaseskjemaer.
 - Alle filer i Flyway migration script må ha følgende format:
