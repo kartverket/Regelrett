@@ -175,7 +175,7 @@ Users belonging to the group with this ID will have elevated access to the Regel
 
 #### `host`
 
-Includes IP or hostname and port. For example, for Postgres running on the same host as Regelrett: host = 127.0.0.1:5432
+Includes IP or hostname and port. For example, for Postgres running on the same host as Regelrett: host = 127.0.0.1:5433
 
 #### `name`
 
