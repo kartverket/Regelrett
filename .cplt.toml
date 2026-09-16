@@ -2,7 +2,7 @@
 # Detected: JVM (Gradle), Node.js, Docker, Ktor, TestContainers, Vite, Flyway
 
 [deny]
-paths = ["conf/*.yaml"]
+paths = ["~/conf/*.yaml"]
 
 [propose]
 # ⚠️  grants access to the Docker socket, effectively root on the host
