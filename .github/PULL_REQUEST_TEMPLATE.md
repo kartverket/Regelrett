@@ -1,33 +1,11 @@
-**Hva er funskjonaliteten du har lagt til?**
+## Bakgrunn 🔒
 
-[Legg til en kort beskrivelse av hva utvidelsen eller oppdateringen gjør]
+Lenke til Jira-kort
 
-**Hvorfor trenger vi denne funskjonaliteten?**
+## Løsning 🔑
 
-[Legg til en beskrivelse av problemet utvidelsen forsøker å løse]
+- [ ] 🤖 KI har bidratt til utvikling av denne endringen
 
-**Hvem er funskjonaliteten for?**
+## Testing 🧪
 
-[Legg til informasjon om hvilken type bruker funskjonaliteten er for]
-
-**Er det potensielle risikoer knyttet til endringen?**
-
-[Legg til informasjon om eventuelle sikkerhetstilak eller vurderinger som bør gjøres]
-
-- Trengs det noen sikkerhetstiltak eller ytterligere vurderinger?
-
-<!--
-
-- Lukker automatisk koblet Issue når PR-en blir merget.
-
-Bruk: "Fixes #<issue nummer>", eller "Fixes (paste link til issue)"
-
--->
-
-Fixes #
-
-**Anmerkninger til vurderingen:**
-
-- [ ] Det virker som forventet fra en brukers perspektiv.
-- [ ] Dokumentasjonen er oppdatert.
-- [ ] Det er gjort adekvar feilhåndtering og logging.
+- [ ] Jeg har testet mine endringer
