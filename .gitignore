@@ -10,6 +10,9 @@ conf/*.yaml
 !conf/defaults.yaml
 !conf/sample.yaml
 
+# Environment Variables
+.env
+
 # Custom Schemasources
 conf/provisioning/schemasources/*
 !conf/provisioning/schemasources/sample.yaml
