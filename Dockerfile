@@ -1,16 +1,13 @@
 # syntax=docker/dockerfile:1
 
-ARG BASE_IMAGE=eclipse-temurin:25.0.2_10-jre-alpine-3.23
-ARG JS_IMAGE=node:22-alpine
 ARG JS_PLATFORM=linux/amd64
-ARG GRADLE_IMAGE=gradle:8.14-jdk21-alpine
 ARG OTEL_JAVA_AGENT_VERSION=2.29.0
 
 ARG KOTLIN_SRC=kt-builder
 ARG JS_SRC=js-builder
 
 
-FROM --platform=${JS_PLATFORM} ${JS_IMAGE} AS js-base
+FROM --platform=${JS_PLATFORM} dhi.io/node:22.23.2-alpine3.24-dev@sha256:884fa94e9c3228138eeaa7376f40972647ac6eaf8c960e407b1ea374f9479b0d AS js-base
 WORKDIR /tmp/regelrett
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
@@ -30,7 +27,7 @@ ENV NODE_ENV=production
 RUN pnpm build
 
 
-FROM ${GRADLE_IMAGE} AS kt-cache
+FROM dhi.io/gradle:8.14.5-r7-jdk21-alpine3.24-dev@sha256:59eed81f9bc6bd9915bb3f92a27b19a59fe79f76bc6b1d49e0c7238aa0bb5b85 AS kt-cache
 RUN mkdir -p /home/gradle/cache_home
 ENV GRADLE_USER_HOME=/home/gradle/cache_home
 WORKDIR /tmp/regelrett
@@ -38,7 +35,7 @@ COPY build.gradle.* gradle.properties ./
 COPY gradle ./gradle
 RUN gradle clean build -i --stacktrace
 
-FROM ${GRADLE_IMAGE} AS kt-builder
+FROM dhi.io/gradle:8.14.5-r7-jdk21-alpine3.24-dev@sha256:59eed81f9bc6bd9915bb3f92a27b19a59fe79f76bc6b1d49e0c7238aa0bb5b85 AS kt-builder
 WORKDIR /tmp/regelrett
 COPY conf conf
 COPY --from=kt-cache /home/gradle/cache_home /tmp/regelrett/.gradle
@@ -55,14 +52,18 @@ RUN gradle shadowJar --no-daemon
 FROM ${KOTLIN_SRC} AS kt-src
 FROM ${JS_SRC} AS js-src
 
-FROM ${BASE_IMAGE} AS otel-agent
+FROM dhi.io/eclipse-temurin:25.0.2.10-alpine3.23-dev@sha256:118aef9e9fa388809f0105f8e78e75bd4b4f4426f1e31a510bbe8719768f47dd AS otel-agent
 ARG OTEL_JAVA_AGENT_VERSION
 RUN wget -q -O /opentelemetry-javaagent.jar \
     "https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v${OTEL_JAVA_AGENT_VERSION}/opentelemetry-javaagent.jar"
 
-FROM ${BASE_IMAGE}
+FROM dhi.io/eclipse-temurin:25.0.2.10-alpine3.23-dev@sha256:118aef9e9fa388809f0105f8e78e75bd4b4f4426f1e31a510bbe8719768f47dd
 
-RUN apk update && apk upgrade --no-cache && apk add --no-cache libpng gnutls
+RUN apk add --no-cache \
+    gnutls \
+    libcrypto3=3.5.8-r0 \
+    libpng \
+    libssl3=3.5.8-r0
 
 LABEL maintainer="Bekk Consulting"
 LABEL org.opencontainers.image.source="https://github.com/bekk/regelrett"
@@ -82,29 +83,14 @@ COPY --from=kt-src /tmp/regelrett/conf conf
 COPY --from=kt-src /tmp/regelrett/build/libs/*.jar ${RR_PATHS_JAR}
 COPY --from=otel-agent /opentelemetry-javaagent.jar ${OTEL_JAVAAGENT_PATH}
 
-RUN if [ ! $(getent group "$RR_GID") ]; then \
-    if grep -i -q alpine /etc/issue; then \
-    addgroup -S -g $RR_GID regelrett; \
-    elif grep -i -q ubuntu /etc/issue; then \
-    DEBIAN_FRONTEND=noninteractive && \
-    addgroup --system --gid $RR_GID regelrett; \
-    else \
-    echo 'ERROR: Unsupported base image' && /bin/false; \
-    fi; \
-    fi && \
-    RR_GID_NAME=$(getent group $RR_GID | cut -d':' -f1) && \
-    if grep -i -q alpine /etc/issue; then \
-    adduser -S -u $RR_UID -G "$RR_GID_NAME" regelrett; \
-    else \
-    adduser --system --uid $RR_UID --ingroup "$RR_GID_NAME" regelrett; \
-    fi && \
+RUN adduser -S -u "$RR_UID" -G root regelrett && \
     mkdir -p "$RR_PATHS_PROVISIONING/schemasources" && \
     cp conf/provisioning/schemasources/sample.yaml "$RR_PATHS_PROVISIONING/schemasources/" && \
     cp conf/sample.yaml "$RR_PATHS_CONFIG" && \
-    chown -R "regelrett:$RR_GID_NAME" "$RR_PATHS_HOME" "$RR_PATHS_PROVISIONING" "$RR_PATHS_JAR" "$OTEL_JAVAAGENT_PATH" && \
+    chown -R "regelrett:$RR_GID" "$RR_PATHS_HOME" "$RR_PATHS_PROVISIONING" "$RR_PATHS_JAR" "$OTEL_JAVAAGENT_PATH" && \
     chmod -R 777 "$RR_PATHS_PROVISIONING"
 
-ENV JAVA_HOME=/opt/java/openjdk
+ENV JAVA_HOME=/usr/lib/jvm/temurin-25
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
 
 COPY --from=kt-src /tmp/regelrett/build/libs/*.jar ./app/regelrett.jar
@@ -117,4 +103,3 @@ HEALTHCHECK NONE
 
 USER "$RR_UID"
 ENTRYPOINT ["sh", "-c", "exec java ${JAVA_OPTS:-} -Duser.timezone=Europe/Oslo -jar /app/regelrett.jar --homepath=$RR_PATHS_HOME --config=$RR_PATHS_CONFIG"]
-
