@@ -6,7 +6,11 @@ ARG OTEL_JAVA_AGENT_VERSION=2.29.0
 ARG KOTLIN_SRC=kt-builder
 ARG JS_SRC=js-builder
 
+# -----------------------------------------------------------------------------
+# Build images
+# -----------------------------------------------------------------------------
 
+# JavaScript build
 FROM --platform=${JS_PLATFORM} dhi.io/node:22.23.2-alpine3.24-dev@sha256:884fa94e9c3228138eeaa7376f40972647ac6eaf8c960e407b1ea374f9479b0d AS js-base
 WORKDIR /tmp/regelrett
 ENV PNPM_HOME="/pnpm"
@@ -26,7 +30,7 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 ENV NODE_ENV=production
 RUN pnpm build
 
-
+# Kotlin build
 FROM dhi.io/gradle:8.14.5-r7-jdk21-alpine3.24-dev@sha256:59eed81f9bc6bd9915bb3f92a27b19a59fe79f76bc6b1d49e0c7238aa0bb5b85 AS kt-cache
 RUN mkdir -p /home/gradle/cache_home
 ENV GRADLE_USER_HOME=/home/gradle/cache_home
@@ -49,14 +53,19 @@ COPY gradle ./gradle
 # and boot JAR by default.
 RUN gradle shadowJar --no-daemon
 
+# Build artifact selection
 FROM ${KOTLIN_SRC} AS kt-src
 FROM ${JS_SRC} AS js-src
 
+# OpenTelemetry agent
 FROM dhi.io/eclipse-temurin:25.0.2.10-alpine3.23-dev@sha256:118aef9e9fa388809f0105f8e78e75bd4b4f4426f1e31a510bbe8719768f47dd AS otel-agent
 ARG OTEL_JAVA_AGENT_VERSION
 RUN wget -q -O /opentelemetry-javaagent.jar \
     "https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v${OTEL_JAVA_AGENT_VERSION}/opentelemetry-javaagent.jar"
 
+# -----------------------------------------------------------------------------
+# Runtime image
+# -----------------------------------------------------------------------------
 FROM dhi.io/eclipse-temurin:25.0.2.10-alpine3.23-dev@sha256:118aef9e9fa388809f0105f8e78e75bd4b4f4426f1e31a510bbe8719768f47dd
 
 RUN apk add --no-cache \
