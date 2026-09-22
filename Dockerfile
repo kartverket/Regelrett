@@ -1,7 +1,6 @@
 # syntax=docker/dockerfile:1
 
 ARG JS_PLATFORM=linux/amd64
-ARG OTEL_JAVA_AGENT_VERSION=2.29.0
 
 # -----------------------------------------------------------------------------
 # Build images
@@ -38,8 +37,7 @@ RUN --mount=type=cache,id=gradle,target=/home/gradle/.gradle \
     gradle shadowJar --no-daemon
 
 # OpenTelemetry agent
-ARG OTEL_JAVA_AGENT_VERSION
-FROM otel/autoinstrumentation-java:${OTEL_JAVA_AGENT_VERSION} AS otel-agent
+FROM otel/autoinstrumentation-java:2.29.0 AS otel-agent
 
 # -----------------------------------------------------------------------------
 # Runtime image
