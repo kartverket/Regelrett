@@ -25,7 +25,7 @@ ENV NODE_ENV=production
 RUN pnpm build
 
 # Kotlin build
-FROM dhi.io/gradle:8.14.5-r7-jdk21-alpine3.24-dev@sha256:59eed81f9bc6bd9915bb3f92a27b19a59fe79f76bc6b1d49e0c7238aa0bb5b85 AS kt-builder
+FROM dhi.io/gradle:9.5.1-jdk21-alpine-dev@sha256:0fb4c1c5b3bf5b1a4d9a5af68f467ed6d830dd027d01e14c4e70435dfedb7c7b AS kt-builder
 WORKDIR /tmp/regelrett
 COPY conf conf
 COPY src src
