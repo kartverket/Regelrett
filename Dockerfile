@@ -3,9 +3,6 @@
 ARG JS_PLATFORM=linux/amd64
 ARG OTEL_JAVA_AGENT_VERSION=2.29.0
 
-ARG KOTLIN_SRC=kt-builder
-ARG JS_SRC=js-builder
-
 # -----------------------------------------------------------------------------
 # Build images
 # -----------------------------------------------------------------------------
@@ -53,10 +50,6 @@ COPY gradle ./gradle
 # and boot JAR by default.
 RUN gradle shadowJar --no-daemon
 
-# Build artifact selection
-FROM ${KOTLIN_SRC} AS kt-src
-FROM ${JS_SRC} AS js-src
-
 # OpenTelemetry agent
 FROM dhi.io/eclipse-temurin:25.0.2.10-alpine3.23-dev@sha256:118aef9e9fa388809f0105f8e78e75bd4b4f4426f1e31a510bbe8719768f47dd AS otel-agent
 ARG OTEL_JAVA_AGENT_VERSION
@@ -88,8 +81,8 @@ ENV RR_PATHS_PROVISIONING="/etc/regelrett/provisioning" \
 
 WORKDIR $RR_PATHS_HOME
 
-COPY --from=kt-src /tmp/regelrett/conf conf
-COPY --from=kt-src /tmp/regelrett/build/libs/*.jar ${RR_PATHS_JAR}
+COPY --from=kt-builder /tmp/regelrett/conf conf
+COPY --from=kt-builder /tmp/regelrett/build/libs/*.jar ${RR_PATHS_JAR}
 COPY --from=otel-agent /opentelemetry-javaagent.jar ${OTEL_JAVAAGENT_PATH}
 
 RUN adduser -S -u "$RR_UID" -G root regelrett && \
@@ -102,8 +95,8 @@ RUN adduser -S -u "$RR_UID" -G root regelrett && \
 ENV JAVA_HOME=/usr/lib/jvm/temurin-25
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
 
-COPY --from=kt-src /tmp/regelrett/build/libs/*.jar ./app/regelrett.jar
-COPY --from=js-src /tmp/regelrett/dist ./dist
+COPY --from=kt-builder /tmp/regelrett/build/libs/*.jar ./app/regelrett.jar
+COPY --from=js-builder /tmp/regelrett/dist ./dist
 
 ENV RR_SERVER_HTTP_PORT=8080
 ENV RR_MANAGEMENT_HTTP_PORT=8081
