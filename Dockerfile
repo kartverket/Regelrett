@@ -38,10 +38,8 @@ RUN --mount=type=cache,id=gradle,target=/home/gradle/.gradle \
     gradle shadowJar --no-daemon
 
 # OpenTelemetry agent
-FROM dhi.io/eclipse-temurin:25.0.2.10-alpine3.23-dev@sha256:118aef9e9fa388809f0105f8e78e75bd4b4f4426f1e31a510bbe8719768f47dd AS otel-agent
 ARG OTEL_JAVA_AGENT_VERSION
-RUN wget -q -O /opentelemetry-javaagent.jar \
-    "https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v${OTEL_JAVA_AGENT_VERSION}/opentelemetry-javaagent.jar"
+FROM otel/autoinstrumentation-java:${OTEL_JAVA_AGENT_VERSION} AS otel-agent
 
 # -----------------------------------------------------------------------------
 # Runtime image
@@ -70,7 +68,7 @@ WORKDIR $RR_PATHS_HOME
 
 COPY --from=kt-builder /tmp/regelrett/conf conf
 COPY --from=kt-builder /tmp/regelrett/build/libs/*.jar ${RR_PATHS_JAR}
-COPY --from=otel-agent /opentelemetry-javaagent.jar ${OTEL_JAVAAGENT_PATH}
+COPY --from=otel-agent /javaagent.jar ${OTEL_JAVAAGENT_PATH}
 
 RUN adduser -S -u "$RR_UID" -G root regelrett && \
     mkdir -p "$RR_PATHS_PROVISIONING/schemasources" && \
