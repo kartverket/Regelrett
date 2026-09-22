@@ -25,27 +25,17 @@ ENV NODE_ENV=production
 RUN pnpm build
 
 # Kotlin build
-FROM dhi.io/gradle:8.14.5-r7-jdk21-alpine3.24-dev@sha256:59eed81f9bc6bd9915bb3f92a27b19a59fe79f76bc6b1d49e0c7238aa0bb5b85 AS kt-cache
-RUN mkdir -p /home/gradle/cache_home
-ENV GRADLE_USER_HOME=/home/gradle/cache_home
-WORKDIR /tmp/regelrett
-COPY build.gradle.* gradle.properties ./
-COPY gradle ./gradle
-RUN gradle clean build -i --stacktrace
-
 FROM dhi.io/gradle:8.14.5-r7-jdk21-alpine3.24-dev@sha256:59eed81f9bc6bd9915bb3f92a27b19a59fe79f76bc6b1d49e0c7238aa0bb5b85 AS kt-builder
 WORKDIR /tmp/regelrett
 COPY conf conf
-COPY --from=kt-cache /home/gradle/cache_home /tmp/regelrett/.gradle
-
 COPY src src
 COPY build.gradle.* gradle.properties ./
 COPY gradle ./gradle
 
-
 # Build the fat JAR, Gradle also supports shadow
 # and boot JAR by default.
-RUN gradle shadowJar --no-daemon
+RUN --mount=type=cache,id=gradle,target=/home/gradle/.gradle \
+    gradle shadowJar --no-daemon
 
 # OpenTelemetry agent
 FROM dhi.io/eclipse-temurin:25.0.2.10-alpine3.23-dev@sha256:118aef9e9fa388809f0105f8e78e75bd4b4f4426f1e31a510bbe8719768f47dd AS otel-agent
