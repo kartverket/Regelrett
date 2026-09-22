@@ -54,8 +54,8 @@ RUN apk add --no-cache \
     libpng \
     libssl3=3.5.8-r0
 
-LABEL maintainer="Bekk Consulting"
-LABEL org.opencontainers.image.source="https://github.com/bekk/regelrett"
+LABEL maintainer="Bekk Consulting" \
+    org.opencontainers.image.source="https://github.com/bekk/regelrett"
 
 ARG RR_UID="472"
 ARG RR_GID="0"
