@@ -79,9 +79,6 @@ RUN adduser -S -u "$RR_UID" -G root regelrett && \
     chown -R "regelrett:$RR_GID" "$RR_PATHS_HOME" "$RR_PATHS_PROVISIONING" "$RR_PATHS_JAR" "$OTEL_JAVAAGENT_PATH" && \
     chmod -R 777 "$RR_PATHS_PROVISIONING"
 
-ENV JAVA_HOME=/usr/lib/jvm/temurin-25
-ENV PATH="${JAVA_HOME}/bin:${PATH}"
-
 COPY --from=js-builder /tmp/regelrett/dist ./dist
 
 ENV RR_SERVER_HTTP_PORT=8080
