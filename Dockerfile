@@ -95,7 +95,6 @@ RUN adduser -S -u "$RR_UID" -G root regelrett && \
 ENV JAVA_HOME=/usr/lib/jvm/temurin-25
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
 
-COPY --from=kt-builder /tmp/regelrett/build/libs/*.jar ./app/regelrett.jar
 COPY --from=js-builder /tmp/regelrett/dist ./dist
 
 ENV RR_SERVER_HTTP_PORT=8080
