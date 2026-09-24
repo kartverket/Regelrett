@@ -29,8 +29,7 @@ COPY src src
 COPY build.gradle.* gradle.properties ./
 COPY gradle ./gradle
 
-# Build the fat JAR, Gradle also supports shadow
-# and boot JAR by default.
+# Build the executable fat JAR with the Shadow plugin.
 RUN --mount=type=cache,id=gradle,target=/home/gradle/.gradle \
     gradle shadowJar --no-daemon && \
     install -d -m 0755 /tmp/runtime-root/etc/regelrett && \
