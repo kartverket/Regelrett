@@ -47,9 +47,6 @@ FROM otel/autoinstrumentation-java:2.31.1@sha256:342ad4c72909bb92b7cd6fa09d5fdd5
 # -----------------------------------------------------------------------------
 FROM dhi.io/eclipse-temurin:25-alpine3.23@sha256:76901e7c63f2a53a2990136b315d72ccffac5d381442be293ce4a7be84003010
 
-LABEL maintainer="Bekk Consulting" \
-    org.opencontainers.image.source="https://github.com/bekk/regelrett"
-
 ARG RR_UID="472"
 ARG RR_GID="0"
 
