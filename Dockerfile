@@ -82,5 +82,5 @@ ENV RR_MANAGEMENT_HTTP_PORT=8081
 EXPOSE $RR_SERVER_HTTP_PORT $RR_MANAGEMENT_HTTP_PORT
 HEALTHCHECK NONE
 
-USER "$RR_UID"
+USER "$RR_UID:$RR_GID"
 ENTRYPOINT ["sh", "-c", "exec java ${JAVA_OPTS:-} -Duser.timezone=Europe/Oslo -jar /app/regelrett.jar --homepath=$RR_PATHS_HOME --config=$RR_PATHS_CONFIG"]
