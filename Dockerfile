@@ -1,13 +1,11 @@
 # syntax=docker/dockerfile:1
 
-ARG JS_PLATFORM=linux/amd64
-
 # -----------------------------------------------------------------------------
 # Build images
 # -----------------------------------------------------------------------------
 
 # JavaScript build
-FROM --platform=${JS_PLATFORM} dhi.io/node:22.23.2-alpine3.24-dev@sha256:884fa94e9c3228138eeaa7376f40972647ac6eaf8c960e407b1ea374f9479b0d AS js-base
+FROM dhi.io/node:24-alpine3.24-dev-dev@sha256:884fa94e9c3228138eeaa7376f40972647ac6eaf8c960e407b1ea374f9479b0d AS js-base
 WORKDIR /tmp/regelrett
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
