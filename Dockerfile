@@ -37,7 +37,7 @@ RUN --mount=type=cache,id=gradle,target=/home/gradle/.gradle \
     gradle shadowJar --no-daemon
 
 # OpenTelemetry agent
-FROM otel/autoinstrumentation-java:2.31.1 AS otel-agent
+FROM otel/autoinstrumentation-java:2.31.1@sha256:342ad4c72909bb92b7cd6fa09d5fdd50f41879b5657329e729baeacb46d9a02e AS otel-agent
 
 # -----------------------------------------------------------------------------
 # Runtime image
