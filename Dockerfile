@@ -34,7 +34,12 @@ COPY gradle ./gradle
 # Build the fat JAR, Gradle also supports shadow
 # and boot JAR by default.
 RUN --mount=type=cache,id=gradle,target=/home/gradle/.gradle \
-    gradle shadowJar --no-daemon
+    gradle shadowJar --no-daemon && \
+    install -d -m 0755 /tmp/runtime-root/etc/regelrett && \
+    install -d -m 0777 /tmp/runtime-root/etc/regelrett/provisioning/schemasources && \
+    install -m 0666 conf/provisioning/schemasources/sample.yaml \
+        /tmp/runtime-root/etc/regelrett/provisioning/schemasources/sample.yaml && \
+    install -m 0644 conf/sample.yaml /tmp/runtime-root/etc/regelrett/regelrett.yaml
 
 # OpenTelemetry agent
 FROM otel/autoinstrumentation-java:2.31.1@sha256:342ad4c72909bb92b7cd6fa09d5fdd50f41879b5657329e729baeacb46d9a02e AS otel-agent
@@ -42,13 +47,7 @@ FROM otel/autoinstrumentation-java:2.31.1@sha256:342ad4c72909bb92b7cd6fa09d5fdd5
 # -----------------------------------------------------------------------------
 # Runtime image
 # -----------------------------------------------------------------------------
-FROM dhi.io/eclipse-temurin:25.0.2.10-alpine3.23-dev@sha256:118aef9e9fa388809f0105f8e78e75bd4b4f4426f1e31a510bbe8719768f47dd
-
-RUN apk add --no-cache \
-    gnutls \
-    libcrypto3 \
-    libpng \
-    libssl3
+FROM dhi.io/eclipse-temurin:25-alpine3.23@sha256:76901e7c63f2a53a2990136b315d72ccffac5d381442be293ce4a7be84003010
 
 LABEL maintainer="Bekk Consulting" \
     org.opencontainers.image.source="https://github.com/bekk/regelrett"
@@ -64,23 +63,16 @@ ENV RR_PATHS_PROVISIONING="/etc/regelrett/provisioning" \
 
 WORKDIR $RR_PATHS_HOME
 
-COPY --from=kt-builder /tmp/regelrett/conf conf
-COPY --from=kt-builder /tmp/regelrett/build/libs/*.jar ${RR_PATHS_JAR}
-COPY --from=otel-agent /javaagent.jar ${OTEL_JAVAAGENT_PATH}
-
-RUN adduser -S -u "$RR_UID" -G root regelrett && \
-    mkdir -p "$RR_PATHS_PROVISIONING/schemasources" && \
-    cp conf/provisioning/schemasources/sample.yaml "$RR_PATHS_PROVISIONING/schemasources/" && \
-    cp conf/sample.yaml "$RR_PATHS_CONFIG" && \
-    chown -R "regelrett:$RR_GID" "$RR_PATHS_HOME" "$RR_PATHS_PROVISIONING" "$RR_PATHS_JAR" "$OTEL_JAVAAGENT_PATH" && \
-    chmod -R 777 "$RR_PATHS_PROVISIONING"
-
-COPY --from=js-builder /tmp/regelrett/dist ./dist
+COPY --from=kt-builder --chown=${RR_UID}:${RR_GID} /tmp/regelrett/conf conf
+COPY --from=kt-builder --chown=${RR_UID}:${RR_GID} /tmp/regelrett/build/libs/*.jar ${RR_PATHS_JAR}
+COPY --from=kt-builder --chown=${RR_UID}:${RR_GID} /tmp/runtime-root/etc/regelrett /etc/regelrett
+COPY --from=otel-agent --chown=${RR_UID}:${RR_GID} /javaagent.jar ${OTEL_JAVAAGENT_PATH}
+COPY --from=js-builder --chown=${RR_UID}:${RR_GID} /tmp/regelrett/dist ./dist
 
 ENV RR_SERVER_HTTP_PORT=8080
 ENV RR_MANAGEMENT_HTTP_PORT=8081
 EXPOSE $RR_SERVER_HTTP_PORT $RR_MANAGEMENT_HTTP_PORT
 HEALTHCHECK NONE
 
-USER "$RR_UID:$RR_GID"
-ENTRYPOINT ["sh", "-c", "exec java ${JAVA_OPTS:-} -Duser.timezone=Europe/Oslo -jar /app/regelrett.jar --homepath=$RR_PATHS_HOME --config=$RR_PATHS_CONFIG"]
+USER "$RR_UID"
+ENTRYPOINT ["java", "-Duser.timezone=Europe/Oslo", "-jar", "/app/regelrett.jar", "--homepath=/usr/share/regelrett", "--config=/etc/regelrett/regelrett.yaml"]
