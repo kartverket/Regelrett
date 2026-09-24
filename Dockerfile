@@ -46,9 +46,9 @@ FROM dhi.io/eclipse-temurin:25.0.2.10-alpine3.23-dev@sha256:118aef9e9fa388809f01
 
 RUN apk add --no-cache \
     gnutls \
-    libcrypto3=3.5.8-r0 \
+    libcrypto3 \
     libpng \
-    libssl3=3.5.8-r0
+    libssl3
 
 LABEL maintainer="Bekk Consulting" \
     org.opencontainers.image.source="https://github.com/bekk/regelrett"
