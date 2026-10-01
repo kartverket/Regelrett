@@ -30,38 +30,12 @@ Det vil si at hvis du har konfigurert opp regelrett og fått den til å kjøre, 
 En kort intro til hvordan du gjør dette finner du i stegene under, men for mer utfyllende detaljer og eksempler bør du lese her:
 [Provisjonering](conf/provisioning/README.md)
 
-### Kjøre lokal PostgreSQL database
+## Kjøre tjenesten lokalt
 
-Du trenger `docker-compose` og en docker-daemon installert, der **Colima** er et greit valg. Følgende kommandoer tar deg langt på vei hvis du har Homebrew installert:
-
-```
-brew install docker
-brew install docker-compose
-brew install colima
-```
-
-Deretter kan du starte Colima med:
-
-```
-colima start --network-address
-```
-
-Alternativt kan du bruke Postgres desktop til å kjøre en database lokalt. Som standard antar Regelrett at du
-har en bruker `postgres` uten passord. Dette er
-[konfigurerbart](conf/README.md).
-
-Start så databasen (i detached mode) med
-
-```
-docker compose up regelrett-db -d
-```
-
-Nå skal databasen være oppe og kjøre! Hvis du ønsker å kjøre opp databasen på en egen port må du huske å bytte ut porten i configen og i kommandoen over.
+Se [CONTRIBUTING](CONTRIBUTING.md)
 
 ### Info
 
-- Du kan stoppe containeren ved å kjøre `docker compose stop regelrett-db` og starte den igjen med
-  `docker compose start regelrett-db`.
 - Applikasjonen bruker en PostgreSQL-database, og Flyway migration for å gjøre
   endringer på databaseskjemaer.
 - Alle filer i Flyway migration script må ha følgende format:
@@ -73,81 +47,6 @@ Nå skal databasen være oppe og kjøre! Hvis du ønsker å kjøre opp databasen
   maskin utenfor Flyway.
 - Databasemigreringer kjører automatisk ved oppstart av applikasjonen, eller så
   kan de kjøres manuelt med `./gradlew flywayMigrate`
-
-## Kjøre frontend og backend lokalt
-
-Backend er bygget med KTOR og frontend er bygget med React, Vite og TypeScript.
-
-### Steg 0
-
-Før du begynner, sørg for at du har følgende installert:
-
-- **[Node.js](https://nodejs.org)** (versjon 20.x eller nyere)
-- **[pnpm](https://pnpm.io/)**
-- **JDK 21** (eller nyere) for backend
-
-### Steg 1: Konfigurasjon
-
-Du må konfigurere applikasjonen slik det beskrives i
-[`conf/README.md`](conf/README.md). Du kan enten opprette en `conf/custom.yaml`
-fil, eller bruke miljøvariabler der du kjører backenden.
-
-Verdiene som _må_ overskrives, enten i fil - i conf/custom.yaml:
-
-```yaml
-oauth:
-  tenant_id: <tenant_id>
-  client_id: <client_id>
-  client_secret: <client_secret>
-```
-
-Eller som miljøvariabler:
-
-```env
-RR_OAUTH_TENANT_ID=<TENANT_ID>
-RR_OAUTH_CLIENT_ID=<CLIENT_ID>
-RR_OAUTH_CLIENT_SECRET=<CLIENT_SECRET>
-```
-
-Om du setter base.mode til development skal KTOR appen kunne reloades
-automatisk.
-
-conf/custom.yaml:
-
-```yaml
-base:
-  mode: development
-```
-
-Miljøvariabel:
-
-```env
-RR_BASE_MODE=development
-```
-
-Du kan sette miljøvariablene i IntelliJ ved å gå inn på `Run -> Edit
-configurations`.
-
-### Steg 2: Frontend dev server
-
-- Installer avhengigheter med `pnpm i`
-- Start utviklingsserveren ved å kjøre: `pnpm run dev`
-
-### Steg 3: Web server
-
-#### IntelliJ
-
-- Gå inn på `Run -> Edit configurations`
-- Trykk på + for å legge til ny konfigurasjon og velg KTOR
-- Sett `no.bekk.ApplicationKt` som main class
-
-#### Terminal
-
-- `./gradlew -t build -x test` i ett shell
-- `./gradlew run` i ett annet
-
-Backenden fungerer som api og webserver for frontenden, som skal være
-tilgjengelig på `http://localhost:8080`
 
 ### Steg 4: Provisjonering
 
@@ -186,6 +85,27 @@ er trengs for å hente ut adressen til `TESTCONTAINERS_HOST_OVERRIDE`.
 Hvis du bruker noe annet, eksempelvis Podman eller Rancher, se dokumentasjonen
 til testcontainers;
 https://java.testcontainers.org/supported_docker_environment/
+
+### Verifisere containeren
+
+Applikasjonsbildet bruker digest-låste Docker Hardened Images fra `dhi.io` og
+bygges for `linux/amd64`. Runtime-bildet er en minimal variant uten skall eller
+pakkehåndterer. Bruk `JAVA_TOOL_OPTIONS` i stedet for `JAVA_OPTS` for å sende
+flagg til JVM-en. Logg inn med `docker login dhi.io` før lokal bygging. Kjør
+containerkontrakten, inkludert lokal PostgreSQL og bind-montert provisjonering,
+med:
+
+```shell
+./scripts/container-contract.sh
+```
+
+Skriptet bruker et midlertidig Buildx-oppsett under kjøringen, slik at det ikke
+skriver til Buildx-tilstanden under brukerens Docker-konfigurasjon.
+
+CI krever Actions secrets `DHI_USERNAME` og `DHI_TOKEN`. Legg de samme navnene
+inn som Dependabot secrets, slik at Docker-oppdateringen kan lese `dhi.io`.
+Oppdater DHI-referansene ved å beholde versjonstaggene i `FROM`-linjene og
+erstatte digestene med de publiserte multi-arkitektur-digestene.
 
 ## Mer informasjon om frontenden
 
