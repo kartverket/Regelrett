@@ -38,7 +38,7 @@ export function PaginationButtonContainer<TData>({ table }: Props<TData>) {
     if (ref.current) {
       if (navigation === NavigationType.Push) {
         window.scrollTo({
-          top: document.documentElement.scrollHeight,
+          top: 0,
           behavior: "auto",
         });
       }
