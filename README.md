@@ -48,7 +48,7 @@ Se [CONTRIBUTING](CONTRIBUTING.md)
 - Databasemigreringer kjører automatisk ved oppstart av applikasjonen, eller så
   kan de kjøres manuelt med `./gradlew flywayMigrate`
 
-### Steg 4: Provisjonering
+### Provisjonering
 
 Nå som Regelrett er oppe og kjører, må du provisjonere skjemakildene slik som beskrevet i [`conf/provisioning/README.md`](conf/provisioning/README.md).
 I praksis betyr provisjonering at du forteller Regelrett hvor skjemaene ligger (Airtable eller Yaml) og hvordan man får tak i dem, slik at applikasjonen kan laste dem inn.  
@@ -85,6 +85,27 @@ er trengs for å hente ut adressen til `TESTCONTAINERS_HOST_OVERRIDE`.
 Hvis du bruker noe annet, eksempelvis Podman eller Rancher, se dokumentasjonen
 til testcontainers;
 https://java.testcontainers.org/supported_docker_environment/
+
+### Verifisere containeren
+
+Applikasjonsbildet bruker digest-låste Docker Hardened Images fra `dhi.io` og
+bygges for `linux/amd64`. Runtime-bildet er en minimal variant uten skall eller
+pakkehåndterer. Bruk `JAVA_TOOL_OPTIONS` i stedet for `JAVA_OPTS` for å sende
+flagg til JVM-en. Logg inn med `docker login dhi.io` før lokal bygging. Kjør
+containerkontrakten, inkludert lokal PostgreSQL og bind-montert provisjonering,
+med:
+
+```shell
+./scripts/container-contract.sh
+```
+
+Skriptet bruker et midlertidig Buildx-oppsett under kjøringen, slik at det ikke
+skriver til Buildx-tilstanden under brukerens Docker-konfigurasjon.
+
+CI krever Actions secrets `DHI_USERNAME` og `DHI_TOKEN`. Legg de samme navnene
+inn som Dependabot secrets, slik at Docker-oppdateringen kan lese `dhi.io`.
+Oppdater DHI-referansene ved å beholde versjonstaggene i `FROM`-linjene og
+erstatte digestene med de publiserte multi-arkitektur-digestene.
 
 ## Mer informasjon om frontenden
 
