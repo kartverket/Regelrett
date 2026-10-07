@@ -86,27 +86,6 @@ Hvis du bruker noe annet, eksempelvis Podman eller Rancher, se dokumentasjonen
 til testcontainers;
 https://java.testcontainers.org/supported_docker_environment/
 
-### Verifisere containeren
-
-Applikasjonsbildet bruker digest-låste Docker Hardened Images fra `dhi.io` og
-bygges for `linux/amd64`. Runtime-bildet er en minimal variant uten skall eller
-pakkehåndterer. Bruk `JAVA_TOOL_OPTIONS` i stedet for `JAVA_OPTS` for å sende
-flagg til JVM-en. Logg inn med `docker login dhi.io` før lokal bygging. Kjør
-containerkontrakten, inkludert lokal PostgreSQL og bind-montert provisjonering,
-med:
-
-```shell
-./scripts/container-contract.sh
-```
-
-Skriptet bruker et midlertidig Buildx-oppsett under kjøringen, slik at det ikke
-skriver til Buildx-tilstanden under brukerens Docker-konfigurasjon.
-
-CI krever Actions secrets `DHI_USERNAME` og `DHI_TOKEN`. Legg de samme navnene
-inn som Dependabot secrets, slik at Docker-oppdateringen kan lese `dhi.io`.
-Oppdater DHI-referansene ved å beholde versjonstaggene i `FROM`-linjene og
-erstatte digestene med de publiserte multi-arkitektur-digestene.
-
 ## Mer informasjon om frontenden
 
 - For å sikre kodekvalitet, kjør lint-verktøyet: `pnpm run lint`
