@@ -124,3 +124,29 @@ For å kjøre alle testene, inkludert testene merket `IntegrationTest`, bruk:
 ```
 
 > Bruker man Colima krever det noe ekstra oppsett for å kjøre integrasjonstestene. Se [her](https://java.testcontainers.org/supported_docker_environment/).
+
+## Mer informasjon om frontenden
+
+- For å sikre kodekvalitet, kjør lint-verktøyet: `pnpm run lint`
+- For å automatisk fikse lintingproblemer: `pnpm run lint-fix`
+- For å formatere kodebasen med Prettier: `pnpm run format`. Dette vil formatere
+  alle filer i `app`-mappen.
+- For å kjøre typesjekk (inkludert `react-router` typegen): `pnpm run typecheck`.
+- For å kjøre frontendtestene (Vitest): `pnpm test`.
+- For å lage en produksjonsklar versjon av prosjektet: `pnpm run build`. Dette
+  vil kompilere TypeScript-filene og pakke applikasjonen ved hjelp av Vite.
+  Output vil bli plassert i `dist`-mappen, klar for utrulling.
+- Før du ruller ut, kan du forhåndsvise produksjonsbygget lokalt:
+  `pnpm run preview`. Denne kommandoen vil servere produksjonsbygget på en
+  lokal server, slik at du kan verifisere at alt fungerer som forventet.
+- Husky er konfigurert til å kjøre visse skript før commits blir fullført.
+  Dette inkluderer linting og TypeScript-sjekker for å sikre kodekvalitet og
+  konsistens. Disse kjøres via `lint-staged` på stage'ede filer.
+- Dette prosjektet bruker TanStack Query (tidligere kjent som React Query) for
+  å håndtere nettverksforespørsler og servertilstand. TanStack Query forenkler
+  datainnhenting, caching, synkronisering og oppdatering av servertilstand i
+  React-applikasjoner. Ved å bruke dette kraftige biblioteket sikrer prosjektet
+  effektiv og pålitelig datahåndtering, minimerer unødvendige
+  nettverksforespørsler, og gir en optimal brukeropplevelse med automatiske
+  bakgrunnsoppdateringer og feilhåndtering. Se dokumentasjonen for TanStack
+  Query her: https://tanstack.com/query/latest
