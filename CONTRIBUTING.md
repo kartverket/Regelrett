@@ -127,15 +127,6 @@ For å kjøre alle testene, inkludert testene merket `IntegrationTest`, bruk:
 
 ## Mer informasjon om frontenden
 
-- For å sikre kodekvalitet, kjør lint-verktøyet: `pnpm run lint`
-- For å automatisk fikse lintingproblemer: `pnpm run lint-fix`
-- For å formatere kodebasen med Prettier: `pnpm run format`. Dette vil formatere
-  alle filer i `app`-mappen.
-- For å kjøre typesjekk (inkludert `react-router` typegen): `pnpm run typecheck`.
-- For å kjøre frontendtestene (Vitest): `pnpm test`.
-- For å lage en produksjonsklar versjon av prosjektet: `pnpm run build`. Dette
-  vil kompilere TypeScript-filene og pakke applikasjonen ved hjelp av Vite.
-  Output vil bli plassert i `dist`-mappen, klar for utrulling.
 - Før du ruller ut, kan du forhåndsvise produksjonsbygget lokalt:
   `pnpm run preview`. Denne kommandoen vil servere produksjonsbygget på en
   lokal server, slik at du kan verifisere at alt fungerer som forventet.
