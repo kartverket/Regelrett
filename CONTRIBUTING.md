@@ -127,17 +127,6 @@ For å kjøre alle testene, inkludert testene merket `IntegrationTest`, bruk:
 
 ## Mer informasjon om frontenden
 
-- Før du ruller ut, kan du forhåndsvise produksjonsbygget lokalt:
-  `pnpm run preview`. Denne kommandoen vil servere produksjonsbygget på en
-  lokal server, slik at du kan verifisere at alt fungerer som forventet.
 - Husky er konfigurert til å kjøre visse skript før commits blir fullført.
   Dette inkluderer linting og TypeScript-sjekker for å sikre kodekvalitet og
   konsistens. Disse kjøres via `lint-staged` på stage'ede filer.
-- Dette prosjektet bruker TanStack Query (tidligere kjent som React Query) for
-  å håndtere nettverksforespørsler og servertilstand. TanStack Query forenkler
-  datainnhenting, caching, synkronisering og oppdatering av servertilstand i
-  React-applikasjoner. Ved å bruke dette kraftige biblioteket sikrer prosjektet
-  effektiv og pålitelig datahåndtering, minimerer unødvendige
-  nettverksforespørsler, og gir en optimal brukeropplevelse med automatiske
-  bakgrunnsoppdateringer og feilhåndtering. Se dokumentasjonen for TanStack
-  Query her: https://tanstack.com/query/latest
