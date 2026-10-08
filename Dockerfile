@@ -22,7 +22,7 @@ ENV NODE_ENV=production
 RUN pnpm build
 
 # Kotlin build
-FROM dhi.io/gradle:9-jdk25-alpine3.23-dev@sha256:480bdfbf96e65828f36baad3708ec27c0e6f5b8316714e6c47abc52e04308ed9 AS kt-builder
+FROM dhi.io/gradle:9-jdk25-alpine3.23-dev@sha256:0dd3d4f3b8544e44a039cefe0520f859b7fa5f0ee787aeb5542a65be420e4649 AS kt-builder
 WORKDIR /tmp/regelrett
 COPY conf conf
 COPY src src
@@ -39,12 +39,12 @@ RUN --mount=type=cache,id=gradle,target=/home/gradle/.gradle \
     install -m 0644 conf/sample.yaml /tmp/runtime-root/etc/regelrett/regelrett.yaml
 
 # OpenTelemetry agent
-FROM otel/autoinstrumentation-java:2.31.1@sha256:342ad4c72909bb92b7cd6fa09d5fdd50f41879b5657329e729baeacb46d9a02e AS otel-agent
+FROM otel/autoinstrumentation-java:2.32.0-1@sha256:9dad1c6e3e2ecee48fc164a19bcfde703510bee972c8cb421689fde89b5f89e9 AS otel-agent
 
 # -----------------------------------------------------------------------------
 # Runtime image
 # -----------------------------------------------------------------------------
-FROM dhi.io/eclipse-temurin:25-alpine3.23@sha256:76901e7c63f2a53a2990136b315d72ccffac5d381442be293ce4a7be84003010
+FROM dhi.io/eclipse-temurin:25-alpine3.23@sha256:9a1468f69531dcd1604d7a9865a8826b5f94fc07e066417981c07d12ee737f98
 
 ARG RR_UID="472"
 ARG RR_GID="0"
