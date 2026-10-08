@@ -8,8 +8,8 @@ registries:
   dhi:
     type: docker-registry
     url: https://dhi.io
-    username: ${{secrets.DHI_USERNAME}}
-    password: ${{secrets.DHI_TOKEN}}
+    username: ${{vars.DOCKERHUB_USERNAME}}
+    password: ${{secrets.DOCKERHUB_TOKEN}}
 
 updates:
   - package-ecosystem: "github-actions"
