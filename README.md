@@ -66,26 +66,6 @@ RR_AIRTABLE_ACCESS_TOKEN=<PAT>
 
 Les mer om [provisjonering](conf/provisioning/README.md).
 
-## Kjøre testene
-
-For å kunne kjøre flere av testene lokalt, så må du ha en fungerende
-dockerinstallasjon. I tillegg, avhengig av oppsettet ditt, så er det noen
-spesifikke miljøvariabler som må settes. Hvis du bruker colima, sett følgende i
-.bashrc/.zshrc eller andre tilsvarende konfigurasjonsfiler for ditt shell;
-
-```shell
-export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock
-export TESTCONTAINERS_HOST_OVERRIDE=$(colima ls -j | jq -r '.address') export
-DOCKER_HOST="unix://${HOME}/.colima/default/docker.sock"
-```
-
-Merk at det er viktig at colima startes med `--network-address` flagget, da det
-er trengs for å hente ut adressen til `TESTCONTAINERS_HOST_OVERRIDE`.
-
-Hvis du bruker noe annet, eksempelvis Podman eller Rancher, se dokumentasjonen
-til testcontainers;
-https://java.testcontainers.org/supported_docker_environment/
-
 ## Mer informasjon om frontenden
 
 - For å sikre kodekvalitet, kjør lint-verktøyet: `pnpm run lint`

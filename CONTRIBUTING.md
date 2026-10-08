@@ -105,3 +105,22 @@ Backend kan også startes direkte i IntelliJ
 3.  Sett `no.bekk.ApplicationKt` som main class
 
 <br>
+
+## Kjøre tester
+
+Testene kjøres med Gradle:
+
+```sh
+./gradlew test
+```
+
+Som standard utelater denne kommandoen testene som er merket med
+`IntegrationTest`. De øvrige testene krever normalt ikke Docker.
+
+For å kjøre alle testene, inkludert testene merket `IntegrationTest`, bruk:
+
+```sh
+./gradlew test -PintegrationTest
+```
+
+> Bruker man Colima krever det noe ekstra oppsett for å kjøre integrasjonstestene. Se [her](https://java.testcontainers.org/supported_docker_environment/).
