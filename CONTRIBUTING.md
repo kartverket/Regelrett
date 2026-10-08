@@ -124,9 +124,3 @@ For å kjøre alle testene, inkludert testene merket `IntegrationTest`, bruk:
 ```
 
 > Bruker man Colima krever det noe ekstra oppsett for å kjøre integrasjonstestene. Se [her](https://java.testcontainers.org/supported_docker_environment/).
-
-## Mer informasjon om frontenden
-
-- Husky er konfigurert til å kjøre visse skript før commits blir fullført.
-  Dette inkluderer linting og TypeScript-sjekker for å sikre kodekvalitet og
-  konsistens. Disse kjøres via `lint-staged` på stage'ede filer.
