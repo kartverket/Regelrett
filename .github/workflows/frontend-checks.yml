@@ -1,0 +1,61 @@
+name: Frontend Checks
+
+on:
+  pull_request:
+    paths:
+      - 'frontend/**'
+      - 'conf/defaults.yaml'
+      - '.editorconfig'
+      - '.prettierignore'
+      - '.prettierrc'
+      - 'Dockerfile'
+      - '.dockerignore'
+      - 'compose.yaml'
+      - '.github/workflows/frontend-checks.yml'
+  push:
+    branches:
+      - main
+      - release-*.*.*
+    paths:
+      - 'frontend/**'
+      - 'conf/defaults.yaml'
+      - '.editorconfig'
+      - '.prettierignore'
+      - '.prettierrc'
+      - 'Dockerfile'
+      - '.dockerignore'
+      - 'compose.yaml'
+      - '.github/workflows/frontend-checks.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - name: Enable Corepack
+        run: corepack enable
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Lint
+        run: pnpm run lint
+      - name: Typecheck
+        run: pnpm run typecheck
+      - name: Test
+        run: pnpm test
+      - name: Build
+        run: pnpm run build

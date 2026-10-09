@@ -42,11 +42,11 @@ Se [CONTRIBUTING](CONTRIBUTING.md)
 
 `V<Version>__<Description>.sql` For eksempel: `V1.1__initial.sql`
 
-- Migreringsfilene ligger i `src/main/resources/db/migration`.
+- Migreringsfilene ligger i `backend/src/main/resources/db/migration`.
 - Databasen heter "regelrett", og må settes opp lokalt på utviklerens
   maskin utenfor Flyway.
 - Databasemigreringer kjører automatisk ved oppstart av applikasjonen, eller så
-  kan de kjøres manuelt med `./gradlew flywayMigrate`
+  kan de kjøres manuelt med `./backend/gradlew -p backend flywayMigrate`
 
 ### Provisjonering
 
@@ -55,7 +55,7 @@ I praksis betyr provisjonering at du forteller Regelrett hvor skjemaene ligger (
 I [`conf/provisioning/schemasources/sample.yaml`](conf/provisioning/schemasources/sample.yaml) finner du et eksempel på hvordan du provisjonerer opp et skjema.
 Kopier eksempelet og endre verdiene til å stemme overens med dine skjemakilder og skjema. Du kan provisjonere opp flere skjemaer i samme fil.
 
-Det finnes to typer skjemakilder: YAML og Airtable. For YAML-skjemaer lager du én `.yaml`-fil per skjema i mappen [src/main/resources/questions](src/main/resources/questions)
+Det finnes to typer skjemakilder: YAML og Airtable. For YAML-skjemaer lager du én `.yaml`-fil per skjema i mappen [backend/src/main/resources/questions](backend/src/main/resources/questions)
 
 Hvis du provisjonerer opp en skjemakilde fra airtable og velger å beholde [airtable access_token som miljøvariabel](conf/provisioning/README.md#use-environment-variables) slik som i sample.yaml, må du sette denne som en miljøvariabel. Denne brukes i
 conf/provisioning/<yourProvisioningFileName>.yaml og kan derfor ikke settes i conf/custom.yaml:

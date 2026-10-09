@@ -83,7 +83,7 @@ docker compose up regelrett-db
 Start frontend
 
 ```sh
-pnpm dev
+pnpm --dir frontend dev
 ```
 
 Start database
@@ -95,7 +95,7 @@ docker compose up regelrett-db
 Start backend
 
 ```sh
-./gradlew run
+./backend/gradlew -p backend run
 ```
 
 Backend kan også startes direkte i IntelliJ
