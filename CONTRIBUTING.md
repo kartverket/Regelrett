@@ -115,7 +115,7 @@ Testene kjøres med Gradle:
 ```
 
 Som standard utelater denne kommandoen testene som er merket med
-`IntegrationTest`. De øvrige testene krever normalt ikke Docker.
+`IntegrationTest`, som krever Docker.
 
 For å kjøre alle testene, inkludert testene merket `IntegrationTest`, bruk:
 
