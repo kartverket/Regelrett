@@ -1,1 +1,5 @@
 node_modules
+frontend/.react-router
+frontend/dist
+backend/.gradle
+backend/build

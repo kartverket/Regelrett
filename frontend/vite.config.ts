@@ -9,7 +9,7 @@ import { parse } from "yaml";
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
 
 export default () => {
-  const regelrettRoot = path.join(currentDir);
+  const regelrettRoot = path.resolve(currentDir, "..");
   const defaultSettings = readFileSync(`${regelrettRoot}/conf/defaults.yaml`, {
     encoding: "utf-8",
   });

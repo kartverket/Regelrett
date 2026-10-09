@@ -42,11 +42,11 @@ Se [CONTRIBUTING](CONTRIBUTING.md)
 
 `V<Version>__<Description>.sql` For eksempel: `V1.1__initial.sql`
 
-- Migreringsfilene ligger i `src/main/resources/db/migration`.
+- Migreringsfilene ligger i `backend/src/main/resources/db/migration`.
 - Databasen heter "regelrett", og må settes opp lokalt på utviklerens
   maskin utenfor Flyway.
 - Databasemigreringer kjører automatisk ved oppstart av applikasjonen, eller så
-  kan de kjøres manuelt med `./gradlew flywayMigrate`
+  kan de kjøres manuelt med `./backend/gradlew -p backend flywayMigrate`
 
 ### Provisjonering
 
@@ -55,7 +55,7 @@ I praksis betyr provisjonering at du forteller Regelrett hvor skjemaene ligger (
 I [`conf/provisioning/schemasources/sample.yaml`](conf/provisioning/schemasources/sample.yaml) finner du et eksempel på hvordan du provisjonerer opp et skjema.
 Kopier eksempelet og endre verdiene til å stemme overens med dine skjemakilder og skjema. Du kan provisjonere opp flere skjemaer i samme fil.
 
-Det finnes to typer skjemakilder: YAML og Airtable. For YAML-skjemaer lager du én `.yaml`-fil per skjema i mappen [src/main/resources/questions](src/main/resources/questions)
+Det finnes to typer skjemakilder: YAML og Airtable. For YAML-skjemaer lager du én `.yaml`-fil per skjema i mappen [backend/src/main/resources/questions](backend/src/main/resources/questions)
 
 Hvis du provisjonerer opp en skjemakilde fra airtable og velger å beholde [airtable access_token som miljøvariabel](conf/provisioning/README.md#use-environment-variables) slik som i sample.yaml, må du sette denne som en miljøvariabel. Denne brukes i
 conf/provisioning/<yourProvisioningFileName>.yaml og kan derfor ikke settes i conf/custom.yaml:
@@ -88,17 +88,17 @@ https://java.testcontainers.org/supported_docker_environment/
 
 ## Mer informasjon om frontenden
 
-- For å sikre kodekvalitet, kjør lint-verktøyet: `pnpm run lint`
-- For å automatisk fikse lintingproblemer: `pnpm run lint-fix`
-- For å formatere kodebasen med Prettier: `pnpm run format`. Dette vil formatere
+- For å sikre kodekvalitet, kjør lint-verktøyet: `pnpm --dir frontend run lint`
+- For å automatisk fikse lintingproblemer: `pnpm --dir frontend run lint-fix`
+- For å formatere kodebasen med Prettier: `pnpm --dir frontend run format`. Dette vil formatere
   alle filer i `app`-mappen.
-- For å kjøre typesjekk (inkludert `react-router` typegen): `pnpm run typecheck`.
-- For å kjøre frontendtestene (Vitest): `pnpm test`.
-- For å lage en produksjonsklar versjon av prosjektet: `pnpm run build`. Dette
+- For å kjøre typesjekk (inkludert `react-router` typegen): `pnpm --dir frontend run typecheck`.
+- For å kjøre frontendtestene (Vitest): `pnpm --dir frontend test`.
+- For å lage en produksjonsklar versjon av prosjektet: `pnpm --dir frontend run build`. Dette
   vil kompilere TypeScript-filene og pakke applikasjonen ved hjelp av Vite.
-  Output vil bli plassert i `dist`-mappen, klar for utrulling.
+  Output vil bli plassert i `frontend/dist`-mappen, klar for utrulling.
 - Før du ruller ut, kan du forhåndsvise produksjonsbygget lokalt:
-  `pnpm run preview`. Denne kommandoen vil servere produksjonsbygget på en
+  `pnpm --dir frontend run preview`. Denne kommandoen vil servere produksjonsbygget på en
   lokal server, slik at du kan verifisere at alt fungerer som forventet.
 - Husky er konfigurert til å kjøre visse skript før commits blir fullført.
   Dette inkluderer linting og TypeScript-sjekker for å sikre kodekvalitet og
