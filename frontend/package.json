@@ -10,7 +10,7 @@
     "lint-fix": "eslint --fix  --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "format": "prettier --write 'app/**/*.{js,ts,tsx,json,css,md}'",
     "preview": "vite preview",
-    "typecheck": "react-router typegen && tsc",
+    "typecheck": "tsc",
     "test": "vitest run"
   },
   "dependencies": {
