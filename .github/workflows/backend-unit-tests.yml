@@ -2,16 +2,24 @@ name: Backend Unit Tests
 
 on:
   pull_request:
-    paths-ignore:
-      - 'docs/**'
-      - '**/*.md'
+    paths:
+      - 'backend/**'
+      - 'conf/**'
+      - 'Dockerfile'
+      - '.dockerignore'
+      - 'compose.yaml'
+      - '.github/workflows/backend-unit-tests.yml'
   push:
     branches:
       - main
       - release-*.*.*
-    paths-ignore:
-      - 'docs/**'
-      - '**/*.md'
+    paths:
+      - 'backend/**'
+      - 'conf/**'
+      - 'Dockerfile'
+      - '.dockerignore'
+      - 'compose.yaml'
+      - '.github/workflows/backend-unit-tests.yml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -42,6 +50,6 @@ jobs:
           ~/.gradle/caches
           ~/.gradle/wrapper
     - name: Run unit tests
+      working-directory: backend
       run: ./gradlew test --no-daemon
-
 

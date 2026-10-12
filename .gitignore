@@ -1,9 +1,13 @@
 .DS_Store
-/node_modules/
 
-# Vite
+# Frontend
+/node_modules/
+/.pnpm-store/
 /.react-router/
 /dist/
+/frontend/node_modules/
+/frontend/.react-router/
+/frontend/dist/
 
 # Custom Config
 conf/*.yaml
@@ -17,10 +21,12 @@ conf/*.yaml
 conf/provisioning/schemasources/*
 !conf/provisioning/schemasources/sample.yaml
 
-# Gradle
-.gradle
-build/
-!gradle/wrapper/gradle-wrapper.jar
+# Backend
+/.gradle/
+/build/
+/backend/.gradle/
+/backend/build/
+!backend/gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
 
@@ -48,7 +54,6 @@ out/
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
-/dist/
 /nbdist/
 /.nb-gradle/
 
@@ -56,4 +61,3 @@ out/
 .vscode/
 .kotlin
 kls_database.db
-

@@ -21,7 +21,7 @@ updates:
         patterns:
           - "*"
   - package-ecosystem: "gradle"
-    directory: "/"
+    directory: "/backend"
     schedule:
       interval: "daily"
       time: "02:00"
@@ -29,6 +29,17 @@ updates:
     open-pull-requests-limit: 10
     groups:
       gradle-dependencies:
+        patterns:
+          - "*"
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "daily"
+      time: "02:00"
+      timezone: "Europe/Oslo"
+    open-pull-requests-limit: 10
+    groups:
+      npm-dependencies:
         patterns:
           - "*"
   - package-ecosystem: "docker"

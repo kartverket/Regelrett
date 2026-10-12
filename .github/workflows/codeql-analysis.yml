@@ -44,6 +44,7 @@ jobs:
 
     - if: matrix.language == 'java-kotlin'
       name: Execute gradle build
+      working-directory: backend
       run: |
         ./gradlew --no-daemon -Dorg.gradle.jvmargs=-Xmx2g clean test
 

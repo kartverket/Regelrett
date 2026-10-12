@@ -12,7 +12,8 @@ describe(mapTableDataRecords.name, () => {
       records: [
         {
           id: "q1",
-          question: "What is your favorite color?",
+          name: "What is your favorite color?",
+          description: "",
           recordId: "ar-22",
           answers: [],
           comments: [],
@@ -29,7 +30,8 @@ describe(mapTableDataRecords.name, () => {
         },
         {
           id: "q2",
-          question: "What is your favorite food?",
+          name: "What is your favorite food?",
+          description: "",
           recordId: "ar-23",
           answers: [],
           comments: [],
@@ -90,7 +92,8 @@ describe(mapTableDataRecords.name, () => {
     expect(result).toEqual([
       {
         id: "q1",
-        question: "What is your favorite color?",
+        name: "What is your favorite color?",
+        description: "",
         recordId: "ar-22",
         answers: [
           {
@@ -125,7 +128,8 @@ describe(mapTableDataRecords.name, () => {
       },
       {
         id: "q2",
-        question: "What is your favorite food?",
+        name: "What is your favorite food?",
+        description: "",
         recordId: "ar-23",
         answers: [
           {
@@ -169,7 +173,8 @@ describe(mapTableDataRecords.name, () => {
       records: [
         {
           id: "q1",
-          question: "What is your favorite color?",
+          name: "What is your favorite color?",
+          description: "",
           recordId: "ar-22",
           answers: [],
           comments: [],
@@ -195,7 +200,8 @@ describe(mapTableDataRecords.name, () => {
     expect(result).toEqual([
       {
         id: "q1",
-        question: "What is your favorite color?",
+        name: "What is your favorite color?",
+        description: "",
         recordId: "ar-22",
         answers: [],
         comments: [],

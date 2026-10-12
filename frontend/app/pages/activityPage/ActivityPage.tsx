@@ -82,11 +82,12 @@ export default function ActivityPage() {
     return <ErrorState message="Noe gikk galt, prøv gjerne igjen" />;
   }
 
-  if (tableData && comments && answers) {
-    tableData.records = mapTableDataRecords(tableData, comments, answers);
-  }
+  const mappedRecords =
+    tableData && comments && answers
+      ? mapTableDataRecords(tableData, comments, answers)
+      : undefined;
 
-  const allSingleSelect = tableData?.records.every(
+  const allSingleSelect = mappedRecords?.every(
     (record) =>
       record.metadata?.answerMetadata?.type === AnswerType.SELECT_SINGLE,
   );
@@ -158,7 +159,7 @@ export default function ActivityPage() {
                   columnMetadata={tableData?.columns ?? []}
                   filterByAnswer={allSingleSelect ?? false}
                   contextId={context?.id}
-                  data={tableData?.records ?? []}
+                  data={mappedRecords ?? []}
                   tableData={tableData}
                   formName={tableData.name}
                   contextName={context.name}
