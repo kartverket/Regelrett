@@ -14,6 +14,21 @@ import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { useAnswers } from "@/hooks/useAnswers";
 
+function TruncatedText({ str, maxLength }: { str: string; maxLength: number }) {
+  if (str.length > maxLength) {
+    return (
+      <Tooltip>
+        <TooltipTrigger>
+          <p className="font-semibold text-xl">{str.slice(0, maxLength)}...</p>
+        </TooltipTrigger>
+        <TooltipContent>{str}</TooltipContent>
+      </Tooltip>
+    );
+  } else {
+    return <p className="font-semibold text-xl align">{str}</p>;
+  }
+}
+
 export function ContextLink({
   contextId,
   formId,
@@ -24,29 +39,6 @@ export function ContextLink({
   canDelete?: boolean;
 }) {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-
-  function TruncatedText({
-    str,
-    maxLength,
-  }: {
-    str: string;
-    maxLength: number;
-  }) {
-    if (str.length > maxLength) {
-      return (
-        <Tooltip>
-          <TooltipTrigger>
-            <p className="font-semibold text-xl">
-              {str.slice(0, maxLength)}...
-            </p>
-          </TooltipTrigger>
-          <TooltipContent>{str}</TooltipContent>
-        </Tooltip>
-      );
-    } else {
-      return <p className="font-semibold text-xl align">{str}</p>;
-    }
-  }
 
   const { data: context, isPending: contextIsPending } = useContext(contextId);
   const { data: answers, isPending: answerIsPending } = useAnswers(contextId);
