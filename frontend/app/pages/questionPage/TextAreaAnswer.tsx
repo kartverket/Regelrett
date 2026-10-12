@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 
 type Props = {
@@ -7,18 +7,8 @@ type Props = {
   disabled?: boolean;
 };
 
-export function TextAreaAnswer({
-  latestAnswer,
-  submitAnswer,
-  disabled,
-}: Props) {
-  const [answerInput, setAnswerInput] = useState<string | undefined>(
-    latestAnswer,
-  );
-
-  useEffect(() => {
-    setAnswerInput(latestAnswer);
-  }, [latestAnswer]);
+function TextAreaInput({ latestAnswer, submitAnswer, disabled }: Props) {
+  const [answerInput, setAnswerInput] = useState(latestAnswer);
 
   return (
     <Textarea
@@ -27,10 +17,14 @@ export function TextAreaAnswer({
       className="w-1/2 resize-y bg-card"
       onBlur={() => {
         if (answerInput !== latestAnswer) {
-          submitAnswer(answerInput ?? "");
+          submitAnswer(answerInput);
         }
       }}
       disabled={disabled}
     />
   );
+}
+
+export function TextAreaAnswer(props: Props) {
+  return <TextAreaInput key={props.latestAnswer} {...props} />;
 }
