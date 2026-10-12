@@ -248,6 +248,8 @@ export function TableComponent({
         ]
       : [...parsedColumns, commentColumn, statusColumn];
 
+  // TanStack Table v8 is incompatible with React Compiler; migrate to v9.
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     columns: columns,
     data: data,
