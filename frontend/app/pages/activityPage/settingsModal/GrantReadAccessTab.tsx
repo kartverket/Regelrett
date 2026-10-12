@@ -10,7 +10,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
@@ -78,7 +78,10 @@ export function GrantReadAccessTab({ setOpen }: GrantReadAccessTabProps) {
 
   const [usernameInput, setUsernameInput] = React.useState("");
   const [showSuggestions, setShowSuggestions] = React.useState(false);
-  const hasSelectedUser = GrantReadAccessForm.watch("userId");
+  const hasSelectedUser = useWatch({
+    control: GrantReadAccessForm.control,
+    name: "userId",
+  });
   const debouncedUsernameInput = useDebounce(usernameInput, 500);
   const isDebouncing = usernameInput !== debouncedUsernameInput;
   const { data: userSuggestions = [], isFetching: isSearching } = useSearchUser(
