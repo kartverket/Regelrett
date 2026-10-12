@@ -22,6 +22,48 @@ type Props = {
   disabled?: boolean;
 };
 
+type UnitSelectProps = {
+  unitList: string[];
+  unit?: string;
+  value?: string;
+  disabled?: boolean;
+  setAnswerUnit: React.Dispatch<React.SetStateAction<string | undefined>>;
+  submitAnswer: (newAnswer: string, unit?: string) => void;
+};
+
+const UnitSelect = ({
+  unitList,
+  unit,
+  value,
+  disabled,
+  setAnswerUnit,
+  submitAnswer,
+}: UnitSelectProps) => {
+  return (
+    <Select
+      disabled={disabled}
+      value={unit ?? unitList[0]}
+      onValueChange={(selectedUnit) => {
+        setAnswerUnit(selectedUnit);
+        if (value) {
+          submitAnswer(value, selectedUnit);
+        }
+      }}
+    >
+      <SelectTrigger className="w-auto text-sm -mr-1 bg-transparent shadow-none border-none focus:ring-0">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        {unitList.map((u) => (
+          <SelectItem key={u} value={u}>
+            {u}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+};
+
 export function TimeAnswer({
   updated,
   value,
@@ -53,32 +95,6 @@ export function TimeAnswer({
 
   const unitList = units ?? [];
 
-  const UnitSelect = () => {
-    return (
-      <Select
-        disabled={disabled}
-        value={unit ?? unitList[0]}
-        onValueChange={(selectedUnit) => {
-          setAnswerUnit(selectedUnit);
-          if (value) {
-            submitAnswer(value, selectedUnit);
-          }
-        }}
-      >
-        <SelectTrigger className="w-auto text-sm -mr-1 bg-transparent shadow-none border-none focus:ring-0">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {unitList.map((u) => (
-            <SelectItem key={u} value={u}>
-              {u}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    );
-  };
-
   return (
     <div className="flex flex-col w-[170px]">
       <div className="relative">
@@ -95,7 +111,14 @@ export function TimeAnswer({
         />
 
         <div className="absolute right-0 top-1/2 -translate-y-1/2">
-          <UnitSelect />
+          <UnitSelect
+            unitList={unitList}
+            unit={unit}
+            value={value}
+            disabled={disabled}
+            setAnswerUnit={setAnswerUnit}
+            submitAnswer={submitAnswer}
+          />
         </div>
       </div>
 
