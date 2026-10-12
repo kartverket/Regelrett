@@ -111,7 +111,7 @@ Backend kan også startes direkte i IntelliJ
 Testene kjøres med Gradle:
 
 ```sh
-./gradlew test
+./backend/gradlew -p backend test
 ```
 
 Som standard utelater denne kommandoen testene som er merket med
@@ -120,7 +120,7 @@ Som standard utelater denne kommandoen testene som er merket med
 For å kjøre alle testene, inkludert testene merket `IntegrationTest`, bruk:
 
 ```sh
-./gradlew test -PintegrationTest
+./backend/gradlew -p backend test -PintegrationTest
 ```
 
 > Bruker man Colima krever det noe ekstra oppsett for å kjøre integrasjonstestene. Se [her](https://java.testcontainers.org/supported_docker_environment/).
