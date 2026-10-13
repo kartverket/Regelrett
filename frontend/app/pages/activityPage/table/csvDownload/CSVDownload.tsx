@@ -1,7 +1,11 @@
 import { OptionalFieldType, type Column, type Question } from "@/api/types";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
-import { buildContextCsvFilename } from "@/utils/csvFilename";
+import ExcelJS from "exceljs";
+import {
+  buildContextCsvFilename,
+  buildContextXlsxFilename,
+} from "@/utils/csvFilename";
 import { toast } from "sonner";
 
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -22,33 +26,11 @@ export function CSVDownload({
   ...rest
 }: Props) {
   const answerColumnName = columns.find((c) => c.answerable)?.name ?? "Svar";
-  const csvRows = rows
-    .map((row) =>
-      headerArray
-        .map((header) => {
-          switch (header) {
-            case answerColumnName:
-              return escapeCSVValue(row.answers.map((answer) => answer.answer));
-            case "Kommentar":
-              return escapeCSVValue(
-                row.comments.map((comment) => comment.comment),
-              );
-            default: {
-              const field = row.metadata.optionalFields?.find(
-                (field) => field.key === header,
-              );
-              if (!field) return "";
-              const value =
-                field.type !== OptionalFieldType.OPTION_MULTIPLE &&
-                field.value.length > 0
-                  ? field.value[0]
-                  : field.value;
-              return escapeCSVValue(value);
-            }
-          }
-        })
-        .join(","),
-    )
+  const valuesByRow = rows.map((row) =>
+    headerArray.map((header) => getCellValue(row, header, answerColumnName)),
+  );
+  const csvRows = valuesByRow
+    .map((values) => values.map(escapeCSVValue).join(","))
     .join("\n");
 
   const csvData = `${headerArray.join(",")}\n${csvRows}`;
@@ -78,12 +60,84 @@ export function CSVDownload({
     }
   };
 
+  const handleXlsxDownload = async (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    onClick?.(event);
+
+    try {
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet("Svar");
+
+      worksheet.addRow(headerArray);
+      valuesByRow.forEach((values) => {
+        worksheet.addRow(values.map((value) => formatXlsxValue(value)));
+      });
+      worksheet.getRow(1).font = { bold: true };
+      worksheet.views = [{ state: "frozen", ySplit: 1 }];
+
+      const fileName = buildContextXlsxFilename(formName, contextName);
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      downloadBlob(blob, fileName);
+    } catch (error) {
+      console.error("Error downloading context XLSX:", error);
+      toast.error("Å nei!", {
+        description: "Det har skjedd en feil. Prøv på nytt",
+        duration: 5000,
+        id: "download-context-xlsx-error",
+      });
+    }
+  };
+
   return (
-    <Button variant="outline" className="w-fit" onClick={handleDownload} {...rest}>
-      <Download className="size-5" />
-      Last ned CSV
-    </Button>
+    <div className="flex gap-2">
+      <Button
+        variant="outline"
+        className="w-fit"
+        onClick={handleDownload}
+        {...rest}
+      >
+        <Download className="size-5" />
+        Last ned CSV
+      </Button>
+      <Button
+        variant="outline"
+        className="w-fit"
+        onClick={handleXlsxDownload}
+        {...rest}
+      >
+        <Download className="size-5" />
+        Last ned XLSX
+      </Button>
+    </div>
   );
+}
+
+function getCellValue(
+  row: Question,
+  header: string,
+  answerColumnName: string,
+): string | string[] {
+  switch (header) {
+    case answerColumnName:
+      return row.answers.map((answer) => answer.answer);
+    case "Kommentar":
+      return row.comments.map((comment) => comment.comment);
+    default: {
+      const field = row.metadata.optionalFields?.find(
+        (field) => field.key === header,
+      );
+      if (!field) return "";
+
+      return field.type !== OptionalFieldType.OPTION_MULTIPLE &&
+        field.value.length > 0
+        ? field.value[0]
+        : field.value;
+    }
+  }
 }
 
 const escapeCSVValue = (value: string | number | Array<string>): string => {
@@ -99,3 +153,18 @@ const escapeCSVValue = (value: string | number | Array<string>): string => {
   }
   return String(value); // Return the value as a string
 };
+
+function formatXlsxValue(value: string | string[]): string {
+  return Array.isArray(value) ? value.join("|") : value;
+}
+
+function downloadBlob(blob: Blob, fileName: string) {
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
+}
