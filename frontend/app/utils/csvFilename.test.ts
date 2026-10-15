@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { buildContextCsvFilename } from "./csvFilename";
+import {
+  buildContextCsvFilename,
+  buildContextXlsxFilename,
+} from "./csvFilename";
 
 describe("buildContextCsvFilename", () => {
   it("bygger filnavn av formName og contextName", () => {
@@ -30,5 +33,13 @@ describe("buildContextCsvFilename", () => {
   it("kaster feil hvis input ikke gir gyldig filnavn", () => {
     expect(() => buildContextCsvFilename("!!!", "***")).toThrowError();
   });
-});
 
+  it("bygger XLSX-filnavn med samme normalisering", () => {
+    expect(
+      buildContextXlsxFilename(
+        "Sikkerhetskontrollere",
+        "Skjemautfylling (Regelrett)",
+      ),
+    ).toBe("sikkerhetskontrollere-skjemautfylling-regelrett.xlsx");
+  });
+});

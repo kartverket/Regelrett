@@ -1,6 +1,4 @@
-const FILE_EXTENSION = ".csv";
 const MAX_FILENAME_LENGTH = 120;
-const MAX_BASENAME_LENGTH = MAX_FILENAME_LENGTH - FILE_EXTENSION.length;
 
 function sanitizeForFileName(value: string): string {
   return (
@@ -23,21 +21,35 @@ export function buildContextCsvFilename(
   formName: string,
   contextName: string,
 ): string {
+  return buildContextFilename(formName, contextName, ".csv");
+}
+
+export function buildContextXlsxFilename(
+  formName: string,
+  contextName: string,
+): string {
+  return buildContextFilename(formName, contextName, ".xlsx");
+}
+
+function buildContextFilename(
+  formName: string,
+  contextName: string,
+  fileExtension: string,
+): string {
   const baseName = sanitizeForFileName(`${formName}-${contextName}`);
 
   if (!baseName) {
-    throw new Error("CSV filename could not be generated from form and context name");
+    throw new Error("Filename could not be generated from form and context name");
   }
 
   const truncatedBaseName = baseName
-    .slice(0, MAX_BASENAME_LENGTH)
+    .slice(0, MAX_FILENAME_LENGTH - fileExtension.length)
     // Remove trailing dashes if truncation cut in the middle of a separator block.
     .replace(/-+$/g, "");
 
   if (!truncatedBaseName) {
-    throw new Error("CSV filename became empty after truncation");
+    throw new Error("Filename became empty after truncation");
   }
 
-  return `${truncatedBaseName}${FILE_EXTENSION}`;
+  return `${truncatedBaseName}${fileExtension}`;
 }
-
