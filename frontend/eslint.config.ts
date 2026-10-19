@@ -11,6 +11,11 @@ export default defineConfig(
   pluginReact.configs.flat.recommended,
   reactHooks.configs.flat["recommended-latest"],
   {
+    settings: {
+      react: { version: "19" },
+    },
+  },
+  {
     rules: {
       "react/react-in-jsx-scope": "off",
       "@typescript-eslint/no-import-type-side-effects": "error",
