@@ -1,24 +1,26 @@
 import type { Column } from "../../../api/types";
 import { TableFilter } from "./TableFilter";
 import { useStoredRedirect } from "../../../hooks/useStoredRedirect";
-import type { Table as TanstackTable } from "@tanstack/react-table";
+import type { ReactTable } from "@tanstack/react-table";
 import { FunnelX, ListFilter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSearchParams } from "react-router";
+import type { Question } from "@/api/types";
+import type { ActivityTableFeatures } from "./tableFeatures";
 
-interface Props<TData> {
+interface Props {
   tableMetadata: Column[];
   filterByAnswer: boolean;
-  table: TanstackTable<TData>;
+  table: ReactTable<ActivityTableFeatures, Question>;
   formId: string;
 }
 
-export const TableActions = <TData,>({
+export const TableActions = ({
   tableMetadata,
   filterByAnswer,
   table,
   formId,
-}: Props<TData>) => {
+}: Props) => {
   const storedRedirect = useStoredRedirect();
   const [_, setSearchParams] = useSearchParams();
 

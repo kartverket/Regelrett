@@ -9,10 +9,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { ArrowUpIcon, ArrowDownIcon, XIcon, EyeOffIcon } from "lucide-react";
 import React from "react";
+import type { Question } from "@/api/types";
+import type { ActivityTableFeatures } from "./tableFeatures";
 
-interface Props<TData, TValue>
+interface Props<TValue>
   extends React.ThHTMLAttributes<HTMLTableCellElement> {
-  column: Column<TData, TValue>;
+  column: Column<ActivityTableFeatures, Question, TValue>;
   header: string;
   setColumnVisibility: React.Dispatch<
     React.SetStateAction<Record<string, boolean>>
@@ -21,13 +23,13 @@ interface Props<TData, TValue>
   isNameColumn?: boolean;
 }
 
-export function DataTableHeader<TData, TValue>({
+export function DataTableHeader<TValue>({
   column,
   header,
   setColumnVisibility,
   className,
   isNameColumn = false,
-}: Props<TData, TValue>) {
+}: Props<TValue>) {
   const hideColumn = (name: string) => {
     column.clearSorting();
     setColumnVisibility((prev) => ({

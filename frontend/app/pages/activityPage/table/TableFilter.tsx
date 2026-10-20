@@ -1,5 +1,5 @@
 import { useSearchParams } from "react-router";
-import type { Column } from "@tanstack/react-table";
+import type { Column, ReactTable } from "@tanstack/react-table";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -8,23 +8,24 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { Table as TanstackTable } from "@tanstack/react-table";
+import type { Question } from "@/api/types";
+import type { ActivityTableFeatures } from "./tableFeatures";
 
-type TableFilters<TData> = {
+type TableFilters = {
   filterName: string;
   filterOptions: { name: string; value: string }[];
-  column: Column<TData, unknown>;
+  column: Column<ActivityTableFeatures, Question, unknown>;
   formId: string;
-  table: TanstackTable<TData>;
+  table: ReactTable<ActivityTableFeatures, Question>;
 };
 
-export const TableFilter = <TData,>({
+export const TableFilter = ({
   filterName,
   filterOptions,
   column,
   formId,
   table,
-}: TableFilters<TData>) => {
+}: TableFilters) => {
   const placeholder = "Alle";
   const [_, setSearchParams] = useSearchParams();
 

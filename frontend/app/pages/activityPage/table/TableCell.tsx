@@ -7,12 +7,13 @@ import Markdown from "react-markdown";
 import { markdownComponents } from "@/utils/markdownComponents";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router";
+import type { ActivityTableFeatures } from "./tableFeatures";
 
 type Props = {
   contextId: string;
   value: Array<string>;
   column: Column;
-  row: Row<Question>;
+  row: Row<ActivityTableFeatures, Question>;
   user: User;
 };
 

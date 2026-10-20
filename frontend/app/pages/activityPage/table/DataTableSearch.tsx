@@ -1,16 +1,22 @@
-import type { Table } from "@tanstack/react-table";
+import type { ReactTable } from "@tanstack/react-table";
 import type { HTMLAttributes} from "react";
 import { useEffect, useState } from "react";
 import { useDebounce } from "../../../hooks/useDebounce";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import type { Question } from "@/api/types";
+import type { ActivityTableFeatures } from "./tableFeatures";
 
-interface Props<TData> extends HTMLAttributes<HTMLDivElement> {
-  table: Table<TData>;
+interface Props
+  extends HTMLAttributes<HTMLDivElement> {
+  table: ReactTable<ActivityTableFeatures, Question>;
 }
 
-export function DataTableSearch<TData>({ table, ...rest }: Props<TData>) {
-  const globalFilter = table.getState().globalFilter;
+export function DataTableSearch({
+  table,
+  ...rest
+}: Props) {
+  const globalFilter = table.state.globalFilter;
   const [value, setValue] = useState<string | undefined>(globalFilter);
 
   const debouncedValue = useDebounce(value, 200);
