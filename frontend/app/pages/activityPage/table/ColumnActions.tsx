@@ -4,21 +4,23 @@ import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import React from "react";
-import type { Table as TanstackTable } from "@tanstack/react-table";
+import type { ReactTable } from "@tanstack/react-table";
+import type { Question } from "@/api/types";
+import type { ActivityTableFeatures } from "./tableFeatures";
 
-interface Props<TData> {
-  table: TanstackTable<TData>;
+interface Props {
+  table: ReactTable<ActivityTableFeatures, Question>;
   unHideColumn: (name: string) => void;
   unHideColumns: (name: string[]) => void;
   showOnlyFillModeColumns: (name: string[]) => void;
 }
 
-export function ColumnActions<TData>({
+export function ColumnActions({
   table,
   unHideColumn,
   unHideColumns,
   showOnlyFillModeColumns,
-}: Props<TData>) {
+}: Props) {
   const headerNames = table.getAllColumns().map((column) => column.id);
 
   return (

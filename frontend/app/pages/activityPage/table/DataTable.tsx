@@ -1,4 +1,4 @@
-import type { Table as TanstackTable} from "@tanstack/react-table";
+import type { ReactTable } from "@tanstack/react-table";
 import { flexRender } from "@tanstack/react-table";
 import { PaginationButtonContainer } from "./pagination/PaginationButtonContainer";
 import { TableStateProvider } from "./TableState";
@@ -10,12 +10,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import type { Question } from "@/api/types";
+import type { ActivityTableFeatures } from "./tableFeatures";
 
-interface Props<TData> {
-  table: TanstackTable<TData>;
+interface Props {
+  table: ReactTable<ActivityTableFeatures, Question>;
 }
 
-export function DataTable<TData>({ table }: Props<TData>) {
+export function DataTable({ table }: Props) {
   return (
     <TableStateProvider>
       <div className="px-10">

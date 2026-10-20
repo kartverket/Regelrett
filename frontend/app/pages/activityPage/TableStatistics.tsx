@@ -1,16 +1,17 @@
 import { Switch } from "@/components/ui/switch";
 import type { Question } from "../../api/types";
 import { Progress } from "@/components/ui/progress";
-import type { Table } from "@tanstack/react-table";
+import type { ReactTable } from "@tanstack/react-table";
 import { useState } from "react";
+import type { ActivityTableFeatures } from "./table/tableFeatures";
 
 interface Props {
   filteredData: Question[];
-  table: Table<Question>;
+  table: ReactTable<ActivityTableFeatures, Question>;
 }
 
 export const TableStatistics = ({ filteredData, table }: Props) => {
-  const hasActiveFilters = table.getState().columnFilters.length > 0;
+  const hasActiveFilters = table.state.columnFilters.length > 0;
   const showForActiveFiltersLocalstorage = localStorage.getItem(
     "showForActiveFilters",
   );

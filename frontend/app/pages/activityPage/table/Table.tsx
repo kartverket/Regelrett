@@ -1,12 +1,5 @@
 import type { Row, SortingState } from "@tanstack/react-table";
-import {
-  createColumnHelper,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
+import { createColumnHelper, useTable } from "@tanstack/react-table";
 import { useColumnVisibility } from "@/hooks/useColumnVisibility";
 import { Comment } from "./Comment";
 import { DataTable } from "./DataTable";
@@ -26,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
 import { TableStatistics } from "../TableStatistics";
 import { isOlderThan } from "@/utils/formatTime";
+import { activityTableFeatures } from "./tableFeatures";
 
 type Props = {
   columnMetadata: Column[];
@@ -65,18 +59,22 @@ export function TableComponent({
   const pageParam = search.get("page");
   const pageIndex = pageParam ? parseInt(pageParam) - 1 : 0;
 
-  const columnHelper = createColumnHelper<Question>();
+  const columnHelper = createColumnHelper<
+    typeof activityTableFeatures,
+    Question
+  >();
 
-  const answerColumnName = tableData.columns.find((c) => c.answerable)?.name ?? "Svar";
+  const answerColumnName =
+    tableData.columns.find((c) => c.answerable)?.name ?? "Svar";
 
   function urlFilterParamsToColumnFilterState(params: string[]) {
     const allowedFilters: Record<string, string[]> = {
       ...Object.fromEntries(
-      columnMetadata
-        .filter(({ answerable }) => filterByAnswer || !answerable)
-        .map((col) => [col.name, col.options?.map((opt) => opt.name)]),
-    ),
-      Status: ["utgaatt", "ikke utfylt", "utfylt"]
+        columnMetadata
+          .filter(({ answerable }) => filterByAnswer || !answerable)
+          .map((col) => [col.name, col.options?.map((opt) => opt.name)]),
+      ),
+      Status: ["utgaatt", "ikke utfylt", "utfylt"],
     };
     const grouped: Record<string, string[]> = {};
 
@@ -122,9 +120,7 @@ export function TableComponent({
               metaColumn.name.toLowerCase() === "id"
                 ? "min-w-[120px]"
                 : undefined,
-              metaColumn.answerable
-                ? "min-w-[220px]"
-                : undefined,
+              metaColumn.answerable ? "min-w-[220px]" : undefined,
             )}
           />
         ),
@@ -140,8 +136,10 @@ export function TableComponent({
             />
           </DataTableCell>
         ),
-        sortingFn: (a, b, columnId) => {
-          const getLastUpdatedTime = (row: Row<Question>) =>
+        sortFn: (a, b, columnId) => {
+          const getLastUpdatedTime = (
+            row: Row<typeof activityTableFeatures, Question>,
+          ) =>
             row.original.answers?.at(-1)?.updated?.getTime() ?? 0;
           if (columnId === answerColumnName) {
             return getLastUpdatedTime(a) - getLastUpdatedTime(b);
@@ -153,7 +151,7 @@ export function TableComponent({
           );
         },
         filterFn: (
-          row: Row<Question>,
+          row: Row<typeof activityTableFeatures, Question>,
           columnId: string,
           filterValue: string,
         ) => {
@@ -234,11 +232,13 @@ export function TableComponent({
   );
 
   // Find the index of the answerable column to inject comment/status columns after it
-  const answerIndex = parsedColumns.findIndex((column) => column.id === answerColumnName);
+  const answerIndex = parsedColumns.findIndex(
+    (column) => column.id === answerColumnName,
+  );
 
   // If the column is found, inject the new columns
 
-  const columns =
+  const columns = columnHelper.columns(
     answerIndex >= 0
       ? [
           ...parsedColumns.slice(0, answerIndex + 1),
@@ -246,12 +246,12 @@ export function TableComponent({
           statusColumn,
           ...parsedColumns.slice(answerIndex + 1),
         ]
-      : [...parsedColumns, commentColumn, statusColumn];
+      : [...parsedColumns, commentColumn, statusColumn],
+  );
 
-  // TanStack Table v8 is incompatible with React Compiler; migrate to v9.
-  // eslint-disable-next-line react-hooks/incompatible-library
-  const table = useReactTable({
-    columns: columns,
+  const table = useTable({
+    features: activityTableFeatures,
+    columns,
     data: data,
     state: {
       columnVisibility,
@@ -263,10 +263,7 @@ export function TableComponent({
     },
     onSortingChange: setSorting,
     autoResetAll: false,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+
     globalFilterFn: (row, _, filterValue) => {
       const searchTerm = String(filterValue).toLowerCase();
       const optionalFields = row.original.metadata?.optionalFields ?? [];
@@ -299,19 +296,19 @@ export function TableComponent({
             table={table}
           />
         </SkeletonLoader>
-        { hasWriteAccess &&
-        <CSVDownload
-          rows={
-            table
-              .getFilteredRowModel()
-              .rows.map((row) => row.original) as Question[]
-          }
-          headerArray={headerNames}
-          columns={columnMetadata}
-          formName={formName}
-          contextName={contextName}
-        />
-        }
+        {hasWriteAccess && (
+          <CSVDownload
+            rows={
+              table
+                .getFilteredRowModel()
+                .rows.map((row) => row.original) as Question[]
+            }
+            headerArray={headerNames}
+            columns={columnMetadata}
+            formName={formName}
+            contextName={contextName}
+          />
+        )}
       </div>
       <TableActions
         tableMetadata={columnMetadata}

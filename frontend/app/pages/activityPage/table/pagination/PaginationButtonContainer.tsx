@@ -1,4 +1,4 @@
-import type { Table, Updater } from "@tanstack/react-table";
+import type { ReactTable, Updater } from "@tanstack/react-table";
 import { PaginationActionButton } from "./PaginationActionButton";
 import { PaginationRelativeButtons } from "./PaginationRelativeButtons";
 import { useRef, useEffect } from "react";
@@ -8,14 +8,16 @@ import {
   useNavigationType,
   useSearchParams,
 } from "react-router";
+import type { Question } from "@/api/types";
+import type { ActivityTableFeatures } from "../tableFeatures";
 
-interface Props<TData> {
-  table: Table<TData>;
+interface Props {
+  table: ReactTable<ActivityTableFeatures, Question>;
 }
 
-export function PaginationButtonContainer<TData>({ table }: Props<TData>) {
+export function PaginationButtonContainer({ table }: Props) {
   const [_, setSearchParams] = useSearchParams();
-  const state = table.getState().pagination;
+  const state = table.state.pagination;
   const index = state.pageIndex;
   const pageSize = state.pageSize;
   const numberOfRows = table.getRowCount();

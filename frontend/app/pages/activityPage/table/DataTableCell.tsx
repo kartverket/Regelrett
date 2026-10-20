@@ -1,16 +1,19 @@
 import type { Cell } from "@tanstack/react-table";
 import type { HTMLAttributes } from "react";
+import type { Question } from "@/api/types";
+import type { ActivityTableFeatures } from "./tableFeatures";
 
-interface Props<TData, TValue> extends HTMLAttributes<HTMLTableCellElement> {
-  cell: Cell<TData, TValue>;
+interface Props<TValue>
+  extends HTMLAttributes<HTMLTableCellElement> {
+  cell: Cell<ActivityTableFeatures, Question, TValue>;
 }
 
-export function DataTableCell<TData, TValue>({
+export function DataTableCell<TValue>({
   cell,
   children,
   className,
   ...rest
-}: Props<TData, TValue>) {
+}: Props<TValue>) {
   return (
     <div
       key={cell.id}
