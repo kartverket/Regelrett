@@ -22,7 +22,7 @@ ENV NODE_ENV=production
 RUN pnpm build
 
 # Kotlin build
-FROM dhi.io/gradle:9-jdk25-alpine3.23-dev@sha256:48cc617ac00d3128f120a548932b4971e37597ed4dc42d644e7d0f68ef36030e AS kt-builder
+FROM dhi.io/gradle:9-jdk25-alpine3.23-dev@sha256:212e08b9eb088d210bb69f5d4dfba02b2ad51f8d285809dc52eeb0a795ff6e47 AS kt-builder
 WORKDIR /tmp/regelrett/backend
 COPY backend/src ./src
 COPY backend/build.gradle.kts backend/settings.gradle.kts backend/gradle.properties backend/gradlew backend/gradlew.bat ./
@@ -44,7 +44,7 @@ FROM otel/autoinstrumentation-java:2.32.0-1@sha256:9dad1c6e3e2ecee48fc164a19bcfd
 # -----------------------------------------------------------------------------
 # Runtime image
 # -----------------------------------------------------------------------------
-FROM dhi.io/eclipse-temurin:25-alpine3.23@sha256:9a1468f69531dcd1604d7a9865a8826b5f94fc07e066417981c07d12ee737f98
+FROM dhi.io/eclipse-temurin:25-alpine3.23@sha256:39348106fd38c496410d4dec539ef6e2c70cbda990bd93a1ada470901a591baa
 
 ARG RR_UID="472"
 ARG RR_GID="0"
