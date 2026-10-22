@@ -55,7 +55,7 @@ dependencies {
         implementation("com.fasterxml.jackson.core:jackson-databind:2.22.4") {
             because("Fixes CVE-2026-54513")
         }
-        implementation("tools.jackson.core:jackson-databind:3.2.3") {
+        implementation("tools.jackson.core:jackson-databind:3.2.4") {
             because("Fixes Jackson databind vulnerabilities present in 3.1.1")
         }
     }
