@@ -44,7 +44,7 @@ FROM otel/autoinstrumentation-java:2.32.0-1@sha256:9dad1c6e3e2ecee48fc164a19bcfd
 # -----------------------------------------------------------------------------
 # Runtime image
 # -----------------------------------------------------------------------------
-FROM dhi.io/eclipse-temurin:25-alpine3.23@sha256:6cb88d5d839ed622351fe08a0cb833aab05c4d38c4fa20f82bd147840baf0279
+FROM ghcr.io/kartverket/emudhra-images/jre/dhi:jre-25.0-alpine3.24@sha256:f0b12aab0f96059700032dada95e0bf85e8e0e7404d92246370a0a752ed21c4d
 
 ARG RR_UID="472"
 ARG RR_GID="0"
