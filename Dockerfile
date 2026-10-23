@@ -22,7 +22,7 @@ ENV NODE_ENV=production
 RUN pnpm build
 
 # Kotlin build
-FROM dhi.io/gradle:9-jdk25-alpine3.23-dev@sha256:f1eeaf133576569dd0bde3368b76f155f406e8471e1548b500de98ab445012dd AS kt-builder
+FROM dhi.io/gradle:9-jdk25-alpine3.23-dev@sha256:977e53a34bc11410b1a478c0edec213109e514fb7f4c006f6c67b3433b9f46da AS kt-builder
 WORKDIR /tmp/regelrett/backend
 COPY backend/src ./src
 COPY backend/build.gradle.kts backend/settings.gradle.kts backend/gradle.properties backend/gradlew backend/gradlew.bat ./
