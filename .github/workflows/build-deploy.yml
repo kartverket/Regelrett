@@ -66,7 +66,7 @@ jobs:
       - uses: actions/setup-java@v6
         with:
           distribution: "temurin"
-          java-version: "21.0.13+0.2"
+          java-version: "21.0.13+9.0.LTS"
           architecture: "x64"
 
       - name: test pull image
