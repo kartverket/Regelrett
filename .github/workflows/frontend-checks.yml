@@ -12,6 +12,7 @@ on:
       - ".dockerignore"
       - "compose.yaml"
       - ".github/workflows/frontend-checks.yml"
+      - ".nvmrc"
   push:
     branches:
       - main
@@ -26,6 +27,7 @@ on:
       - ".dockerignore"
       - "compose.yaml"
       - ".github/workflows/frontend-checks.yml"
+      - ".nvmrc"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
