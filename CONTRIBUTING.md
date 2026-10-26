@@ -54,7 +54,7 @@ Følgende må være installert
 - Docker
 - docker-compose
 - Colima (eller tilsvarende)
-- Node.js v24.x
+- Node.js v24.22.1 (see `.nvmrc`)
 - JDK v25.x
 - pnpm
 

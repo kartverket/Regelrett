@@ -10,24 +10,24 @@ on:
     branches:
       - main
     paths:
-      - 'backend/**'
-      - 'frontend/**'
-      - 'conf/**'
-      - 'Dockerfile'
-      - '.dockerignore'
-      - 'compose.yaml'
-      - '.github/workflows/build-deploy.yml'
+      - "backend/**"
+      - "frontend/**"
+      - "conf/**"
+      - "Dockerfile"
+      - ".dockerignore"
+      - "compose.yaml"
+      - ".github/workflows/build-deploy.yml"
   push:
     branches:
       - main
     paths:
-      - 'backend/**'
-      - 'frontend/**'
-      - 'conf/**'
-      - 'Dockerfile'
-      - '.dockerignore'
-      - 'compose.yaml'
-      - '.github/workflows/build-deploy.yml'
+      - "backend/**"
+      - "frontend/**"
+      - "conf/**"
+      - "Dockerfile"
+      - ".dockerignore"
+      - "compose.yaml"
+      - ".github/workflows/build-deploy.yml"
 
 permissions:
   id-token: write
@@ -66,7 +66,7 @@ jobs:
       - uses: actions/setup-java@v6
         with:
           distribution: "temurin"
-          java-version: "21"
+          java-version: "21.0.13+9.0.LTS"
           architecture: "x64"
 
       - name: test pull image
@@ -144,10 +144,10 @@ jobs:
       - name: "Run Pharos"
         uses: kartverket/pharos@v0.7.1
         with:
-          image_url: ${{ env.REGISTRY }}/${{ needs.build.outputs.image }}          
+          image_url: ${{ env.REGISTRY }}/${{ needs.build.outputs.image }}
           tfsec: false
           trivy: true
-          trivy_vex: 'true'
+          trivy_vex: "true"
 
   deploy-dev:
     name: Deploy to dev

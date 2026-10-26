@@ -12,6 +12,7 @@ on:
       - ".dockerignore"
       - "compose.yaml"
       - ".github/workflows/frontend-checks.yml"
+      - ".nvmrc"
   push:
     branches:
       - main
@@ -26,6 +27,7 @@ on:
       - ".dockerignore"
       - "compose.yaml"
       - ".github/workflows/frontend-checks.yml"
+      - ".nvmrc"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -48,7 +50,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version: "24.22.1"
 
       - name: Enable Corepack
         run: corepack enable
