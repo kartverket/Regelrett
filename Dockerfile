@@ -5,7 +5,7 @@
 # -----------------------------------------------------------------------------
 
 # JavaScript build
-FROM dhi.io/node:24-alpine3.24@sha256:2a0ee74a7199e15de2480878bb8212f936d636b7531b3dd5aa05a0f38f8d8d84 AS js-base
+FROM dhi.io/node:24-alpine3.24-dev@sha256:c7999456f9380ed100bb430baeb4fdbf4fec59c51d3bab2b0bd3ea77a44e3677 AS js-base
 WORKDIR /tmp/regelrett
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
