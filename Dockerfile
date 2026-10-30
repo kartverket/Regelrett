@@ -39,7 +39,7 @@ RUN --mount=type=cache,id=gradle,target=/home/gradle/.gradle \
     install -m 0644 ../conf/sample.yaml /tmp/runtime-root/etc/regelrett/regelrett.yaml
 
 # OpenTelemetry agent
-FROM otel/autoinstrumentation-java:2.32.0-1@sha256:9dad1c6e3e2ecee48fc164a19bcfde703510bee972c8cb421689fde89b5f89e9 AS otel-agent
+FROM otel/autoinstrumentation-java:2.33.0-1@sha256:81440f3c68a386047c2c8b1ec35fe496bad2e23dc34e5090c401042696a636c8 AS otel-agent
 
 # -----------------------------------------------------------------------------
 # Runtime image
