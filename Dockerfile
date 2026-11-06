@@ -5,7 +5,7 @@
 # -----------------------------------------------------------------------------
 
 # JavaScript build
-FROM dhi.io/node:24-alpine3.24-dev@sha256:a094288ded95c0a0d223ca65faa2c37707fb345acd05646d30e00aca3329d0cb AS js-base
+FROM dhi.io/node:24-alpine3.24-dev@sha256:63686c53f38366f0ee736fd4737b95411a6f106ac925aa7dbfdd3fb0d11adb9e AS js-base
 WORKDIR /tmp/regelrett
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
@@ -22,7 +22,7 @@ ENV NODE_ENV=production
 RUN pnpm build
 
 # Kotlin build
-FROM dhi.io/gradle:9-jdk25-alpine3.23-dev@sha256:6058ee4b03154aa6a4274fa7fb1f27ccac948e1fbf8d2473e4774559871cdf3d AS kt-builder
+FROM dhi.io/gradle:9-jdk25-alpine3.23-dev@sha256:b0748ba5de9df2787da1cd359be318277c6cdc3cac29be20c18025364168b44f AS kt-builder
 WORKDIR /tmp/regelrett/backend
 COPY backend/src ./src
 COPY backend/build.gradle.kts backend/settings.gradle.kts backend/gradle.properties backend/gradlew backend/gradlew.bat ./
