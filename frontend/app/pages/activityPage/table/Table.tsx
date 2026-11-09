@@ -292,7 +292,7 @@ export function TableComponent({
       <div className="px-10 flex justify-between">
         <SkeletonLoader loading={isLoading} width="w-full" height="h-6">
           <TableStatistics
-            filteredData={tableData?.records ?? []}
+            filteredData={data}
             table={table}
           />
         </SkeletonLoader>
