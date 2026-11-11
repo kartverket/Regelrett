@@ -1,4 +1,7 @@
-import type { Question } from "../../api/types";
+import type { Answer, Question, User } from "../../api/types";
+import { RefreshCw } from "lucide-react";
+import { Button } from "../../components/ui/button";
+import { useSubmitAnswer } from "../../hooks/useAnswers";
 import Markdown from "react-markdown";
 import { markdownComponents } from "../../utils/markdownComponents";
 import { LoadingState } from "../../components/LoadingState";
@@ -10,8 +13,10 @@ import { Badge } from "../../components/ui/badge";
 
 type Props = {
   question: Question;
-  answerUpdated: Date | undefined;
+  latestAnswer: Answer | undefined;
   formId: string;
+  contextId: string;
+  user: User;
 };
 
 type Value = {
@@ -25,12 +30,23 @@ type FieldData = {
   value: Value[];
 };
 
-export function QuestionDetails({ question, answerUpdated, formId }: Props) {
+export function QuestionDetails({
+  question,
+  latestAnswer,
+  formId,
+  contextId,
+  user,
+}: Props) {
   const {
     data: columns,
     error: columnsError,
     isPending: columnsIsLoading,
   } = useFetchColumns(formId);
+  const { mutate: submitAnswer } = useSubmitAnswer(
+    contextId,
+    question.recordId,
+  );
+  const answerUpdated = latestAnswer?.updated;
 
   if (columnsIsLoading) return <LoadingState />;
   if (columnsError)
@@ -104,6 +120,28 @@ export function QuestionDetails({ question, answerUpdated, formId }: Props) {
             {answerUpdated ? formatDateTime(answerUpdated) : "Aldri"}
           </p>
         </div>
+        {latestAnswer && (
+          <Button
+            aria-label="Forny svaret"
+            className="flex justify-start has-[>svg]:px-0 w-fit text-xs"
+            variant={"link"}
+            size="sm"
+            onClick={() => {
+              submitAnswer({
+                actor: user.id,
+                recordId: question.recordId,
+                questionId: question.id,
+                answer: latestAnswer.answer,
+                answerUnit: latestAnswer.answerUnit,
+                answerType: question.metadata.answerMetadata.type,
+                contextId: contextId,
+              });
+            }}
+          >
+            Forny svar
+            <RefreshCw />
+          </Button>
+        )}
       </div>
       <div className="bg-secondary p-4 rounded-xl">
         <p className="font-bold">Beskrivelse:</p>

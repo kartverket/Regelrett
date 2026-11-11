@@ -5,11 +5,9 @@ import { PercentAnswer } from "@/components/answers/PercentAnswer";
 import { RadioAnswer } from "./RadioAnswer";
 import { TextAreaAnswer } from "./TextAreaAnswer";
 import { TextAnswer } from "@/components/answers/TextAnswer";
-import { Button } from "@/components/ui/button";
 import { TimeAnswer } from "@/components/answers/TimeAnswer";
 import { CheckboxAnswer } from "@/components/answers/CheckboxAnswer";
 import { useSubmitAnswer } from "@/hooks/useAnswers";
-import { RefreshCw } from "lucide-react";
 import { useIsMutating } from "@tanstack/react-query";
 import MultiCheckboxAnswer from "@/components/answers/MultiCheckboxAnswer";
 
@@ -143,23 +141,6 @@ export function QuestionAnswer({
             return <p>Denne svartypen blir ikke støttet</p>;
         }
       })()}
-      {answers.length > 0 && (
-        <Button
-          aria-label="Forny svaret"
-          className="flex justify-start has-[>svg]:px-0 w-fit text-xs"
-          variant={"link"}
-          size="sm"
-          onClick={() => {
-            submitAnswer(
-              answers.at(-1)?.answer ?? "",
-              answers.at(-1)?.answerUnit,
-            );
-          }}
-        >
-          Forny svar
-          <RefreshCw />
-        </Button>
-      )}
     </div>
   );
 }
