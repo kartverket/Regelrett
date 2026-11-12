@@ -87,8 +87,10 @@ export default function QuestionPage() {
         />
         <QuestionDetails
           question={questionQuery.data}
-          answerUpdated={answersQuery.data.at(-1)?.updated}
+          latestAnswer={answersQuery.data.at(-1)}
           formId={contextQuery.data.formId}
+          contextId={contextId}
+          user={userQuery.data.user}
         />
         <Separator className="my-10" />
         <QuestionAnswer
