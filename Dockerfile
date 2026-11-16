@@ -22,7 +22,7 @@ ENV NODE_ENV=production
 RUN pnpm build
 
 # Kotlin build
-FROM dhi.io/gradle:9-jdk25-alpine3.23-dev@sha256:29e03ae0203ce5a2bc42b9b1b3073eb7c3ca21a4750de250c6cee9da63c29682 AS kt-builder
+FROM dhi.io/gradle:9-jdk25-alpine3.23-dev@sha256:aff7cfb4acd274fd05cab2792600a45e5cc46226744e388321d40dc4b79bae2f AS kt-builder
 WORKDIR /tmp/regelrett/backend
 COPY backend/src ./src
 COPY backend/build.gradle.kts backend/settings.gradle.kts backend/gradle.properties backend/gradlew backend/gradlew.bat ./
@@ -39,7 +39,7 @@ RUN --mount=type=cache,id=gradle,target=/home/gradle/.gradle \
     install -m 0644 ../conf/sample.yaml /tmp/runtime-root/etc/regelrett/regelrett.yaml
 
 # OpenTelemetry agent
-FROM otel/autoinstrumentation-java:2.33.1-3@sha256:9f44e319d84bfa1cb9b7f711916a0169e185f5eedee0a8f74cb23affc2953f00 AS otel-agent
+FROM otel/autoinstrumentation-java:2.33.1-3@sha256:383a36e8d63a96435a04f2a32f0bf065f211f9ef0c6e75e9e895f0f7d272659a AS otel-agent
 
 # -----------------------------------------------------------------------------
 # Runtime image
