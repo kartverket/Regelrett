@@ -1,12 +1,14 @@
 import { OptionalFieldType, type Column, type Question } from "@/api/types";
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { Download, LightbulbIcon } from "lucide-react";
 import ExcelJS from "exceljs";
 import {
   buildContextCsvFilename,
   buildContextXlsxFilename,
 } from "@/utils/csvFilename";
 import { toast } from "sonner";
+import { ExcelExportInstructionsModal } from "../../../frontPage/ExcelExportInstructionsModal";
+import { useState } from "react";
 
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   rows: Question[];
@@ -34,6 +36,8 @@ export function CSVDownload({
     .join("\n");
 
   const csvData = `${headerArray.join(",")}\n${csvRows}`;
+
+  const [excelInstructionsOpen, setExcelInstructionsOpen] = useState(false);
 
   const handleDownload = (event: React.MouseEvent<HTMLButtonElement>) => {
     onClick?.(event);
@@ -103,15 +107,15 @@ export function CSVDownload({
         <Download className="size-5" />
         Last ned CSV
       </Button>
-      <Button
-        variant="outline"
-        className="w-fit"
-        onClick={handleXlsxDownload}
-        {...rest}
-      >
-        <Download className="size-5" />
-        Last ned XLSX
+
+      <Button variant={"link"} onClick={() => setExcelInstructionsOpen(true)}>
+        <LightbulbIcon />
+        Instruksjoner for å importere data i Excel
       </Button>
+      <ExcelExportInstructionsModal
+        isOpen={excelInstructionsOpen}
+        onClose={() => setExcelInstructionsOpen(false)}
+      />
     </div>
   );
 }
