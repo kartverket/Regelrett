@@ -1,14 +1,10 @@
 import { OptionalFieldType, type Column, type Question } from "@/api/types";
 import { Button } from "@/components/ui/button";
+import { buildContextCsvFilename } from "@/utils/csvFilename";
 import { Download, LightbulbIcon } from "lucide-react";
-import ExcelJS from "exceljs";
-import {
-  buildContextCsvFilename,
-  buildContextXlsxFilename,
-} from "@/utils/csvFilename";
+import { useState } from "react";
 import { toast } from "sonner";
 import { ExcelExportInstructionsModal } from "../../../frontPage/ExcelExportInstructionsModal";
-import { useState } from "react";
 
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   rows: Question[];
@@ -60,38 +56,6 @@ export function CSVDownload({
         description: "Det har skjedd en feil. Prøv på nytt",
         duration: 5000,
         id: "download-context-csv-error",
-      });
-    }
-  };
-
-  const handleXlsxDownload = async (
-    event: React.MouseEvent<HTMLButtonElement>,
-  ) => {
-    onClick?.(event);
-
-    try {
-      const workbook = new ExcelJS.Workbook();
-      const worksheet = workbook.addWorksheet("Svar");
-
-      worksheet.addRow(headerArray);
-      valuesByRow.forEach((values) => {
-        worksheet.addRow(values.map((value) => formatXlsxValue(value)));
-      });
-      worksheet.getRow(1).font = { bold: true };
-      worksheet.views = [{ state: "frozen", ySplit: 1 }];
-
-      const fileName = buildContextXlsxFilename(formName, contextName);
-      const buffer = await workbook.xlsx.writeBuffer();
-      const blob = new Blob([buffer], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      downloadBlob(blob, fileName);
-    } catch (error) {
-      console.error("Error downloading context XLSX:", error);
-      toast.error("Å nei!", {
-        description: "Det har skjedd en feil. Prøv på nytt",
-        duration: 5000,
-        id: "download-context-xlsx-error",
       });
     }
   };
@@ -157,18 +121,3 @@ const escapeCSVValue = (value: string | number | Array<string>): string => {
   }
   return String(value); // Return the value as a string
 };
-
-function formatXlsxValue(value: string | string[]): string {
-  return Array.isArray(value) ? value.join("|") : value;
-}
-
-function downloadBlob(blob: Blob, fileName: string) {
-  const url = window.URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = fileName;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  window.URL.revokeObjectURL(url);
-}
