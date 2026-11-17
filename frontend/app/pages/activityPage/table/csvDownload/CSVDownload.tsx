@@ -1,12 +1,10 @@
 import { OptionalFieldType, type Column, type Question } from "@/api/types";
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
-import ExcelJS from "exceljs";
-import {
-  buildContextCsvFilename,
-  buildContextXlsxFilename,
-} from "@/utils/csvFilename";
+import { buildContextCsvFilename } from "@/utils/csvFilename";
+import { Download, LightbulbIcon } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
+import { ExcelExportInstructionsModal } from "../../../frontPage/ExcelExportInstructionsModal";
 
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   rows: Question[];
@@ -35,6 +33,8 @@ export function CSVDownload({
 
   const csvData = `${headerArray.join(",")}\n${csvRows}`;
 
+  const [excelInstructionsOpen, setExcelInstructionsOpen] = useState(false);
+
   const handleDownload = (event: React.MouseEvent<HTMLButtonElement>) => {
     onClick?.(event);
 
@@ -60,38 +60,6 @@ export function CSVDownload({
     }
   };
 
-  const handleXlsxDownload = async (
-    event: React.MouseEvent<HTMLButtonElement>,
-  ) => {
-    onClick?.(event);
-
-    try {
-      const workbook = new ExcelJS.Workbook();
-      const worksheet = workbook.addWorksheet("Svar");
-
-      worksheet.addRow(headerArray);
-      valuesByRow.forEach((values) => {
-        worksheet.addRow(values.map((value) => formatXlsxValue(value)));
-      });
-      worksheet.getRow(1).font = { bold: true };
-      worksheet.views = [{ state: "frozen", ySplit: 1 }];
-
-      const fileName = buildContextXlsxFilename(formName, contextName);
-      const buffer = await workbook.xlsx.writeBuffer();
-      const blob = new Blob([buffer], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      downloadBlob(blob, fileName);
-    } catch (error) {
-      console.error("Error downloading context XLSX:", error);
-      toast.error("Å nei!", {
-        description: "Det har skjedd en feil. Prøv på nytt",
-        duration: 5000,
-        id: "download-context-xlsx-error",
-      });
-    }
-  };
-
   return (
     <div className="flex gap-2">
       <Button
@@ -103,15 +71,15 @@ export function CSVDownload({
         <Download className="size-5" />
         Last ned CSV
       </Button>
-      <Button
-        variant="outline"
-        className="w-fit"
-        onClick={handleXlsxDownload}
-        {...rest}
-      >
-        <Download className="size-5" />
-        Last ned XLSX
+
+      <Button variant={"link"} onClick={() => setExcelInstructionsOpen(true)}>
+        <LightbulbIcon />
+        Instruksjoner for å importere data i Excel
       </Button>
+      <ExcelExportInstructionsModal
+        isOpen={excelInstructionsOpen}
+        onClose={() => setExcelInstructionsOpen(false)}
+      />
     </div>
   );
 }
@@ -153,18 +121,3 @@ const escapeCSVValue = (value: string | number | Array<string>): string => {
   }
   return String(value); // Return the value as a string
 };
-
-function formatXlsxValue(value: string | string[]): string {
-  return Array.isArray(value) ? value.join("|") : value;
-}
-
-function downloadBlob(blob: Blob, fileName: string) {
-  const url = window.URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = fileName;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  window.URL.revokeObjectURL(url);
-}

@@ -1,19 +1,19 @@
+import { ErrorState } from "@/components/ErrorState";
 import { Page } from "@/components/layout/Page";
+import { SkeletonLoader } from "@/components/SkeletonLoader";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUser } from "@/hooks/useUser";
-import RedirectBackButton from "../../components/buttons/RedirectBackButton";
-import TeamContexts from "./TeamContexts";
+import ReadGrantedContextsSection from "@/pages/frontPage/ReadGrantedContextsSection";
 import {
   handleExportFullCSV,
   handleExportProgressCSV,
 } from "@/utils/csvExportUtils";
-import { ErrorState } from "@/components/ErrorState";
-import { Button } from "@/components/ui/button";
-import { Download, FileText } from "lucide-react";
-import { SkeletonLoader } from "@/components/SkeletonLoader";
-import React from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ReadGrantedContextsSection from "@/pages/frontPage/ReadGrantedContextsSection";
-
+import { Download, FileText, LightbulbIcon } from "lucide-react";
+import { useState } from "react";
+import RedirectBackButton from "../../components/buttons/RedirectBackButton";
+import { ExcelExportInstructionsModal } from "./ExcelExportInstructionsModal";
+import TeamContexts from "./TeamContexts";
 
 export default function FrontPage() {
   const {
@@ -21,6 +21,8 @@ export default function FrontPage() {
     isPending: isUserinfoLoading,
     isError: isUserinfoError,
   } = useUser();
+
+  const [excelInstructionsOpen, setExcelInstructionsOpen] = useState(false);
 
   if (isUserinfoError) {
     return (
@@ -32,8 +34,6 @@ export default function FrontPage() {
   }
 
   const teams = userinfo ? userinfo.groups : [];
-
-
 
   return (
     <div>
@@ -87,6 +87,22 @@ export default function FrontPage() {
                           <Download className="size-4" />
                           Eksporter utfyllingstilstand
                         </Button>
+                      )}
+
+                      {userinfo?.superuser && userinfo?.reportinguser && (
+                        <>
+                          <Button
+                            variant={"link"}
+                            onClick={() => setExcelInstructionsOpen(true)}
+                          >
+                            <LightbulbIcon />
+                            Instruksjoner for å importere data i Excel
+                          </Button>
+                          <ExcelExportInstructionsModal
+                            isOpen={excelInstructionsOpen}
+                            onClose={() => setExcelInstructionsOpen(false)}
+                          />
+                        </>
                       )}
                     </div>
 
