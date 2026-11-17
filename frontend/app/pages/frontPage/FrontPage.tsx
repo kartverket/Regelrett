@@ -68,7 +68,7 @@ export default function FrontPage() {
                     </div>
 
                     <div className="flex flex-row gap-4 flex-wrap">
-                      {true && (
+                      {userinfo?.superuser && (
                         <Button
                           variant="outline"
                           className="gap-2"
@@ -78,7 +78,7 @@ export default function FrontPage() {
                           Eksporter skjemautfyllinger
                         </Button>
                       )}
-                      {true && (
+                      {userinfo?.reportinguser && (
                         <Button
                           variant="outline"
                           className="gap-2"
@@ -89,18 +89,21 @@ export default function FrontPage() {
                         </Button>
                       )}
 
-                      {}
-                      <Button
-                        variant={"link"}
-                        onClick={() => setExcelInstructionsOpen(true)}
-                      >
-                        <LightbulbIcon />
-                        Instruksjoner for å importere data i Excel
-                      </Button>
-                      <ExcelExportInstructionsModal
-                        isOpen={excelInstructionsOpen}
-                        onClose={() => setExcelInstructionsOpen(false)}
-                      />
+                      {userinfo?.superuser && userinfo?.reportinguser && (
+                        <>
+                          <Button
+                            variant={"link"}
+                            onClick={() => setExcelInstructionsOpen(true)}
+                          >
+                            <LightbulbIcon />
+                            Instruksjoner for å importere data i Excel
+                          </Button>
+                          <ExcelExportInstructionsModal
+                            isOpen={excelInstructionsOpen}
+                            onClose={() => setExcelInstructionsOpen(false)}
+                          />
+                        </>
+                      )}
                     </div>
 
                     <div className="space-y-6">
