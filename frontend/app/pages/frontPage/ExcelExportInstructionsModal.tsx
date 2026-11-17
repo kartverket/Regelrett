@@ -18,7 +18,7 @@ export function ExcelExportInstructionsModal({ onClose, isOpen }: Props) {
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-[450px]">
         <DialogHeader>
-          <DialogTitle className="text-xl">Eksportere til Excel</DialogTitle>
+          <DialogTitle className="text-xl">Importere til Excel</DialogTitle>
         </DialogHeader>
         <SkeletonLoader loading={false}>
           <DialogDescription className="text-base break-words max-w-sm">
