@@ -1,19 +1,19 @@
+import { ErrorState } from "@/components/ErrorState";
 import { Page } from "@/components/layout/Page";
+import { SkeletonLoader } from "@/components/SkeletonLoader";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUser } from "@/hooks/useUser";
-import RedirectBackButton from "../../components/buttons/RedirectBackButton";
-import TeamContexts from "./TeamContexts";
+import ReadGrantedContextsSection from "@/pages/frontPage/ReadGrantedContextsSection";
 import {
   handleExportFullCSV,
   handleExportProgressCSV,
 } from "@/utils/csvExportUtils";
-import { ErrorState } from "@/components/ErrorState";
-import { Button } from "@/components/ui/button";
-import { Download, FileText } from "lucide-react";
-import { SkeletonLoader } from "@/components/SkeletonLoader";
-import React from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ReadGrantedContextsSection from "@/pages/frontPage/ReadGrantedContextsSection";
-
+import { Download, FileText, LightbulbIcon } from "lucide-react";
+import { useState } from "react";
+import RedirectBackButton from "../../components/buttons/RedirectBackButton";
+import { ExcelExportInstructionsModal } from "./ExcelExportInstructionsModal";
+import TeamContexts from "./TeamContexts";
 
 export default function FrontPage() {
   const {
@@ -21,6 +21,8 @@ export default function FrontPage() {
     isPending: isUserinfoLoading,
     isError: isUserinfoError,
   } = useUser();
+
+  const [excelInstructionsOpen, setExcelInstructionsOpen] = useState(false);
 
   if (isUserinfoError) {
     return (
@@ -32,8 +34,6 @@ export default function FrontPage() {
   }
 
   const teams = userinfo ? userinfo.groups : [];
-
-
 
   return (
     <div>
@@ -68,7 +68,7 @@ export default function FrontPage() {
                     </div>
 
                     <div className="flex flex-row gap-4 flex-wrap">
-                      {userinfo?.superuser && (
+                      {true && (
                         <Button
                           variant="outline"
                           className="gap-2"
@@ -78,7 +78,7 @@ export default function FrontPage() {
                           Eksporter skjemautfyllinger
                         </Button>
                       )}
-                      {userinfo?.reportinguser && (
+                      {true && (
                         <Button
                           variant="outline"
                           className="gap-2"
@@ -88,6 +88,19 @@ export default function FrontPage() {
                           Eksporter utfyllingstilstand
                         </Button>
                       )}
+
+                      {}
+                      <Button
+                        variant={"link"}
+                        onClick={() => setExcelInstructionsOpen(true)}
+                      >
+                        <LightbulbIcon />
+                        Instruksjoner for å importere data i Excel
+                      </Button>
+                      <ExcelExportInstructionsModal
+                        isOpen={excelInstructionsOpen}
+                        onClose={() => setExcelInstructionsOpen(false)}
+                      />
                     </div>
 
                     <div className="space-y-6">
