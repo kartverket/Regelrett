@@ -44,7 +44,7 @@ FROM otel/autoinstrumentation-java:2.34.0-1@sha256:9e32040d5521bc5771c1290e77571
 # -----------------------------------------------------------------------------
 # Runtime image
 # -----------------------------------------------------------------------------
-FROM dhi.io/eclipse-temurin:25-alpine3.24@sha256:ac4532028c964814ac5835e7880a9d3f63ebf9089d0ab6ba238276ca5fcf0c9e
+FROM dhi.io/eclipse-temurin:25-alpine3.24@sha256:96e29f91e03b402f3fa902fcc4fe670603ad7e1e2b3e900a81c30a1a76746881
 
 ARG RR_UID="472"
 ARG RR_GID="0"
