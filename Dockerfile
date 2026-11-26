@@ -5,7 +5,7 @@
 # -----------------------------------------------------------------------------
 
 # JavaScript build
-FROM dhi.io/node:24-alpine3.24-dev@sha256:665a173e7d07f3707c68311c6722c91a4524eb7ffd09fe8f400f62fa12d81fd8 AS js-base
+FROM dhi.io/node:24-alpine3.24-dev@sha256:0da0a63de2c7c4a094a85c3f286368426fcd16afc304d08dab62ffbc0e285a6d AS js-base
 WORKDIR /tmp/regelrett
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
@@ -22,7 +22,7 @@ ENV NODE_ENV=production
 RUN pnpm build
 
 # Kotlin build
-FROM dhi.io/gradle:9-jdk25-alpine3.23-dev@sha256:988b2277ca5f5bd3b71f67627a6dc903c40abae047fdf4c88b70876586f9cd3e AS kt-builder
+FROM dhi.io/gradle:9-jdk25-alpine3.23-dev@sha256:b0ae19d017beed75d91ff5d0dbeaa8c68081a4621bee2a1ee38d8ed44f75e1ab AS kt-builder
 WORKDIR /tmp/regelrett/backend
 COPY backend/src ./src
 COPY backend/build.gradle.kts backend/settings.gradle.kts backend/gradle.properties backend/gradlew backend/gradlew.bat ./
@@ -44,7 +44,7 @@ FROM otel/autoinstrumentation-java:2.34.0-1@sha256:9e32040d5521bc5771c1290e77571
 # -----------------------------------------------------------------------------
 # Runtime image
 # -----------------------------------------------------------------------------
-FROM dhi.io/eclipse-temurin:25-alpine3.24@sha256:96e29f91e03b402f3fa902fcc4fe670603ad7e1e2b3e900a81c30a1a76746881
+FROM dhi.io/eclipse-temurin:25-alpine3.24@sha256:a2000057670f93826bd1e2fd69e291653ed89e220aeb96dd101f3abd98ba6976
 
 ARG RR_UID="472"
 ARG RR_GID="0"
