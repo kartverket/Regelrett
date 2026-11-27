@@ -5,7 +5,7 @@
 # -----------------------------------------------------------------------------
 
 # JavaScript build
-FROM dhi.io/node:26-alpine3.24-dev@sha256:b4de66c0e4ee106d6cfa1d7dc3fd92d5a2cd0c6dba855fe02b247fd5190a9066 AS js-base
+FROM dhi.io/node:26-alpine3.24-dev@sha256:d669bddc1eab94967aca024c85040c49f176a145b9fc0bc754152fc55f8d3f05 AS js-base
 WORKDIR /tmp/regelrett
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
@@ -44,7 +44,7 @@ FROM otel/autoinstrumentation-java:2.34.0-1@sha256:9e32040d5521bc5771c1290e77571
 # -----------------------------------------------------------------------------
 # Runtime image
 # -----------------------------------------------------------------------------
-FROM dhi.io/eclipse-temurin:25-alpine3.24@sha256:a2000057670f93826bd1e2fd69e291653ed89e220aeb96dd101f3abd98ba6976
+FROM dhi.io/eclipse-temurin:25-alpine3.24@sha256:f7e4086e2217b2804f273843311aceb8ff8a4a8e774e363171c7ae727d03fb29
 
 ARG RR_UID="472"
 ARG RR_GID="0"
